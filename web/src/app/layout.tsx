@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="ptBR">
       <body
-        className={`${beVieatnamPro.className} bg-white text-zinc-700 antialiased`}
+        className={`${beVieatnamPro.className} mx-auto max-w-7xl bg-white text-zinc-700 antialiased`}
       >
         {children}
       </body>

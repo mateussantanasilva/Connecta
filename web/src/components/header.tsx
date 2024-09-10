@@ -1,0 +1,47 @@
+import Image from 'next/image'
+import LogoImg from '@/assets/logo.svg'
+import Link from 'next/link'
+import { Avatar } from './avatar'
+import { SettingsMenu } from './settings-menu'
+
+export function Header() {
+  return (
+    <header className="flex items-center justify-between py-4">
+      <nav className="flex items-center gap-4">
+        <Link href="/">
+          <Image src={LogoImg} alt="Logo Connecta" />
+        </Link>
+
+        <div className="h-5 w-px bg-zinc-400" />
+
+        <ul className="flex gap-6 font-medium transition-colors">
+          <li className="hover:text-green-600">
+            <Link href="/">Página inicial</Link>
+          </li>
+          <li className="hover:text-green-600">
+            <Link href="/campanhas">Campanhas</Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* <Button variant="secondary">
+        <span>Faça sua doação</span>
+      </Button> */}
+
+      <div className="flex items-center gap-6">
+        <SettingsMenu />
+
+        <Link href="/perfil" className="group flex items-center gap-3">
+          <Avatar
+            src="https://images.unsplash.com/photo-1502323777036-f29e3972d82f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Foto de perfil da Molly Jensen"
+          />
+
+          <span className="font-medium text-zinc-800 group-hover:text-orange-600">
+            Molly Jensen
+          </span>
+        </Link>
+      </div>
+    </header>
+  )
+}

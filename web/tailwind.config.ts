@@ -11,9 +11,11 @@ const config: Config = {
       colors: {
         green: {
           600: '#316962',
+          700: '#254f4A',
         },
         orange: {
           600: '#DD720F',
+          700: '#C76102',
         },
       },
     },
