@@ -1,16 +1,17 @@
 import { Avatar } from '@/components/avatar'
-import { Header } from '@/components/header'
+import { Header } from '@/components/sections/header'
 import { BecomeDoneeModal } from '@/components/modals/become-donee-modal'
 import { MyCampaigns } from '@/components/sections/my-campaigns'
 import { MyDonations } from '@/components/sections/my-donations'
 import { Mail, MapPin, Phone } from 'lucide-react'
+import { Footer } from '@/components/sections/footer'
 
 export default function Perfil() {
   return (
     <>
       <Header />
 
-      <main className="mb-20 mt-16 flex gap-14">
+      <main className="mx-auto mb-20 mt-16 flex max-w-7xl gap-14">
         <aside className="max-w-80 space-y-5">
           <header className="flex flex-col items-center">
             <Avatar
@@ -75,6 +76,8 @@ export default function Perfil() {
           <MyDonations />
         </div>
       </main>
+
+      <Footer />
     </>
   )
 }

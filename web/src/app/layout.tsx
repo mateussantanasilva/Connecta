@@ -36,9 +36,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ptBR">
+    <html lang="pt-BR">
       <body
-        className={`${beVieatnamPro.className} mx-auto max-w-7xl bg-white text-zinc-700 antialiased`}
+        className={`${beVieatnamPro.className} bg-white text-zinc-700 antialiased`}
       >
         {children}
       </body>

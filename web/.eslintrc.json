@@ -1,6 +1,7 @@
 {
   "extends": ["@rocketseat/eslint-config/next", "next/core-web-vitals", "next/typescript"],
   "rules": {
-    "camelcase": "off"
+    "camelcase": "off",
+    "react/display-name": "off" 
   }
 }
