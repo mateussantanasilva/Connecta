@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '375px',
+      },
+
       colors: {
         green: {
           600: '#316962',
@@ -17,6 +21,11 @@ const config: Config = {
           600: '#DD720F',
           700: '#C76102',
         },
+      },
+
+      gridTemplateColumns: {
+        cards: 'repeat(auto-fit, minmax(16rem, 1fr))',
+        hero: 'repeat(4, 16rem)',
       },
     },
   },

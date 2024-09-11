@@ -12,7 +12,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
   return (
     <article className="space-y-5 rounded-2xl p-5 shadow">
       <strong className="text-lg font-bold text-zinc-800">
-        {campaign.title}
+        {campaign.name}
       </strong>
 
       <div className="flex items-center justify-between">
@@ -44,7 +44,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
       <ProgressBar progression={campaign.progress} />
 
       <div className="flex items-center justify-between">
-        <Link href={`/campanhas/${campaign.title}`}>
+        <Link href={`/campanhas/${campaign.id}`}>
           <Button>
             <span>Ver detalhes</span>
           </Button>
