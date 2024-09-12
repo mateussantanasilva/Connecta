@@ -16,7 +16,7 @@ export async function getCampaigns(app: FastifyInstance) {
               id: z.string().uuid(),
               name: z.string(),
               collection_point: z.string(),
-              //              collection_point: z.array(z.string()),
+              // collection_point: z.array(z.string()),
               description: z.string(),
               observation: z.string(),
               categories: z.string(),
