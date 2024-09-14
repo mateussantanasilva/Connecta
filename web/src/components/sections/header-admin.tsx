@@ -18,18 +18,18 @@ export function HeaderAdmin() {
 
                 <ul className="hidden gap-6 font-medium transition-colors md:flex">
                     <li className="hover:text-green-600">
-                        <Link href="/" className="flex items-center gap-2">
+                        <Link href="/administrador" className="flex items-center gap-2">
                             <Home className="w-5 h-5" />
                             Página inicial
                         </Link>
                     </li>
                     <li className="hover:text-green-600">
-                        <Link href="/campanhas" className="flex items-center gap-2">
+                        <Link href="/administrador/campanhas" className="flex items-center gap-2">
                             <Megaphone className="w-5 h-5" />
                             Campanhas</Link>
                     </li>
                     <li className="hover:text-green-600">
-                        <Link href="/donatarios" className="flex items-center gap-2">
+                        <Link href="/administrador/donatarios" className="flex items-center gap-2">
                             <HeartHandshake className="w-5 h-5" />
                             Donatários</Link>
                     </li>

@@ -3,7 +3,7 @@
 import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown } from 'lucide-react';
 
-export default function StatusPopover() {
+export default function StatusPopoverAdmin() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
@@ -19,9 +19,9 @@ export default function StatusPopover() {
           sideOffset={5}
         >
           <div className="p-2">
-            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Apto</button>
-            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Inativo</button>
-            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Em análise</button>
+            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Não iniciada</button>
+            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Iniciada há 20 dias</button>
+            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Encerrada há 20 dias</button>
           </div>
           <Popover.Arrow className="fill-white" />
         </Popover.Content>
