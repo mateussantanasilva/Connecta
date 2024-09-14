@@ -10,7 +10,7 @@ interface CampaignCardProps {
 
 export function CampaignCard({ campaign }: CampaignCardProps) {
   return (
-    <article className="space-y-5 rounded-2xl p-5 shadow">
+    <article className="space-y-4 rounded-2xl p-5 shadow">
       <strong className="text-lg font-bold text-zinc-800">
         {campaign.name}
       </strong>

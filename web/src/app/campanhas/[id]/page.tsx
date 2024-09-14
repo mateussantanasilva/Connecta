@@ -1,6 +1,6 @@
 import { Campaign } from '@/@types/Campaign'
 import { Checkbox } from '@/components/checkbox'
-import { ReserveDonation } from '@/components/modals/reserve-donation'
+import { ReserveDonationModal } from '@/components/modals/reserve-donation-modal'
 import { CampaignDetails } from '@/components/sections/campaign-details'
 import { DonationItem } from '@/components/sections/donation-item'
 import { Footer } from '@/components/sections/footer'
@@ -32,7 +32,7 @@ export default function Campanha() {
               {campaign.name}
             </h1>
 
-            <ReserveDonation />
+            <ReserveDonationModal />
           </header>
 
           <div className="space-y-5">

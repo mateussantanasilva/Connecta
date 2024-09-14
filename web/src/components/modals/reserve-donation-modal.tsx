@@ -6,7 +6,7 @@ import { HandHeart, SquareCheck, X } from 'lucide-react'
 import { Input } from '../input'
 import { QuantityInput } from '../quantity-input'
 
-export function ReserveDonation() {
+export function ReserveDonationModal() {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
