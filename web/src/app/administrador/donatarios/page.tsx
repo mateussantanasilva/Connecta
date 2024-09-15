@@ -5,6 +5,7 @@ import { Button } from '@/components/button'
 import { Pagination } from '@/components/pagination'
 import StatusPopover from "@/components/status-popover"
 import { HeaderAdmin } from '@/components/sections/header-admin'
+import {DoneeRequestsModal} from '@/components/modals/donee-requests-modal'
 
 
 export default function Donatario() {
@@ -15,10 +16,7 @@ export default function Donatario() {
                 <header className="flex w-full items-center justify-between">
                     <h1 className="text-4xl font-bold text-zinc-800">Donatários</h1>
 
-                    <Button className="flex items-center gap-2">
-                        <span>Ver solicitações</span>
-                        <TextSearch className="size-5 shrink-0" />
-                    </Button>
+                    <DoneeRequestsModal />
                 </header>
 
 

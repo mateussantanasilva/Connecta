@@ -3,6 +3,8 @@ import { HeaderAdmin } from '@/components/sections/header-admin'
 import { Button } from '@/components/button'
 import { Pagination } from '@/components/pagination'
 import StatusPopoverAdmin from "@/components/status-popover-admin"
+import { CreateCampaignModal } from '@/components/modals/create-campaign-modal'
+
 
 export default function Campanha() {
     return (
@@ -13,10 +15,7 @@ export default function Campanha() {
                 <header className="flex w-full items-center justify-between">
                     <h1 className="text-4xl font-bold text-zinc-800">Campanhas</h1>
 
-                    <Button className="flex items-center gap-2">
-                        <span>Criar Campanhas</span>
-                        <Plus className="size-5 shrink-0" />
-                    </Button>
+                        <CreateCampaignModal />
                 </header>
 
                 <div className="flex items-center gap-4">
