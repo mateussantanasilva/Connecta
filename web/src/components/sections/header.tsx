@@ -6,7 +6,7 @@ import { SettingsMenu } from '../settings-menu'
 
 export function Header() {
   return (
-    <header className="mx-auto flex max-w-7xl items-center justify-between bg-transparent p-4 xl:px-0">
+    <header className="mx-auto flex max-w-7xl items-center justify-between bg-transparent p-4 2xl:px-0">
       <nav className="flex items-center gap-4">
         <Link href="/">
           <Image src={LogoImg} alt="Logo Connecta" />

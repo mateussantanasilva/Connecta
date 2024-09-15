@@ -25,30 +25,32 @@ export default function Campanha() {
     <>
       <Header />
 
-      <main className="mx-auto mb-20 mt-16 flex max-w-7xl gap-14">
+      <main className="mx-auto mb-20 mt-16 flex max-w-7xl flex-col gap-14 px-4 lg:flex-row 2xl:px-0">
         <section className="flex-1 space-y-5">
-          <header className="flex items-center justify-between">
-            <h1 className="text-4xl font-bold text-zinc-800">
+          <header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+            <h1 className="text-3xl font-bold text-zinc-800 lg:text-4xl">
               {campaign.name}
             </h1>
 
             <ReserveDonationModal />
           </header>
 
-          <div className="space-y-5">
+          <div className="space-y-5 overflow-x-scroll sm:overflow-x-auto [&::-webkit-scrollbar]:h-1.5">
             <h3 className="text-lg font-bold text-zinc-800">Alimentação</h3>
 
             <div className="flex items-center gap-14 px-5 text-sm font-medium uppercase text-zinc-800">
-              <div className="flex flex-1 items-center gap-5">
+              <div className="flex min-w-48 flex-1 items-center gap-5">
                 <Checkbox disabled />
                 <strong className="font-medium">Nome do item</strong>
               </div>
 
-              <strong className="w-24 text-center font-medium">
+              <strong className="min-w-24 text-center font-medium">
                 Quantidade
               </strong>
 
-              <strong className="w-24 text-center font-medium">Status</strong>
+              <strong className="min-w-24 text-center font-medium">
+                Status
+              </strong>
             </div>
 
             <div className="space-y-2">

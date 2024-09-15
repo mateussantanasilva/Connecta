@@ -8,7 +8,7 @@ export default function Campanhas() {
     <>
       <Header />
 
-      <main className="mx-auto mb-20 mt-10 max-w-7xl space-y-6 px-4 md:mt-16 xl:px-0">
+      <main className="mx-auto mb-20 mt-10 max-w-7xl space-y-6 px-4 md:mt-16 2xl:px-0">
         <header className="max-w-xl space-y-5">
           <h1 className="text-3xl font-bold text-zinc-800 lg:text-4xl">
             Campanhas

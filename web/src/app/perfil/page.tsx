@@ -11,7 +11,7 @@ export default function Perfil() {
     <>
       <Header />
 
-      <main className="mx-auto mb-20 mt-16 flex max-w-7xl flex-col gap-14 px-4 lg:flex-row xl:px-0">
+      <main className="mx-auto mb-20 mt-16 flex max-w-7xl flex-col gap-14 px-4 lg:flex-row 2xl:px-0">
         <aside className="mx-auto space-y-5 lg:max-w-80">
           <header className="flex flex-col items-center">
             <Avatar

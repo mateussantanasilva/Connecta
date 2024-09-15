@@ -8,7 +8,7 @@ interface CampaignDetailsProps {
 
 export function CampaignDetails({ campaign }: CampaignDetailsProps) {
   return (
-    <aside className="max-w-80 space-y-5">
+    <aside className="space-y-5 lg:max-w-80">
       <h2 className="text-2xl font-bold text-zinc-800">Detalhes da Campanha</h2>
 
       <div className="space-y-2">
