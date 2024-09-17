@@ -3,9 +3,9 @@ import { HandHeart, Megaphone, PackageOpen, UsersRound } from 'lucide-react'
 
 export function Resources() {
   return (
-    <section className="mx-auto mt-20 flex max-w-7xl items-center justify-between px-4 xl:px-0">
-      <div className="flex flex-wrap gap-6">
-        <div className="max-w-64 space-y-3 rounded-2xl p-5 text-center shadow">
+    <section className="mx-auto mt-20 flex max-w-7xl flex-col-reverse justify-evenly gap-14 px-4 lg:flex-row lg:items-center xl:justify-between 2xl:px-0">
+      <div className="grid grid-cols-cards gap-6 lg:w-1/2 lg:max-w-[33.5rem] lg:grid-cols-2">
+        <div className="space-y-3 rounded-2xl p-5 text-center shadow">
           <div className="mx-auto w-fit rounded-full bg-orange-600/20 p-3">
             <UsersRound className="size-6 shrink-0 text-orange-600" />
           </div>
@@ -17,7 +17,7 @@ export function Resources() {
           </p>
         </div>
 
-        <div className="max-w-64 space-y-3 rounded-2xl p-5 text-center shadow">
+        <div className="space-y-3 rounded-2xl p-5 text-center shadow">
           <div className="mx-auto w-fit rounded-full bg-orange-600/20 p-3">
             <PackageOpen className="size-6 shrink-0 text-orange-600" />
           </div>
@@ -30,7 +30,7 @@ export function Resources() {
           </p>
         </div>
 
-        <div className="max-w-64 space-y-3 rounded-2xl p-5 text-center shadow">
+        <div className="space-y-3 rounded-2xl p-5 text-center shadow">
           <div className="mx-auto w-fit rounded-full bg-orange-600/20 p-3">
             <Megaphone className="size-6 shrink-0 text-orange-600" />
           </div>
@@ -42,7 +42,7 @@ export function Resources() {
           </p>
         </div>
 
-        <div className="max-w-64 space-y-3 rounded-2xl p-5 text-center shadow">
+        <div className="space-y-3 rounded-2xl p-5 text-center shadow">
           <div className="mx-auto w-fit rounded-full bg-orange-600/20 p-3">
             <HandHeart className="size-6 shrink-0 text-orange-600" />
           </div>
@@ -55,12 +55,12 @@ export function Resources() {
         </div>
       </div>
 
-      <div className="max-w-xl space-y-5">
-        <h2 className="text-4xl font-bold text-zinc-800">
+      <div className="space-y-5 lg:max-w-md xl:max-w-xl">
+        <h2 className="text-3xl font-bold text-zinc-800 lg:text-4xl">
           Conheça as Funcionalidades que Facilitam seu Acesso
         </h2>
 
-        <p className="max-w-lg">
+        <p className="lg:max-w-lg">
           Com nossos recursos, você pode gerenciar doações e receber itens
           essenciais com facilidade, garantindo que todos possam participar, se
           beneficiar e contribuir para uma comunidade mais forte e solidária.

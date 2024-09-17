@@ -23,7 +23,7 @@ export function MyDonations() {
     <section className="space-y-5">
       <h2 className="text-2xl font-bold text-zinc-800">Minhas Doações</h2>
 
-      <div className="space-y-5 overflow-x-scroll md:overflow-x-auto [&::-webkit-scrollbar]:h-1.5">
+      <div className="space-y-5 overflow-x-scroll md:overflow-x-visible [&::-webkit-scrollbar]:h-1.5">
         <header className="flex w-full gap-5 px-5 text-center text-sm uppercase text-zinc-800">
           <strong className="min-w-44 max-w-56 flex-1 text-start font-medium">
             Item

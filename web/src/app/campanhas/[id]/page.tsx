@@ -35,7 +35,7 @@ export default function Campanha() {
             <ReserveDonationModal />
           </header>
 
-          <div className="space-y-5 overflow-x-scroll sm:overflow-x-auto [&::-webkit-scrollbar]:h-1.5">
+          <div className="space-y-5 overflow-x-scroll sm:overflow-x-visible [&::-webkit-scrollbar]:h-1.5">
             <h3 className="text-lg font-bold text-zinc-800">Alimentação</h3>
 
             <div className="flex items-center gap-14 px-5 text-sm font-medium uppercase text-zinc-800">

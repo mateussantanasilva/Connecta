@@ -4,9 +4,9 @@ import { ArrowRight } from 'lucide-react'
 
 export function LatestCampaigns() {
   return (
-    <section className="mx-auto my-20 max-w-7xl space-y-20 px-4 xl:px-0">
-      <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-bold text-zinc-800">
+    <section className="mx-auto my-20 max-w-7xl space-y-20 px-4 2xl:px-0">
+      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
+        <h2 className="text-3xl font-bold text-zinc-800 lg:text-4xl">
           Campanhas Mais Recentes
         </h2>
 

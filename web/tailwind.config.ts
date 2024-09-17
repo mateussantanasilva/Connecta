@@ -26,8 +26,8 @@ const config: Config = {
 
       gridTemplateColumns: {
         cards: 'repeat(auto-fit, minmax(16rem, 1fr))',
-        hero: 'repeat(4, 16rem)',
-        about: '14rem, 36rem, 14rem',
+        hero: 'repeat(4, minmax(0, 16rem))',
+        about: 'minmax(0, 14rem), minmax(0, 36rem), minmax(0, 14rem)',
       },
     },
   },
