@@ -1,5 +1,6 @@
 import { Be_Vietnam_Pro } from 'next/font/google'
 import type { Metadata } from 'next'
+import { VLibrasPlugin } from '@/components/vlibras-plugin'
 import './globals.css'
 
 const beVieatnamPro = Be_Vietnam_Pro({
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body
         className={`${beVieatnamPro.className} bg-white text-zinc-700 antialiased`}
       >
+        <VLibrasPlugin />
         {children}
       </body>
     </html>
