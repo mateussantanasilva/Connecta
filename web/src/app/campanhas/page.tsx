@@ -2,8 +2,11 @@ import { CampaignCard } from '@/components/campaign-card'
 import { Pagination } from '@/components/pagination'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
+import { CAMPAIGNS } from '@/constants/campaigns'
 
 export default function Campanhas() {
+  const campaigns = CAMPAIGNS
+
   return (
     <>
       <Header />
@@ -19,28 +22,24 @@ export default function Campanhas() {
           </p>
         </header>
 
-        <section className="grid grid-cols-cards gap-6">
-          {Array.from({ length: 7 }).map((_, index) => (
-            <CampaignCard
-              key={index}
-              campaign={{
-                id: '1',
-                name: 'Mutirão de Natal',
-                startedAt: '2024-10-10T30:15:00.429Z',
-                status: 'Aberta',
-                participants: 100,
-                categories: ['Alimentação', 'Vestuário'],
-                collectionPoints: [
-                  'Av. Águia de Haia, 2983 - Cidade Antônio Estêvão de Carvalho',
-                  'R. Prof. Alves Pedroso, 600 - Cangaiba',
-                ],
-                progress: 75,
-              }}
-            />
-          ))}
-        </section>
+        {campaigns.length === 0 ? (
+          <div className="flex h-80 items-center justify-center">
+            <span className="max-w-md text-center text-sm">
+              Nenhuma campanha disponível no momento. Por favor, volte em breve
+              para conferir novidades!
+            </span>
+          </div>
+        ) : (
+          <>
+            <section className="grid grid-cols-cards gap-6">
+              {campaigns.map((campaign) => (
+                <CampaignCard key={campaign.id} campaign={campaign} />
+              ))}
+            </section>
 
-        <Pagination />
+            <Pagination />
+          </>
+        )}
       </main>
 
       <Footer />

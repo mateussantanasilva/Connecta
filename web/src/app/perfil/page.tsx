@@ -5,8 +5,11 @@ import { MyCampaigns } from '@/components/sections/my-campaigns'
 import { MyDonations } from '@/components/sections/my-donations'
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { Footer } from '@/components/sections/footer'
+import { DONOR_USER } from '@/constants/users'
 
 export default function Perfil() {
+  const user = DONOR_USER
+
   return (
     <>
       <Header />
@@ -15,15 +18,17 @@ export default function Perfil() {
         <aside className="mx-auto space-y-5 lg:max-w-80">
           <header className="flex flex-col items-center">
             <Avatar
-              src="https://images.unsplash.com/photo-1502323777036-f29e3972d82f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="Foto de perfil da Molly Jensen"
+              src={user.picture}
+              alt={`Foto de perfil de ${user.full_name}`}
               size="lg"
             />
 
             <strong className="mb-1 mt-6 text-2xl font-bold text-zinc-800">
-              Molly Jensen
+              {user.full_name}
             </strong>
-            <span>Doador(a)</span>
+            <span>
+              {user.user_type === 'doador' ? 'Doador(a)' : 'Donatário(a)'}
+            </span>
           </header>
 
           <div className="space-y-2">
@@ -31,37 +36,40 @@ export default function Perfil() {
 
             <div className="flex items-center gap-1.5">
               <Mail className="size-5 shrink-0 text-zinc-700" />
-              <span>mollyjensen@gmail.com</span>
+              <span>{user.email}</span>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <Phone className="size-5 shrink-0 text-zinc-700" />
-              <span>(11) 98765-4321</span>
-            </div>
+            {user.telephone && (
+              <div className="flex items-center gap-1.5">
+                <Phone className="size-5 shrink-0 text-zinc-700" />
+                <span>{user.telephone}</span>
+              </div>
+            )}
           </div>
 
           <div className="h-px w-full bg-zinc-400" />
 
-          <div className="space-y-2">
-            <h3 className="text-lg font-bold text-zinc-800">Endereço</h3>
+          {user.address && (
+            <>
+              <div className="space-y-2">
+                <h3 className="text-lg font-bold text-zinc-800">Endereço</h3>
 
-            <div className="flex gap-1.5">
-              <MapPin className="size-5 shrink-0 text-zinc-700" />
-              <span>
-                Rua Árvore da Cera, 20c - Jardim Santo Antonio, São Paulo - SP,
-                08032-270
-              </span>
-            </div>
-          </div>
+                <div className="flex gap-1.5">
+                  <MapPin className="size-5 shrink-0 text-zinc-700" />
+                  <span>{user.address}</span>
+                </div>
+              </div>
 
-          <div className="h-px w-full bg-zinc-400" />
+              <div className="h-px w-full bg-zinc-400" />
+            </>
+          )}
 
           <div className="space-y-2">
             <h3 className="text-lg font-bold text-zinc-800">Função atual</h3>
             <p>
-              Você está registrado como doador e pode contribuir com doações.
-              Para receber itens, encerre sua função como doador e torne-se
-              donatário.
+              {user.user_type === 'doador'
+                ? 'Você está registrado como doador e pode contribuir com doações. Para receber itens, encerre sua função como doador e torne-se donatário.'
+                : 'Você está registrado como donatário e pode receber doações conforme sua necessidade. Para doar itens, encerre sua participação como donatário e torne-se doador.'}
             </p>
           </div>
 

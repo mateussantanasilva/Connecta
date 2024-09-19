@@ -1,39 +1,32 @@
 import { Button } from '@/components/button'
 import { CampaignCard } from '@/components/campaign-card'
+import { CAMPAIGNS } from '@/constants/campaigns'
 import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 export function LatestCampaigns() {
+  const campaigns = CAMPAIGNS.slice(0, 4)
+
+  if (campaigns.length === 0) return
+
   return (
-    <section className="mx-auto my-20 max-w-7xl space-y-20 px-4 2xl:px-0">
+    <section className="mx-auto mb-20 max-w-7xl space-y-20 px-4 2xl:px-0">
       <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
         <h2 className="text-3xl font-bold text-zinc-800 lg:text-4xl">
           Campanhas Mais Recentes
         </h2>
 
-        <Button>
-          <span>Ver mais campanhas</span>
-          <ArrowRight className="size-5 shrink-0" />
-        </Button>
+        <Link href="/campanhas">
+          <Button>
+            <span>Ver mais campanhas</span>
+            <ArrowRight className="size-5 shrink-0" />
+          </Button>
+        </Link>
       </div>
 
-      <div className="grid grid-cols-cards gap-6">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <CampaignCard
-            key={index}
-            campaign={{
-              id: '1',
-              name: 'Mutirão de Natal',
-              startedAt: '2024-10-10T30:15:00.429Z',
-              status: 'Aberta',
-              participants: 100,
-              categories: ['Alimentação', 'Vestuário'],
-              collectionPoints: [
-                'Av. Águia de Haia, 2983 - Cidade Antônio Estêvão de Carvalho',
-                'R. Prof. Alves Pedroso, 600 - Cangaiba',
-              ],
-              progress: 75,
-            }}
-          />
+      <div className="grid min-h-56 grid-cols-cards gap-6">
+        {campaigns.map((campaign) => (
+          <CampaignCard key={campaign.id} campaign={campaign} />
         ))}
       </div>
     </section>

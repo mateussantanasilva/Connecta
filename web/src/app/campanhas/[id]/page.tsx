@@ -1,25 +1,21 @@
-import { Campaign } from '@/@types/Campaign'
 import { Checkbox } from '@/components/checkbox'
 import { ReserveDonationModal } from '@/components/modals/reserve-donation-modal'
 import { CampaignDetails } from '@/components/sections/campaign-details'
 import { DonationItem } from '@/components/sections/donation-item'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
+import { CAMPAIGNS } from '@/constants/campaigns'
 
-export default function Campanha() {
-  const campaign: Campaign = {
-    id: '1',
-    name: 'Mutirão de Natal',
-    startedAt: '2024-10-10T30:15:00.429Z',
-    status: 'Aberta',
-    participants: 100,
-    categories: ['Alimentação', 'Vestuário'],
-    collectionPoints: [
-      'Av. Águia de Haia, 2983 - Cidade Antônio Estêvão de Carvalho',
-      'R. Prof. Alves Pedroso, 600 - Cangaiba',
-    ],
-    progress: 75,
+interface CampanhaParams {
+  params: {
+    id: string
   }
+}
+
+export default function Campanha({ params }: CampanhaParams) {
+  const campaign = CAMPAIGNS.find((campaign) => campaign.id === params.id)
+
+  if (!campaign) return
 
   return (
     <>
@@ -32,7 +28,7 @@ export default function Campanha() {
               {campaign.name}
             </h1>
 
-            <ReserveDonationModal />
+            {campaign.status !== 'fechada' && <ReserveDonationModal />}
           </header>
 
           <div className="space-y-5 overflow-x-scroll sm:overflow-x-visible [&::-webkit-scrollbar]:h-1.5">
