@@ -3,7 +3,7 @@ import { HandHeart, Megaphone, PackageOpen, UsersRound } from 'lucide-react'
 
 export function Resources() {
   return (
-    <section className="mx-auto mt-20 flex max-w-7xl flex-col-reverse justify-evenly gap-14 px-4 lg:flex-row lg:items-center xl:justify-between 2xl:px-0">
+    <section className="mx-auto my-20 flex max-w-7xl flex-col-reverse justify-evenly gap-14 px-4 lg:flex-row lg:items-center xl:justify-between 2xl:px-0">
       <div className="grid grid-cols-cards gap-6 lg:w-1/2 lg:max-w-[33.5rem] lg:grid-cols-2">
         <div className="space-y-3 rounded-2xl p-5 text-center shadow">
           <div className="mx-auto w-fit rounded-full bg-orange-600/20 p-3">

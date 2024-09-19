@@ -5,6 +5,7 @@ import Msg2Img from '@/assets/hero-message-2.png'
 import Grid1Img from '@/assets/hero-grid-1.png'
 import Grid2Img from '@/assets/hero-grid-2.png'
 import { HeartHandshake } from 'lucide-react'
+import Link from 'next/link'
 
 export function Hero() {
   return (
@@ -56,15 +57,17 @@ export function Hero() {
               className="hidden rounded-2xl md:flex"
             />
 
-            <div className="h-full min-h-48 space-y-3 rounded-2xl bg-green-600 p-5 text-white">
-              <p className="text-sm">
+            <div className="h-full min-h-48 rounded-2xl bg-green-600 p-5 text-white">
+              <p className="mb-3 text-sm">
                 Sua doação faz a diferença na vida de quem está em necessidade.
                 Contribua e ajude a mudar vidas agora mesmo.
               </p>
 
-              <Button variant="tertiary">
-                <span>Doar agora</span>
-              </Button>
+              <Link href="/campanhas">
+                <Button variant="tertiary">
+                  <span>Doar agora</span>
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

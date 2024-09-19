@@ -14,6 +14,7 @@ const button = tv({
         'border border-zinc-400 bg-white hover:text-zinc-800 hover:border-zinc-800',
       danger:
         'border border-zinc-400 bg-white text-red-600 hover:text-red-700 hover:border-red-700',
+      lock: 'bg-zinc-500 text-white hover:bg-zinc-600',
     },
 
     size: {

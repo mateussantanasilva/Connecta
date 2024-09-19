@@ -38,7 +38,7 @@ export function ReserveDonationModal() {
           </header>
 
           <form className="space-y-5">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <Input
                 title="Nome do item"
                 type="text"
@@ -47,7 +47,7 @@ export function ReserveDonationModal() {
                 className="flex-1"
               />
 
-              <div className="w-64">
+              <div className="sm:w-64">
                 <QuantityInput
                   unitMeasure="pacotes"
                   type="number"
