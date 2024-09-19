@@ -1,12 +1,24 @@
 import { Campaign } from '@/@types/Campaign'
 import { ProgressBar } from '../progress-bar'
 import Link from 'next/link'
+import { StatusIndicator } from '../status-indicator'
+import { formatCampaignStartedAt } from '@/utils/format-campaign-started-at'
 
 interface CampaignDetailsProps {
   campaign: Campaign
 }
 
 export function CampaignDetails({ campaign }: CampaignDetailsProps) {
+  const formattedDate = formatCampaignStartedAt(
+    campaign.status,
+    campaign.started_at,
+  )
+
+  const participants =
+    campaign.participants > 0
+      ? `${campaign.participants} Participantes`
+      : `Sem participantes`
+
   return (
     <aside className="space-y-5 lg:max-w-80">
       <h2 className="text-2xl font-bold text-zinc-800">Detalhes da Campanha</h2>
@@ -14,18 +26,11 @@ export function CampaignDetails({ campaign }: CampaignDetailsProps) {
       <div className="space-y-2">
         <h3 className="text-lg font-bold text-zinc-800">Resumo</h3>
 
-        <div className="flex items-center gap-1">
-          <div className="rounded-full bg-green-600/20 p-1">
-            <div className="size-2 rounded-full bg-green-600" />
-          </div>
-          <strong className="font-medium text-green-600">
-            {campaign.status}
-          </strong>
-        </div>
+        <StatusIndicator status={campaign.status} size="base" />
 
-        <span className="block">Iniciada há 20 dias</span>
+        <span className="block">{formattedDate}</span>
 
-        <span>180 Participantes</span>
+        <span>{participants}</span>
 
         <ProgressBar progression={campaign.progress} />
       </div>
@@ -52,9 +57,14 @@ export function CampaignDetails({ campaign }: CampaignDetailsProps) {
       <div className="space-y-2">
         <h3 className="text-lg font-bold text-zinc-800">Pontos de Coleta</h3>
 
-        {campaign.collectionPoints.map((point) => (
-          <Link href="/" key={point} className="block truncate">
-            {point}
+        {campaign.collection_points.map((address) => (
+          <Link
+            href={`https://www.google.com/maps/search/?api=1&query=${address}`}
+            key={address}
+            target="_blank"
+            className="block truncate transition-colors hover:text-green-600"
+          >
+            {address}
           </Link>
         ))}
       </div>
@@ -64,22 +74,20 @@ export function CampaignDetails({ campaign }: CampaignDetailsProps) {
       <div className="space-y-2">
         <h3 className="text-lg font-bold text-zinc-800">Descrição</h3>
 
-        <p>
-          Ajude-nos a arrecadar alimentos e roupas de inverno para famílias
-          carentes neste Natal. Sua contribuição será boa!
-        </p>
+        <p>{campaign.description}</p>
       </div>
 
-      <div className="h-px w-full bg-zinc-400" />
+      {campaign.observation && (
+        <>
+          <div className="h-px w-full bg-zinc-400" />
 
-      <div className="space-y-2">
-        <h3 className="text-lg font-bold text-zinc-800">Observações</h3>
+          <div className="space-y-2">
+            <h3 className="text-lg font-bold text-zinc-800">Observações</h3>
 
-        <p>
-          Certifique-se de que os itens doados estejam dentro do prazo de
-          validade e em boas condições.
-        </p>
-      </div>
+            <p>{campaign.observation}</p>
+          </div>
+        </>
+      )}
     </aside>
   )
 }
