@@ -24,13 +24,13 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
       : `Sem participantes`
 
   return (
-    <article className="space-y-4 rounded-2xl p-5 shadow">
+    <article className="space-y-4 truncate rounded-2xl p-5 shadow">
       <strong className="text-lg font-bold text-zinc-800">
         {campaign.name}
       </strong>
 
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm">{formattedDate}</span>
+        <span className="truncate text-sm">{formattedDate}</span>
 
         <StatusIndicator status={campaign.status} size="xs" />
       </div>

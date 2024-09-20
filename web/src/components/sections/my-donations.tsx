@@ -4,6 +4,8 @@ import { SquareCheck, X } from 'lucide-react'
 import { Button } from '../button'
 import { DONATION_ITEMS } from '@/constants/donation-items'
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { ConfirmationModal } from '../modals/confirmation-modal'
 
 export function MyDonations() {
   const [donations, setDonations] = useState(DONATION_ITEMS)
@@ -14,6 +16,10 @@ export function MyDonations() {
     )
 
     setDonations(updatedDonations)
+
+    toast.success(
+      'Sua doação foi cancelada. Esperamos contar com você em outras oportunidades!',
+    )
   }
 
   return (
@@ -69,13 +75,15 @@ export function MyDonations() {
                   {donation.status === 'confirmada' ? (
                     <SquareCheck className="size-5 shrink-0 text-green-600" />
                   ) : (
-                    <Button
-                      size="xs"
-                      variant="danger"
-                      onClick={() => handleCancelDonation(donation.id)}
+                    <ConfirmationModal
+                      title="Cancelar Doação"
+                      description="Tem certeza de que deseja cancelar esta doação? A ação não poderá ser desfeita."
+                      onConfirm={() => handleCancelDonation(donation.id)}
                     >
-                      <X className="size-5 shrink-0" />
-                    </Button>
+                      <Button size="xs" variant="danger">
+                        <X className="size-5 shrink-0" />
+                      </Button>
+                    </ConfirmationModal>
                   )}
                 </div>
               </div>

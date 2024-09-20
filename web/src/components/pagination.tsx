@@ -3,11 +3,11 @@ import { Button } from './button'
 
 export function Pagination() {
   return (
-    <div className="flex flex-col-reverse items-center justify-between gap-5 text-sm sm:flex-row md:text-base">
+    <div className="flex flex-col-reverse items-center justify-between gap-5 text-sm sm:flex-row">
       <span>Total de 4 item(s)</span>
 
       <div className="flex flex-col-reverse items-center gap-5 sm:flex-row">
-        <span className="font-medium">Página 1 de 2</span>
+        <span className="text-sm font-medium">Página 1 de 2</span>
 
         <div className="flex gap-2">
           <Button size="sm" variant="outline">

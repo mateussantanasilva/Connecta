@@ -2,7 +2,7 @@
 
 import * as Dialog from '@radix-ui/react-dialog'
 import { Button } from '../button'
-import { HandHeart, SquareCheck, X } from 'lucide-react'
+import { HandHeart, X } from 'lucide-react'
 import { Input } from '../input'
 import { QuantityInput } from '../quantity-input'
 
@@ -11,8 +11,8 @@ export function ReserveDonationModal() {
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <Button>
-          <span>Participar agora</span>
-          <SquareCheck className="size-5 shrink-0" />
+          <span>Reservar doação</span>
+          <HandHeart className="size-5 shrink-0" />
         </Button>
       </Dialog.Trigger>
 
