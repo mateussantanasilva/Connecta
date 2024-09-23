@@ -5,7 +5,9 @@ import { Button } from '@/components/button'
 import { Pagination } from '@/components/pagination'
 import StatusPopover from "@/components/status-popover"
 import { HeaderAdmin } from '@/components/sections/header-admin'
-import {DoneeRequestsModal} from '@/components/modals/donee-requests-modal'
+import { DoneeRequestsModal } from '@/components/modals/donee-requests-modal'
+import { ActiveDoneeModal } from '@/components/modals/active-donee-modal'
+import { InactiveDoneeModal } from '@/components/modals/inactive-donee-modal'
 
 
 export default function Donatario() {
@@ -32,12 +34,12 @@ export default function Donatario() {
 
                     <StatusPopover />
 
-                    <Button className="flex items-center gap-2">
+                    <Button variant = 'primary' className="flex items-center gap-2 border border-gray-300 ">
                         <span>Filtrar resultados</span>
                         <Search className="size-5 shrink-0" />
                     </Button>
 
-                    <Button className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100 ">
+                    <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100 ">
                         <span>Remover filtros</span>
                         <X className="size-5 shrink-0" />
                     </Button>
@@ -60,10 +62,7 @@ export default function Donatario() {
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-100">
-                                            <Search className="w-5 h-5 text-black hover:text-black" />
-                                        </Button>
-
+                                        <ActiveDoneeModal />
                                         <span className="flex-grow">4f3846b5-9def-48db90</span>
                                     </div>
                                 </td>
@@ -82,10 +81,7 @@ export default function Donatario() {
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-100">
-                                            <Search className="w-5 h-5 text-black hover:text-black" />
-                                        </Button>
-
+                                        <InactiveDoneeModal />
                                         <span className="flex-grow">982guji3-9def-90829</span>
                                     </div>
                                 </td>

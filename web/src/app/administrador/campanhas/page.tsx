@@ -4,6 +4,9 @@ import { Button } from '@/components/button'
 import { Pagination } from '@/components/pagination'
 import StatusPopoverAdmin from "@/components/status-popover-admin"
 import { CreateCampaignModal } from '@/components/modals/create-campaign-modal'
+import { OpenCampaignModal } from '@/components/modals/open-campaign-modal'
+import { CloseCampaignModal } from '@/components/modals/close-campaign-modal'
+import { ClosedCampaignModal } from '@/components/modals/closed-campaign-modal';
 
 
 export default function Campanha() {
@@ -34,7 +37,7 @@ export default function Campanha() {
                         <Search className="size-5 shrink-0" />
                     </Button>
 
-                    <Button className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100 ">
+                    <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100">
                         <span>Remover filtros</span>
                         <X className="size-5 shrink-0" />
                     </Button>
@@ -55,7 +58,7 @@ export default function Campanha() {
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-100">
+                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
                                             <Search className="w-5 h-5 text-black hover:text-black" />
                                         </Button>
                                         <span className="flex-grow">398dfg39-9def-42340</span>
@@ -67,28 +70,51 @@ export default function Campanha() {
                                         <span className="text-[#0369A1]">Iniciada há 20 dias</span>
                                     </div>
                                 </td>
-                                <td className="border border-gray-300 px-4 py-2">Multirão de Natal</td>
+                                <td className="border border-gray-300 px-4 py-2">Mutirão de Natal</td>
                                 <td className="border border-gray-300 px-4 py-2">Vestuário, Alimentação</td>
 
                                 <div className="flex items-center gap-2">
                                     <td className=" px-4 py-2">
                                         72%<br />
-                                        23 doação(s)
+                                        13 doação(s)
                                     </td>
-                                    <Button className="flex items-center gap-2 bg-transparent text-[#DD720F] hover:bg-transparent">
-                                        <span>Detalhes</span>
-                                        <ArrowUpRight className="w-5 h-5 shrink-0" />
-                                    </Button>
+                                    <CloseCampaignModal/>
+                                </div>
+                            </tr>
+                            <tr className="border-b">
+                                <td className="border border-gray-300 px-4 py-2">
+                                    <div className="flex items-center gap-2">
+                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
+                                            <Search className="w-5 h-5 text-black hover:text-black" />
+                                        </Button>
+                                        <span className="flex-grow">39uyie39-9wrf-4wg30</span>
+                                    </div>
+                                </td>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    <div className="flex items-center">
+                                        <span className="h-2 w-2 rounded-full bg-gray-500 mr-2"></span>
+                                        <span className="text-gray-500">Encerrada há 20 dias</span>
+                                    </div>
+                                </td>
+                                <td className="border border-gray-300 px-4 py-2">Mutirão de Aniversário</td>
+                                <td className="border border-gray-300 px-4 py-2">Brinquedos, Alimentação</td>
+
+                                <div className="flex items-center gap-2">
+                                    <td className=" px-4 py-2">
+                                        22%<br />
+                                        10 doação(s)
+                                    </td>
+                                    <ClosedCampaignModal/>
 
                                 </div>
                             </tr>
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-100">
+                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
                                             <Search className="w-5 h-5 text-black hover:text-black" />
                                         </Button>
-                                        <span className="flex-grow">39uyie39-9wrf-4wg30</span>
+                                        <span className="flex-grow">39u04329-93r5-4fg30</span>
                                     </div>
                                 </td>
                                 <td className="border border-gray-300 px-4 py-2">
@@ -97,7 +123,7 @@ export default function Campanha() {
                                         <span className="text-blue-500">Não iniciada</span>
                                     </div>
                                 </td>
-                                <td className="border border-gray-300 px-4 py-2">Multirão de Ano novo</td>
+                                <td className="border border-gray-300 px-4 py-2">Mutirão de Ano novo</td>
                                 <td className="border border-gray-300 px-4 py-2">Limpeza, Alimentação</td>
 
                                 <div className="flex items-center gap-2">
@@ -105,15 +131,12 @@ export default function Campanha() {
                                         62%<br />
                                         17 doação(s)
                                     </td>
-                                    <Button className="flex items-center gap-2 bg-transparent text-[#DD720F] hover:bg-transparent ">
-                                        <span>Detalhes</span>
-                                        <ArrowUpRight className="w-5 h-5 shrink-0" />
-                                    </Button>
-
+                                    <OpenCampaignModal/>
                                 </div>
                             </tr>
                         </tbody>
                     </table>
+                    
                 </div>
                 <Pagination />
             </main >

@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import InputMask, { ReactInputMask } from 'react-input-mask'
 
 interface InputProps extends ComponentProps<'input'> {
-  title: string
+  title?: string
   errorMessage?: string
   mask?: string | Array<string | RegExp>
 }

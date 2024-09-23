@@ -1,11 +1,13 @@
-import React, { useState } from 'react'; 
-import { Trash2, Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trash, Plus } from 'lucide-react';
 import { Button } from '@/components/button';
-//import { Input } from '@/components/input'
-
+import { Input } from '@/components/input';
 
 interface CategoryCheckboxesProps {
     title: string;
+    selectedCategories: string[];
+    initialItems?: Record<string, { nome: string; quantidade: string }[]>;
+    disabled?: boolean;
 }
 
 const categories = [
@@ -30,45 +32,43 @@ const initialItems: Record<Category, { nome: string; quantidade: string }[]> = {
     'Utilidades': []
 };
 
-// Initialize selectedCategories with all categories set to false
-const initialSelectedCategories: Record<Category, boolean> = {
-    'Alimentação': false,
-    'Vestuário': false,
-    'Higiene': false,
-    'Limpeza': false,
-    'Brinquedos': false,
-    'Educação': false,
-    'Utilidades': false
-};
+export function CategoryCheckboxes({ title, selectedCategories, initialItems = {}, disabled }: CategoryCheckboxesProps) {
+    const initialSelectedCategories: Record<Category, boolean> = categories.reduce((acc, category) => {
+        acc[category] = selectedCategories.includes(category);
+        return acc;
+    }, {} as Record<Category, boolean>);
 
-export function CategoryCheckboxes({ title }: CategoryCheckboxesProps) {
-    const [selectedCategories, setSelectedCategories] = useState<Record<Category, boolean>>(initialSelectedCategories);
+    const [selectedCategoriesState, setSelectedCategories] = useState<Record<Category, boolean>>(initialSelectedCategories);
     const [items, setItems] = useState<typeof initialItems>(initialItems);
 
     const handleCheckboxChange = (category: Category) => {
-        setSelectedCategories(prev => ({
-            ...prev,
-            [category]: !prev[category]
-        }));
+        if (!disabled) {
+            setSelectedCategories(prev => ({
+                ...prev,
+                [category]: !prev[category]
+            }));
+        }
+    };
+
+    const handleItemChange = (category: Category, index: number, field: 'nome' | 'quantidade', value: string) => {
+        if (!disabled) {
+            setItems(prevItems => {
+                const updatedItems = [...prevItems[category]];
+                updatedItems[index][field] = value;
+
+                return {
+                    ...prevItems,
+                    [category]: updatedItems
+                };
+            });
+        }
     };
 
     const handleAddItem = (category: Category) => {
         setItems(prevItems => ({
             ...prevItems,
-            [category]: [...prevItems[category], { nome: '', quantidade: '' }]
+            [category]: [...(prevItems[category] || []), { nome: '', quantidade: '' }]
         }));
-    };
-
-    const handleItemChange = (category: Category, index: number, field: 'nome' | 'quantidade', value: string) => {
-        setItems(prevItems => {
-            const updatedItems = [...prevItems[category]];
-            updatedItems[index][field] = value;
-
-            return {
-                ...prevItems,
-                [category]: updatedItems
-            };
-        });
     };
 
     const handleRemoveItem = (category: Category, index: number) => {
@@ -93,50 +93,59 @@ export function CategoryCheckboxes({ title }: CategoryCheckboxesProps) {
                             <input
                                 id={category}
                                 type="checkbox"
-                                checked={!!selectedCategories[category]}
+                                checked={!!selectedCategoriesState[category]}
                                 onChange={() => handleCheckboxChange(category)}
-                                className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                                className="h-4 w-4 border-gray-300 rounded" 
+                                disabled={disabled}
+
                             />
                             <label htmlFor={category} className="ml-2 block text-sm text-gray-900">
                                 {category}
                             </label>
                         </div>
 
-                        {selectedCategories[category] && (
+                        {selectedCategoriesState[category] && (
                             <div className="mt-2 space-y-2">
-                                {items[category].map((item, index) => (
+                                <label className="flex flex-col gap-1 text-sm font-medium text-zinc-800 mb-1">Nome do item</label>
+                                {items[category]?.map((item, index) => (
                                     <div key={index} className="flex items-center space-x-2">
-                                        <input
+                                        <Input
                                             type="text"
-                                            placeholder="Nome do item"
                                             value={item.nome}
                                             onChange={(e) => handleItemChange(category, index, 'nome', e.target.value)}
-                                            className="w-[368px] h-[42px] px-[8px] py-[12px] gap-[10px] flex-grow border border-gray-300 rounded p-2"
+                                            className="flex-grow"
+                                            disabled={disabled} 
                                         />
-                                        <input
+                                        <Input
                                             type="text"
                                             placeholder="Ex.: 10kg, 5 pacotes, peças..."
                                             value={item.quantidade}
                                             onChange={(e) => handleItemChange(category, index, 'quantidade', e.target.value)}
-                                            className="w-[224px] h-[42px] gap-[8px] border border-gray-300 rounded p-2"
+                                            disabled={disabled} 
                                         />
-                                        <Button
-                                            type="button"
-                                            onClick={() => handleRemoveItem(category, index)}
-                                            className="text-red-500 bg-transparent border border-gray-300 hover:bg-gray-200"
-                                        >
-                                            <Trash2 />
-                                        </Button>
+                                        
+                                        {!disabled && (
+                                            <Button
+                                                variant="outline"
+                                                type="button"
+                                                onClick={() => handleRemoveItem(category, index)}
+                                                className="text-red-500 bg-transparent border border-gray-300 hover:bg-gray-200"
+                                            >
+                                                <Trash />
+                                            </Button>
+                                        )}
                                     </div>
                                 ))}
-                                <Button
-                                    type="button"
-                                    onClick={() => handleAddItem(category)}
-                                    className="mt-2 p-2 border rounded flex items-center space-x-1 bg-white text-black border-gray-300 hover:text-white"
+                                {!disabled && (
+                                    <Button
+                                        type="button"
+                                        onClick={() => handleAddItem(category)}
+                                        className="mt-2 p-2 border rounded flex items-center space-x-1 bg-white text-black border-gray-300 hover:text-white"
                                     >
-                                    <span>Adicionar item</span>
-                                    <Plus className="shrink-0" />
-                                </Button>
+                                        <span>Adicionar item</span>
+                                        <Plus className="shrink-0" />
+                                    </Button>
+                                )}
                             </div>
                         )}
                     </div>

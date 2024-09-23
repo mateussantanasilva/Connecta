@@ -60,7 +60,7 @@ export default function Administrador() {
                         <Search className="size-5 shrink-0" />
                     </Button>
 
-                    <Button className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100 ">
+                    <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100 ">
                         <span>Remover filtros</span>
                         <X className="size-5 shrink-0" />
                     </Button>
@@ -98,7 +98,7 @@ export default function Administrador() {
                                 <td className="border border-gray-300 px-4 py-2">há cerca de 2 meses</td>
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button className="flex items-center gap-2 border border-gray-300 text-red-500 hover:bg-gray-100 bg-transparent p-2 rounded">
+                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 text-red-500 hover:bg-gray-200 bg-transparent p-2 rounded">
                                             <X className="w-5 h-5" />
                                         </Button>
 
@@ -108,11 +108,6 @@ export default function Administrador() {
                                     </div>
                                 </td>
                             </tr>
-
-
-
-
-
 
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
@@ -134,7 +129,7 @@ export default function Administrador() {
                                 <td className="border border-gray-300 px-4 py-2">há cerca de 9 meses</td>
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button className="flex items-center gap-2 border border-gray-300 text-red-500 hover:bg-gray-100 bg-transparent p-2 rounded">
+                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 text-red-500 hover:bg-gray-200 bg-transparent p-2 rounded">
                                             <X className="w-5 h-5" />
                                         </Button>
 

@@ -1,13 +1,21 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { Button } from '@/components/button'
-import { X, Plus, HeartHandshake, Send } from 'lucide-react';
-import { Input } from '../input'
-import { CategoryCheckboxes } from '@/components/category-checkboxes'
-
+import { useState } from 'react';
+import { Button } from '@/components/button';
+import { X, Plus } from 'lucide-react';
+import { Input } from '../input';
+import { CategoryCheckboxes } from '@/components/category-checkboxes';
+import { CollectionPoints } from '../collection-points';
+import { TextArea } from '../text-area';
 
 export function CreateCampaignModal() {
+    const [collectionPoints, setCollectionPoints] = useState([{ endereco: '' }]);
+
+    const handlePointsChange = (updatedPoints: { endereco: string }[]) => {
+        setCollectionPoints(updatedPoints);
+    };
+
     return (
         <Dialog.Root>
             <Dialog.Trigger asChild>
@@ -38,13 +46,18 @@ export function CreateCampaignModal() {
                     </header>
 
                     <form className="space-y-5">
-                        <Input title="Nome da Campanha" type="text" />
-                        <Input title="Pontos de coleta" type="text" />
-                        <Input title="Descrição" type="text" isMultiline />
-                        <Input title="Observações" type="text" isMultiline />
-                        <CategoryCheckboxes title="Categorias" />
-                    </form>
+                        <Input title="Nome da campanha" type="text" />
 
+                        <CollectionPoints 
+                            title='Pontos de coleta' 
+                            initialPoints={collectionPoints} 
+                            onPointsChange={handlePointsChange} 
+                        />
+
+                        <TextArea title="Descrição" />
+                        <TextArea title="Observações" />
+                        <CategoryCheckboxes title="Categorias" selectedCategories={[]} /> 
+                    </form>
                     <div className="mt-auto h-px w-full bg-zinc-400" />
 
                     <Button className="ml-auto">
@@ -54,5 +67,5 @@ export function CreateCampaignModal() {
                 </Dialog.Content>
             </Dialog.Portal>
         </Dialog.Root>
-    )
+    );
 }

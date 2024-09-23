@@ -2,17 +2,18 @@
 
 import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/button';
 
 export default function StatusPopoverAdmin() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none">
+        <Button variant="outline"   className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100 py-3 px-4">
           <span>Todos os status</span>
           <ChevronDown className="w-5 h-5" />
-        </button>
+        </Button>
       </Popover.Trigger>
-      
+
       <Popover.Portal>
         <Popover.Content
           className="z-10 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"

@@ -15,6 +15,7 @@ const button = tv({
       danger:
         'border border-zinc-400 bg-white text-red-600 enabled:hover:text-red-700 enabled:hover:border-red-700',
       lock: 'bg-zinc-500 text-white enabled:hover:bg-zinc-600',
+      details: 'bg-transparent text-orange enabled:hover:bg-transparent',
     },
 
     size: {
