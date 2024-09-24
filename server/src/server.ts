@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import fastify from 'fastify'
 import cors from '@fastify/cors'
 import { getCampaigns } from './routes/get-campaigns'
-// import { getCampaignsById } from './routes/get-id-campaigns'
+import { getByIdCampaigns } from './routes/get-campaign'
+import { createCampaign } from './routes/create-campaign'
 
 const app = fastify()
 
@@ -15,7 +15,8 @@ app.get('/', async (request, reply) => {
 })
 
 app.register(getCampaigns)
-// app.register(getCampaignsById)
+app.register(getByIdCampaigns)
+app.register(createCampaign)
 
 app.listen({ port: 3333 }).then(() => {
   console.log('Server is running on port 3333')
