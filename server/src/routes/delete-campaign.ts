@@ -1,34 +1,55 @@
-import { FastifyInstance } from "fastify";
-import { z } from 'zod';
-import { prisma } from "../lib/prisma";
-import fromZodSchema from "zod-to-json-schema";
+import { FastifyInstance } from 'fastify'
+import { z } from 'zod'
+import { db } from '../lib/firebase'
+import { ClientError } from '../errors/client-error'
+import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
-const ParamsScampaignIdchema = z.object({
+const ParamsCampaignIdSchema = z.object({
   campaignId: z.string().uuid(),
-});
+})
+
 export async function deleteCampaign(app: FastifyInstance) {
-    app.delete('/campaign/campaignId', {
-        schema: {
-            params: fromZodSchema(ParamsScampaignIdchema), 
+  app.withTypeProvider<ZodTypeProvider>().delete(
+    '/campaign/:campaignId',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            campaignId: { type: 'string' },
+          },
+          required: ['campaignId'],
         },
-    }, async (request, reply) => {
-        const { campaignId } = request.params as z.infer<typeof ParamsScampaignIdchema>;
+      },
+    },
 
-        try {
-            const campaign = await prisma.campaign.delete({
-                where: {
-                    id: campaignId,
-                },
-            });
+    async (request, reply) => {
+      const { campaignId } = request.params as z.infer<
+        typeof ParamsCampaignIdSchema
+      >
 
-            if (!campaign) {
-                return reply.status(404).send({ error: 'Campanha não encontrada' });
-            }
+      try {
+        const campaignRef = db.collection('campaigns').doc(campaignId)
+        const campaignDoc = await campaignRef.get()
 
-            return { message: 'Campanha deletada com sucesso', campaignId: campaign.id };
-        } catch (error) {
-            console.error(error);
-            return reply.status(500).send({ error: 'Erro ao deletar campanha' });
+        if (!campaignDoc.exists) {
+          return reply
+            .status(404)
+            .send(new ClientError('Campanha não encontrada'))
         }
-    });
+
+        await campaignRef.delete()
+
+        return {
+          message: 'Campanha deletada com sucesso',
+          campaignId,
+        }
+      } catch (error) {
+        console.error(error)
+        return reply
+          .status(500)
+          .send(new ClientError('Erro ao deletar campanha'))
+      }
+    },
+  )
 }
