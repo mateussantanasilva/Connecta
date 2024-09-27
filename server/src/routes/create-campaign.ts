@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -6,6 +7,11 @@ import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from '../errors/client-error'
 
 const CampaignStatus = z.enum(['ABERTA', 'EM_BREVE', 'FECHADA'])
+
+const itemCampaignSchema = z.object({
+  name: z.string().min(1),
+  measure: z.string().min(1),
+})
 
 const campaignSchema = z.object({
   name: z.string().min(1),
@@ -17,6 +23,8 @@ const campaignSchema = z.object({
   status: CampaignStatus,
   participants: z.number().nonnegative(),
   started_at: z.string().min(1),
+  goal: z.string().min(1),
+  items: z.array(itemCampaignSchema).min(1),
   grantee_name: z.string(),
   grantee_email: z.string().email(),
   grantee_user_type: z.string().optional().default('grantee'),
@@ -41,6 +49,8 @@ export async function createCampaign(app: FastifyInstance) {
         status,
         participants,
         started_at,
+        goal,
+        items,
         grantee_name,
         grantee_email,
         grantee_user_type,
@@ -57,6 +67,8 @@ export async function createCampaign(app: FastifyInstance) {
           status,
           participants,
           started_at: new Date(started_at),
+          goal,
+          items,
           grantee: {
             full_name: grantee_name,
             email: grantee_email,
