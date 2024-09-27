@@ -7,6 +7,7 @@ import { Button } from '../button'
 
 interface ConfirmationModalProps {
   children: ReactNode
+  variant?: 'safe' | 'danger'
   title: string
   description: string
   onConfirm: () => void
@@ -14,6 +15,7 @@ interface ConfirmationModalProps {
 
 export function ConfirmationModal({
   children,
+  variant = 'safe',
   title,
   description,
   onConfirm,
@@ -42,7 +44,11 @@ export function ConfirmationModal({
 
           <div className="mt-auto h-px w-full bg-zinc-400" />
 
-          <Button variant="danger" onClick={onConfirm} className="ml-auto">
+          <Button
+            variant={variant === 'danger' ? 'danger' : 'primary'}
+            onClick={onConfirm}
+            className="ml-auto"
+          >
             <span>Confirmar</span>
           </Button>
         </Dialog.Content>

@@ -34,7 +34,9 @@ export function MyDonations() {
           </span>
         </div>
       ) : (
-        <div className="space-y-5 overflow-x-scroll md:overflow-x-visible [&::-webkit-scrollbar]:h-1.5">
+        <div
+          className={`space-y-5 overflow-x-scroll md:overflow-x-visible [&::-webkit-scrollbar]:h-1.5 ${donations.length > 4 && 'overflow-y-scroll'}`}
+        >
           <header className="flex w-full gap-5 px-5 text-center text-sm uppercase text-zinc-800">
             <strong className="min-w-44 max-w-56 flex-1 text-start font-medium">
               Item
@@ -46,9 +48,7 @@ export function MyDonations() {
             </strong>
           </header>
 
-          <div
-            className={`max-h-96 space-y-2 pb-1 [&::-webkit-scrollbar]:h-1.5 ${donations.length > 4 && 'overflow-y-scroll'}`}
-          >
+          <div className={`max-h-96 space-y-2 pb-1`}>
             {donations.map((donation) => (
               <div
                 key={donation.id}
@@ -76,6 +76,7 @@ export function MyDonations() {
                     <SquareCheck className="size-5 shrink-0 text-green-600" />
                   ) : (
                     <ConfirmationModal
+                      variant="danger"
                       title="Cancelar Doação"
                       description="Tem certeza de que deseja cancelar esta doação? A ação não poderá ser desfeita."
                       onConfirm={() => handleCancelDonation(donation.id)}
