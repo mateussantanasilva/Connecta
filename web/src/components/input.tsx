@@ -21,7 +21,7 @@ export const Input = forwardRef<ReactInputMask, InputProps>(
 
         <InputMask
           mask={mask}
-          className="h-10 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 outline-green-600"
+          className="h-10 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 outline-green-600 placeholder:text-zinc-700"
           ref={ref}
           {...props}
         />
