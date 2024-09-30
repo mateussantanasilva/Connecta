@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import * as Popover from '@radix-ui/react-popover';
-import { ChevronDown } from 'lucide-react';
+import * as Popover from '@radix-ui/react-popover'
+import { ChevronDown } from 'lucide-react'
 
 export default function StatusPopoverAdmin() {
   return (
@@ -19,13 +19,19 @@ export default function StatusPopoverAdmin() {
           sideOffset={5}
         >
           <div className="p-2">
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">Não iniciada</button>
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">Iniciada há 20 dias</button>
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">Encerrada há 20 dias</button>
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
+              Não iniciada
+            </button>
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
+              Iniciada há 20 dias
+            </button>
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
+              Encerrada há 20 dias
+            </button>
           </div>
           <Popover.Arrow className="fill-white" />
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
-  );
+  )
 }

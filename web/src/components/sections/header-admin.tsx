@@ -6,7 +6,7 @@ import { SettingsMenuAdmin } from '../settings-menu-admin'
 
 export function HeaderAdmin() {
   return (
-    <header className="border-b border-gray-200">
+    <header className="border-b border-zinc-400">
       <div className="mx-auto flex max-w-7xl items-center justify-between bg-transparent p-4 2xl:px-0">
         <nav className="flex items-center gap-4">
           <Link href="/">

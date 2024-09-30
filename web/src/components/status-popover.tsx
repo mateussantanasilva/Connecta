@@ -7,7 +7,7 @@ export default function StatusPopover() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="flex h-10 items-center gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800">
+        <button className="flex h-10 w-48 items-center justify-between gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800">
           <span>Todos os status</span>
           <ChevronDown className="h-5 w-5" />
         </button>

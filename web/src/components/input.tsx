@@ -13,7 +13,8 @@ export const Input = forwardRef<ReactInputMask, InputProps>(
     return (
       <label
         className={twMerge(
-          'flex flex-col gap-1 text-sm font-medium text-zinc-800',
+          'flex flex-col text-sm font-medium text-zinc-800',
+          title && 'gap-1',
           className,
         )}
       >

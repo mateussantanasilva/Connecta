@@ -14,18 +14,12 @@ export function DoneeFilter() {
 
       <StatusPopover />
 
-      <Button
-        variant="primary"
-        className="flex items-center gap-2 border border-zinc-300"
-      >
+      <Button>
         <span>Filtrar resultados</span>
         <Search className="size-5 shrink-0" />
       </Button>
 
-      <Button
-        variant="outline"
-        className="text-black-500 flex items-center gap-2 border border-zinc-300 bg-transparent hover:bg-zinc-100"
-      >
+      <Button variant="outline">
         <span>Remover filtros</span>
         <X className="size-5 shrink-0" />
       </Button>

@@ -1,16 +1,21 @@
-import { ReactNode } from 'react';
+import { ReactNode } from 'react'
 
 interface CardProps {
-  title: string;
-  count: number | string;
-  description: string;
-  icon: ReactNode;
+  title: string
+  count: number | string
+  description: string
+  icon: ReactNode
 }
 
-export default function StatusCard({ title, count, description, icon }: CardProps) {
+export default function StatusCard({
+  title,
+  count,
+  description,
+  icon,
+}: CardProps) {
   return (
-    <div className="border border-zinc-300 rounded-md p-4 shadow-sm flex flex-col justify-between">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col justify-between rounded-md border border-zinc-300 p-4 shadow-sm">
+      <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-zinc-700">{title}</h3>
         {icon}
       </div>
@@ -19,5 +24,5 @@ export default function StatusCard({ title, count, description, icon }: CardProp
         <p className="text-xs text-zinc-500">{description}</p>
       </div>
     </div>
-  );
+  )
 }
