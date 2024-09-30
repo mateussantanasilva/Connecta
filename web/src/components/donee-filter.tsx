@@ -16,7 +16,7 @@ export function DoneeFilter() {
 
       <Button
         variant="primary"
-        className="flex items-center gap-2 border border-gray-300"
+        className="flex items-center gap-2 border border-zinc-300"
       >
         <span>Filtrar resultados</span>
         <Search className="size-5 shrink-0" />
@@ -24,7 +24,7 @@ export function DoneeFilter() {
 
       <Button
         variant="outline"
-        className="text-black-500 flex items-center gap-2 border border-gray-300 bg-transparent hover:bg-gray-100"
+        className="text-black-500 flex items-center gap-2 border border-zinc-300 bg-transparent hover:bg-zinc-100"
       >
         <span>Remover filtros</span>
         <X className="size-5 shrink-0" />

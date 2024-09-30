@@ -85,7 +85,7 @@ export function CategoryCheckboxes({ title, selectedCategories, initialItems = {
 
     return (
         <div>
-            <label className="block font-medium text-gray-700 mb-2">{title}</label>
+            <label className="block font-medium text-zinc-700 mb-2">{title}</label>
             <div className="space-y-4">
                 {categories.map((category) => (
                     <div key={category}>
@@ -95,11 +95,11 @@ export function CategoryCheckboxes({ title, selectedCategories, initialItems = {
                                 type="checkbox"
                                 checked={!!selectedCategoriesState[category]}
                                 onChange={() => handleCheckboxChange(category)}
-                                className="h-4 w-4 border-gray-300 rounded" 
+                                className="h-4 w-4 border-zinc-300 rounded" 
                                 disabled={disabled}
 
                             />
-                            <label htmlFor={category} className="ml-2 block text-sm text-gray-900">
+                            <label htmlFor={category} className="ml-2 block text-sm text-zinc-900">
                                 {category}
                             </label>
                         </div>
@@ -129,7 +129,7 @@ export function CategoryCheckboxes({ title, selectedCategories, initialItems = {
                                                 variant="outline"
                                                 type="button"
                                                 onClick={() => handleRemoveItem(category, index)}
-                                                className="text-red-500 bg-transparent border border-gray-300 hover:bg-gray-200"
+                                                className="text-red-500 bg-transparent border border-zinc-300 hover:bg-zinc-200"
                                             >
                                                 <Trash />
                                             </Button>
@@ -140,7 +140,7 @@ export function CategoryCheckboxes({ title, selectedCategories, initialItems = {
                                     <Button
                                         type="button"
                                         onClick={() => handleAddItem(category)}
-                                        className="mt-2 p-2 border rounded flex items-center space-x-1 bg-white text-black border-gray-300 hover:text-white"
+                                        className="mt-2 p-2 border rounded flex items-center space-x-1 bg-white text-black border-zinc-300 hover:text-white"
                                     >
                                         <span>Adicionar item</span>
                                         <Plus className="shrink-0" />

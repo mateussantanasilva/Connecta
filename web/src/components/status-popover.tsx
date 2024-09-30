@@ -19,13 +19,13 @@ export default function StatusPopover() {
           sideOffset={5}
         >
           <div className="p-2">
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
               Apto
             </button>
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
               Inativo
             </button>
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
               Em análise
             </button>
           </div>

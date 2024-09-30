@@ -2,16 +2,15 @@
 
 import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown } from 'lucide-react';
-import { Button } from '@/components/button';
 
 export default function StatusPopoverAdmin() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <Button variant="outline"   className="flex items-center gap-2 border border-gray-300 bg-transparent text-black-500 hover:bg-gray-100 py-3 px-4">
+        <button className="flex h-10 items-center gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800">
           <span>Todos os status</span>
-          <ChevronDown className="w-5 h-5" />
-        </Button>
+          <ChevronDown className="h-5 w-5" />
+        </button>
       </Popover.Trigger>
 
       <Popover.Portal>
@@ -20,9 +19,9 @@ export default function StatusPopoverAdmin() {
           sideOffset={5}
         >
           <div className="p-2">
-            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Não iniciada</button>
-            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Iniciada há 20 dias</button>
-            <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Encerrada há 20 dias</button>
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">Não iniciada</button>
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">Iniciada há 20 dias</button>
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">Encerrada há 20 dias</button>
           </div>
           <Popover.Arrow className="fill-white" />
         </Popover.Content>

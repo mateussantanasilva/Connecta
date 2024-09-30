@@ -8,7 +8,7 @@ export function InactiveDoneeModal() {
     return (
         <Dialog.Root>
             <Dialog.Trigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
+                <Button variant="outline" className="flex items-center gap-2 border border-zinc-300 bg-transparent p-2 rounded-md hover:bg-zinc-200">
                     <Search className="w-5 h-5 text-black hover:text-black" />
                 </Button>
 
@@ -18,7 +18,7 @@ export function InactiveDoneeModal() {
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-20 bg-black/60" />
 
-                <Dialog.Content className="fixed inset-0 left-4 right-4 z-30 mx-auto my-4 flex max-w-2xl flex-col gap-5 overflow-y-scroll rounded-2xl bg-white p-5 md:ml-auto md:mr-0 [&::-webkit-scrollbar]:hidden">
+                <Dialog.Content className="fixed inset-0 left-4 right-4 z-30 mx-auto my-4 flex max-w-2xl flex-col gap-5 overflow-y-scroll rounded-2xl bg-white p-5 md:ml-auto md:mr-0 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
                     <Dialog.Close asChild>
                         <Button size="xs" variant="outline" className="ml-auto">
                             <X className="size-5 shrink-0" />
@@ -43,12 +43,12 @@ export function InactiveDoneeModal() {
 
                             <div className="flex flex-col justify-between w-[235px]">
                                 <span className="font-semibold">Antônio Carlos Braga</span>
-                                <span className="text-sm text-gray-600">antoniocarlos@gmail.com</span>
+                                <span className="text-sm text-zinc-600">antoniocarlos@gmail.com</span>
                             </div>
                         </div>
 
                         <div className="flex items-center justify-end w-[300.5px] gap-1">
-                            <span className="h-2 w-2 rounded-full bg-gray-600"></span>
+                            <span className="h-2 w-2 rounded-full bg-zinc-600"></span>
                             <span className="text-[#71717A]">Inativo</span>
                         </div>
                     </div>

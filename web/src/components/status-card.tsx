@@ -9,14 +9,14 @@ interface CardProps {
 
 export default function StatusCard({ title, count, description, icon }: CardProps) {
   return (
-    <div className="border border-gray-300 rounded-md p-4 shadow-sm flex flex-col justify-between">
+    <div className="border border-zinc-300 rounded-md p-4 shadow-sm flex flex-col justify-between">
       <div className="flex justify-between items-center">
-        <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+        <h3 className="text-sm font-medium text-zinc-700">{title}</h3>
         {icon}
       </div>
       <div className="mt-2">
-        <span className="text-2xl font-bold text-gray-900">{count}</span>
-        <p className="text-xs text-gray-500">{description}</p>
+        <span className="text-2xl font-bold text-zinc-900">{count}</span>
+        <p className="text-xs text-zinc-500">{description}</p>
       </div>
     </div>
   );

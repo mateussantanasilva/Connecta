@@ -42,15 +42,15 @@ export function DoneeRequestsModal() {
 
                             <div className="flex flex-col justify-between w-[235px]">
                                 <span className="font-semibold">Antônio Carlos Braga</span>
-                                <span className="text-sm text-gray-600">antoniocarlos@gmail.com</span>
+                                <span className="text-sm text-zinc-600">antoniocarlos@gmail.com</span>
                             </div>
                         </div>
 
                         <div className="flex flex-col items-end w-[300.5px] gap-[2px] h-auto"> 
-                            <span className="text-sm text-gray-500 mb-2">há cerca de 1 hora</span>
+                            <span className="text-sm text-zinc-500 mb-2">há cerca de 1 hora</span>
 
                             <div className="flex items-center space-x-2">
-                                <Button variant="outline" className="p-2 bg-transparent text-red-500 border border-gray-500 hover:bg-gray-200">
+                                <Button variant="outline" className="p-2 bg-transparent text-red-500 border border-zinc-500 hover:bg-zinc-200">
                                     <Trash className="size-5" />
                                 </Button>
                                 <Button className="p-2">

@@ -1,14 +1,14 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog'
-import { Search, Trash, X, UserRoundX, Phone, MapPin, Info, UserRound, Calendar } from 'lucide-react'
+import { Search, X, UserRoundX, Phone, MapPin, Info, UserRound, Calendar } from 'lucide-react'
 import { Button } from '../button'
 
 export function ActiveDoneeModal() {
     return (
         <Dialog.Root>
             <Dialog.Trigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
+                <Button variant="outline" className="flex items-center gap-2 border border-zinc-300 bg-transparent p-2 rounded-md hover:bg-zinc-200">
                     <Search className="w-5 h-5 text-black hover:text-black" />
                 </Button>
 
@@ -18,7 +18,7 @@ export function ActiveDoneeModal() {
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-20 bg-black/60" />
 
-                <Dialog.Content className="fixed inset-0 left-4 right-4 z-30 mx-auto my-4 flex max-w-2xl flex-col gap-5 overflow-y-scroll rounded-2xl bg-white p-5 md:ml-auto md:mr-0 [&::-webkit-scrollbar]:hidden">
+                <Dialog.Content className="fixed inset-0 left-4 right-4 z-30 mx-auto my-4 flex max-w-2xl flex-col gap-5 overflow-y-scroll rounded-2xl bg-white p-5 md:ml-auto md:mr-0 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
                     <Dialog.Close asChild>
                         <Button size="xs" variant="outline" className="ml-auto">
                             <X className="size-5 shrink-0" />
@@ -43,7 +43,7 @@ export function ActiveDoneeModal() {
 
                             <div className="flex flex-col justify-between w-[235px]">
                                 <span className="font-semibold">Antônio Carlos Braga</span>
-                                <span className="text-sm text-gray-600">antoniocarlos@gmail.com</span>
+                                <span className="text-sm text-zinc-600">antoniocarlos@gmail.com</span>
                             </div>
                         </div>
 
@@ -84,7 +84,7 @@ export function ActiveDoneeModal() {
                     <div className="mt-auto h-px w-full bg-zinc-400" />
 
                     <div className="flex justify-end">
-                        <Button variant="outline" className="flex items-center gap-2 bg-transparent text-red-500 border border-gray-500 hover:bg-gray-200">
+                        <Button variant="outline" className="flex items-center gap-2 bg-transparent text-red-500 border border-zinc-500 hover:bg-zinc-200">
                             <span>Desativar donatário</span>
                             <UserRoundX className="size-5 shrink-0" />
                         </Button>

@@ -61,7 +61,7 @@ export function CollectionPoints({ title, initialPoints, onPointsChange, disable
                                 variant="outline"
                                 type="button"
                                 onClick={() => handleRemovePoint(index)}
-                                className="text-red-500 bg-transparent border border-gray-300 hover:bg-gray-200"
+                                className="text-red-500 bg-transparent border border-zinc-300 hover:bg-zinc-200"
                             >
                                 <Trash />
                             </Button>
@@ -72,7 +72,7 @@ export function CollectionPoints({ title, initialPoints, onPointsChange, disable
                     <Button
                         type="button"
                         onClick={handleAddPoint}
-                        className="mt-2 p-2 border rounded flex items-center space-x-1 bg-white text-black border-gray-300 hover:text-white"
+                        className="mt-2 p-2 border rounded flex items-center space-x-1 bg-white text-black border-zinc-300 hover:text-white"
                     >
                         <span>Adicionar ponto</span>
                         <Plus className="shrink-0" />
