@@ -1,4 +1,4 @@
-import { Search, ArrowUpRight, X, Plus } from 'lucide-react';
+import { Search, ArrowUpRight, X } from 'lucide-react';
 import { HeaderAdmin } from '@/components/sections/header-admin'
 import { Button } from '@/components/button'
 import { Pagination } from '@/components/pagination'
@@ -18,7 +18,7 @@ export default function Campanha() {
                 <header className="flex w-full items-center justify-between">
                     <h1 className="text-4xl font-bold text-zinc-800">Campanhas</h1>
 
-                        <CreateCampaignModal />
+                    <CreateCampaignModal />
                 </header>
 
                 <div className="flex items-center gap-4">
@@ -58,9 +58,7 @@ export default function Campanha() {
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
-                                            <Search className="w-5 h-5 text-black hover:text-black" />
-                                        </Button>
+                                        <CloseCampaignModal />
                                         <span className="flex-grow">398dfg39-9def-42340</span>
                                     </div>
                                 </td>
@@ -78,15 +76,22 @@ export default function Campanha() {
                                         72%<br />
                                         13 doação(s)
                                     </td>
-                                    <CloseCampaignModal/>
+                                    <a
+                                        href="http://localhost:3000/campanhas/1"
+                                        target="_blank"
+                                        rel="noopener"
+                                        className="inline-flex items-center text-[#DD720F] font-semibold py-2 px-4 rounded hover:underline transition duration-300"
+                                    >
+                                        Detalhes
+                                        <ArrowUpRight className="size-5 shrink-0" />
+
+                                    </a>
                                 </div>
                             </tr>
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
-                                            <Search className="w-5 h-5 text-black hover:text-black" />
-                                        </Button>
+                                        <ClosedCampaignModal />
                                         <span className="flex-grow">39uyie39-9wrf-4wg30</span>
                                     </div>
                                 </td>
@@ -104,16 +109,23 @@ export default function Campanha() {
                                         22%<br />
                                         10 doação(s)
                                     </td>
-                                    <ClosedCampaignModal/>
+                                    <a
+                                        href="http://localhost:3000/campanhas/2"
+                                        target="_blank"
+                                        rel="noopener"
+                                        className="inline-flex items-center text-[#DD720F] font-semibold py-2 px-4 rounded hover:underline transition duration-300"
+                                    >
+                                        Detalhes
+                                        <ArrowUpRight className="size-5 shrink-0" />
+
+                                    </a>
 
                                 </div>
                             </tr>
                             <tr className="border-b">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
-                                            <Search className="w-5 h-5 text-black hover:text-black" />
-                                        </Button>
+                                        <OpenCampaignModal />
                                         <span className="flex-grow">39u04329-93r5-4fg30</span>
                                     </div>
                                 </td>
@@ -131,12 +143,23 @@ export default function Campanha() {
                                         62%<br />
                                         17 doação(s)
                                     </td>
-                                    <OpenCampaignModal/>
+                                    <a
+                                        href="http://localhost:3000/campanhas/3"
+                                        target="_blank"
+                                        rel="noopener"
+                                        className="inline-flex items-center text-[#DD720F] font-semibold py-2 px-4 rounded hover:underline transition duration-300"
+                                    >
+                                        Detalhes
+                                        <ArrowUpRight className="size-5 shrink-0" />
+
+                                    </a>
+
+
                                 </div>
                             </tr>
                         </tbody>
                     </table>
-                    
+
                 </div>
                 <Pagination />
             </main >

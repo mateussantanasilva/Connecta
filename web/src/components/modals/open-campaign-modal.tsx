@@ -3,7 +3,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useState } from 'react';
 import { Button } from '@/components/button';
-import { X, ArrowUpRight, Trash, Pencil, Megaphone } from 'lucide-react';
+import { X, Search, Trash, Pencil, Megaphone } from 'lucide-react';
 import { Input } from '../input';
 import { CategoryCheckboxes } from '@/components/category-checkboxes';
 import { CollectionPoints } from '../collection-points';
@@ -33,9 +33,8 @@ export function OpenCampaignModal() {
     return (
         <Dialog.Root>
             <Dialog.Trigger asChild>
-                <Button variant='details' className="flex items-center gap-2 bg-transparent text-[#DD720F]">
-                    <span>Detalhes</span>
-                    <ArrowUpRight className="w-5 h-5 shrink-0" />
+                <Button variant="outline" className="flex items-center gap-2 border border-gray-300 bg-transparent p-2 rounded-md hover:bg-gray-200">
+                    <Search className="w-5 h-5 text-black hover:text-black" />
                 </Button>
 
             </Dialog.Trigger>
@@ -84,8 +83,8 @@ export function OpenCampaignModal() {
 
                         <CategoryCheckboxes
                             title="Categorias"
-                            selectedCategories={initialCategories} 
-                            initialItems={initialItems} 
+                            selectedCategories={initialCategories}
+                            initialItems={initialItems}
                         />
                     </form>
 

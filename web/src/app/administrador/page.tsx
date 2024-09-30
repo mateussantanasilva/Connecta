@@ -1,4 +1,4 @@
-import { CheckSquare, Search, Link, Trophy, X, Check } from 'lucide-react';
+import { CheckSquare, Search, HandHeart, Trophy, X, Check } from 'lucide-react';
 import StatusCard from '@/components/status-card';
 import { HeaderAdmin } from '@/components/sections/header-admin'
 import { Button } from '@/components/button'
@@ -36,7 +36,7 @@ export default function Administrador() {
                         title="Doações Anuais"
                         count={140}
                         description="1 pendente(s) de confirmação"
-                        icon={<Link className="w-5 h-5 text-orange-500" />}
+                        icon={<HandHeart className="w-5 h-5 text-orange-500" />}
                     />
                     <StatusCard
                         title="Campanhas 100%"
@@ -98,12 +98,12 @@ export default function Administrador() {
                                 <td className="border border-gray-300 px-4 py-2">há cerca de 2 meses</td>
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 text-red-500 hover:bg-gray-200 bg-transparent p-2 rounded">
-                                            <X className="w-5 h-5" />
+                                        <Button size="xs" variant="danger">
+                                            <X className="size-5 shrink-0" />
                                         </Button>
 
-                                        <Button className="flex items-center gap-2 hover:bg-green-500 text-white p-2 rounded">
-                                            <Check className="w-5 h-5" />
+                                        <Button size="xs">
+                                            <Check className="size-5 shrink-0" />
                                         </Button>
                                     </div>
                                 </td>
@@ -129,12 +129,12 @@ export default function Administrador() {
                                 <td className="border border-gray-300 px-4 py-2">há cerca de 9 meses</td>
                                 <td className="border border-gray-300 px-4 py-2">
                                     <div className="flex items-center gap-2">
-                                        <Button variant="outline" className="flex items-center gap-2 border border-gray-300 text-red-500 hover:bg-gray-200 bg-transparent p-2 rounded">
-                                            <X className="w-5 h-5" />
+                                        <Button size="xs" variant="danger">
+                                            <X className="size-5 shrink-0" />
                                         </Button>
 
-                                        <Button className="flex items-center gap-2 hover:bg-green-500 text-white p-2 rounded">
-                                            <Check className="w-5 h-5" />
+                                        <Button size="xs">
+                                            <Check className="size-5 shrink-0" />
                                         </Button>
                                     </div>
                                 </td>
