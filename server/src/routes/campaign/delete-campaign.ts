@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { db } from '../lib/firebase'
-import { ClientError } from '../errors/client-error'
+import { db } from '../../lib/firebase'
+import { ClientError } from '../../errors/client-error'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 const ParamsCampaignIdSchema = z.object({

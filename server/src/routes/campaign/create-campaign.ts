@@ -2,15 +2,25 @@
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { db } from '../lib/firebase'
+import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
-import { ClientError } from '../errors/client-error'
+import { ClientError } from '../../errors/client-error'
+import { donationStatus } from '../donation/create-donation'
 
-const CampaignStatus = z.enum(['ABERTA', 'EM_BREVE', 'FECHADA'])
+const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
 
 const itemCampaignSchema = z.object({
   name: z.string().min(1),
   measure: z.string().min(1),
+  goal: z.number().min(1),
+  status: z.enum(['disponível', 'reservado', 'concluído']),
+})
+
+const donationSchema = z.object({
+  item_name: z.string().min(1),
+  quantity: z.number().min(1),
+  measure: z.string().min(1),
+  status: donationStatus,
 })
 
 const campaignSchema = z.object({
@@ -25,6 +35,7 @@ const campaignSchema = z.object({
   started_at: z.string().min(1),
   goal: z.string().min(1),
   items: z.array(itemCampaignSchema).min(1),
+  donations: z.array(donationSchema).optional().default([]),
   grantee_name: z.string(),
   grantee_email: z.string().email(),
   grantee_user_type: z.string().optional().default('grantee'),
@@ -51,6 +62,7 @@ export async function createCampaign(app: FastifyInstance) {
         started_at,
         goal,
         items,
+        donations,
         grantee_name,
         grantee_email,
         grantee_user_type,
@@ -69,6 +81,7 @@ export async function createCampaign(app: FastifyInstance) {
           started_at: new Date(started_at),
           goal,
           items,
+          donations,
           grantee: {
             full_name: grantee_name,
             email: grantee_email,

@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
-import { db } from '../lib/firebase'
-import { ClientError } from '../errors/client-error'
+import { db } from '../../lib/firebase'
+import { ClientError } from '../../errors/client-error'
 import { z } from 'zod'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 

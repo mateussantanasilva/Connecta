@@ -2,9 +2,9 @@
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { db } from '../lib/firebase'
+import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
-import { ClientError } from '../errors/client-error'
+import { ClientError } from '../../errors/client-error'
 
 const CampaignStatus = z.enum(['ABERTA', 'EM_BREVE', 'FECHADA'])
 
