@@ -5,9 +5,9 @@ import { useState } from 'react'
 import { Button } from '@/components/button'
 import { X, Search } from 'lucide-react'
 import { Input } from '../input'
-import { CategoryCheckboxes } from '@/components/category-checkboxes'
-import { CollectionPoints } from '../collection-points'
+import { CollectionPoints } from '../admin/collection-points'
 import { TextArea } from '../text-area'
+import { CategoryCheckboxes } from '../admin/category-checkboxes'
 
 export function ClosedCampaignModal() {
   const initialCampaignName = 'Mutirão de Aniversário'
@@ -47,7 +47,7 @@ export function ClosedCampaignModal() {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-20 bg-black/60" />
 
-        <Dialog.Content className="fixed inset-0 left-4 right-4 z-30 mx-auto my-4 flex max-w-2xl flex-col gap-5 overflow-y-scroll rounded-2xl bg-white p-5 md:ml-auto md:mr-0 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
+        <Dialog.Content className="fixed inset-0 left-4 right-4 z-30 mx-auto my-4 flex max-w-2xl flex-col gap-5 overflow-y-scroll rounded-2xl bg-white p-5 pr-2.5 md:ml-auto md:mr-0 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
           <Dialog.Close asChild>
             <Button size="xs" variant="outline" className="ml-auto">
               <X className="size-5 shrink-0" />

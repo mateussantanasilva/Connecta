@@ -1,9 +1,17 @@
-import { CheckSquare, Search, HandHeart, Trophy, X, Check, UserRound } from 'lucide-react'
-import StatusCard from '@/components/status-card'
-import { HeaderAdmin } from '@/components/sections/header-admin'
+import {
+  CheckSquare,
+  Search,
+  HandHeart,
+  Trophy,
+  X,
+  Check,
+  UserRound,
+} from 'lucide-react'
 import { Button } from '@/components/button'
 import { Pagination } from '@/components/pagination'
-import { AdminFilter } from '@/components/admin-filter'
+import { AdminFilter } from '@/components/admin/admin-filter'
+import { HeaderAdmin } from '@/components/admin/header-admin'
+import { StatusCard } from '@/components/admin/status-card'
 
 export default function Administrador() {
   return (
@@ -47,7 +55,6 @@ export default function Administrador() {
           role="table"
           className="divide-y divide-zinc-400 rounded-lg border border-zinc-400"
         >
-
           <header className="flex h-10 items-center gap-5 px-5 text-sm font-medium uppercase text-zinc-800">
             <div className="flex items-center">
               <div className="not-sr-only" />
@@ -60,14 +67,16 @@ export default function Administrador() {
           </header>
 
           <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
-            <div className="flex items-center gap-3 w-60">
-              <div className="w-10 h-10 rounded-full bg-orange-600/20 flex items-center justify-center p-3">
-                <UserRound className="w-5 h-5 text-orange-600" />
+            <div className="flex w-60 items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-600/20 p-3">
+                <UserRound className="h-5 w-5 text-orange-600" />
               </div>
 
-              <div className='gap-1 flex flex-col'>
+              <div className="flex flex-col gap-1">
                 <span className="w-44 truncate">Maria Oliveira Rocha</span>
-                <span className="w-44 truncate">mariaoliveirarocha@gmail.com</span>
+                <span className="w-44 truncate">
+                  mariaoliveirarocha@gmail.com
+                </span>
               </div>
             </div>
 
@@ -80,7 +89,7 @@ export default function Administrador() {
 
             <span className="w-48 truncate">há cerca de 2 meses</span>
 
-            <div className="flex items-center gap-2 w-32">
+            <div className="flex w-32 items-center gap-2">
               <Button size="xs" variant="danger">
                 <X className="size-5 shrink-0" />
               </Button>
@@ -92,11 +101,11 @@ export default function Administrador() {
           </div>
 
           <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
-            <div className="flex items-center gap-3 w-60">
-              <div className="w-10 h-10  rounded-full bg-orange-600/20 flex items-center justify-center p-3">
-                <UserRound className="w-5 h-5 text-orange-600" />
+            <div className="flex w-60 items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-600/20 p-3">
+                <UserRound className="h-5 w-5 text-orange-600" />
               </div>
-              <div className='gap-1 flex flex-col'>
+              <div className="flex flex-col gap-1">
                 <span className="w-44 truncate">Luciana Cardoso Arlinda</span>
                 <span className="w-44 truncate">lucianacarali@gmail.com</span>
               </div>
@@ -111,7 +120,7 @@ export default function Administrador() {
 
             <span className="w-48 truncate">há cerca de 9 meses</span>
 
-            <div className="flex items-center gap-2 w-32">
+            <div className="flex w-32 items-center gap-2">
               <Button size="xs" variant="danger">
                 <X className="size-5 shrink-0" />
               </Button>
@@ -121,10 +130,9 @@ export default function Administrador() {
               </Button>
             </div>
           </div>
-
         </section>
         <Pagination />
-      </main >
+      </main>
     </>
   )
 }

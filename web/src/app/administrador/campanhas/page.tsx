@@ -1,13 +1,12 @@
 import { ArrowUpRight } from 'lucide-react'
-import { HeaderAdmin } from '@/components/sections/header-admin'
 import { Pagination } from '@/components/pagination'
 import { CreateCampaignModal } from '@/components/modals/create-campaign-modal'
 import { OpenCampaignModal } from '@/components/modals/open-campaign-modal'
 import { CloseCampaignModal } from '@/components/modals/close-campaign-modal'
 import { ClosedCampaignModal } from '@/components/modals/closed-campaign-modal'
-import { CampaignFilter } from '@/components/campaign-filter'
 import { StatusIndicator } from '@/components/status-indicator'
-
+import { CampaignFilter } from '@/components/admin/campaign-filter'
+import { HeaderAdmin } from '@/components/admin/header-admin'
 
 export default function Campanha() {
   return (
@@ -51,8 +50,8 @@ export default function Campanha() {
 
             <span className="w-48 truncate">Vestuário, Alimentação</span>
 
-            <div className="flex items-center w-56">
-              <td className='w-28'>
+            <div className="flex w-56 items-center">
+              <td className="w-28">
                 72%
                 <br />
                 13 doação(s)
@@ -83,8 +82,8 @@ export default function Campanha() {
 
             <span className="w-48 truncate">Brinquedos, Alimentação</span>
 
-            <div className="flex items-center w-56">
-              <td className='w-28'>
+            <div className="flex w-56 items-center">
+              <td className="w-28">
                 22%
                 <br />
                 10 doação(s)
@@ -115,8 +114,8 @@ export default function Campanha() {
 
             <span className="w-48 truncate">Limpeza, Alimentação</span>
 
-            <div className="flex items-center w-56">
-              <td className='w-28'>
+            <div className="flex w-56 items-center">
+              <td className="w-28">
                 63%
                 <br />
                 17 doação(s)

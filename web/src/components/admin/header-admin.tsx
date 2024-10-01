@@ -2,7 +2,7 @@ import Image from 'next/image'
 import LogoImg from '@/assets/logo.svg'
 import Link from 'next/link'
 import { Avatar } from '../avatar'
-import { SettingsMenuAdmin } from '../settings-menu-admin'
+import { SettingsMenuAdmin } from '../admin/settings-menu-admin'
 
 export function HeaderAdmin() {
   return (

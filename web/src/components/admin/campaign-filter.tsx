@@ -3,7 +3,7 @@
 import { Search, X } from 'lucide-react'
 import { Button } from '@/components/button'
 import { Input } from '@/components/input'
-import StatusPopover from '@/components/status-popover'
+import { StatusPopover } from './status-popover'
 
 export function CampaignFilter() {
   return (
@@ -12,7 +12,7 @@ export function CampaignFilter() {
 
       <Input placeholder="Nome da campanha" className="w-80" />
 
-      <StatusPopover statuses={['Iniciada', 'Fechada', 'Em breve']} />
+      <StatusPopover status={['Iniciada', 'Fechada', 'Em breve']} />
 
       <Button>
         <span>Filtrar resultados</span>

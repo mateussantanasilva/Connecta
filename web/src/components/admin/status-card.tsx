@@ -7,12 +7,7 @@ interface CardProps {
   icon: ReactNode
 }
 
-export default function StatusCard({
-  title,
-  count,
-  description,
-  icon,
-}: CardProps) {
+export function StatusCard({ title, count, description, icon }: CardProps) {
   return (
     <div className="flex flex-col justify-between rounded-md border border-zinc-300 p-4 shadow-sm">
       <div className="flex items-center justify-between">

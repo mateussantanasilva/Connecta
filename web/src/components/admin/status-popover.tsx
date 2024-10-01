@@ -3,17 +3,19 @@
 import * as Popover from '@radix-ui/react-popover'
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { twMerge } from 'tailwind-merge'
 
 interface StatusPopoverProps {
-  statuses: string[]
+  status: string[]
+  className?: string
 }
 
-export default function StatusPopover({ statuses }: StatusPopoverProps) {
+export function StatusPopover({ status, className }: StatusPopoverProps) {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([])
 
   const handleStatusClick = (status: string) => {
     if (selectedStatuses.includes(status)) {
-      setSelectedStatuses(selectedStatuses.filter(s => s !== status))
+      setSelectedStatuses(selectedStatuses.filter((s) => s !== status))
     } else {
       setSelectedStatuses([...selectedStatuses, status])
     }
@@ -30,7 +32,12 @@ export default function StatusPopover({ statuses }: StatusPopoverProps) {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="flex h-10 w-48 items-center justify-between gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800">
+        <button
+          className={twMerge(
+            'flex h-10 w-48 items-center justify-between gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800',
+            className,
+          )}
+        >
           <span className="truncate">{getButtonLabel()}</span>
           <ChevronDown className="h-5 w-5" />
         </button>
@@ -42,7 +49,7 @@ export default function StatusPopover({ statuses }: StatusPopoverProps) {
           sideOffset={5}
         >
           <div className="p-2">
-            {statuses.map((status, index) => (
+            {status.map((status, index) => (
               <button
                 key={index}
                 onClick={() => handleStatusClick(status)}
