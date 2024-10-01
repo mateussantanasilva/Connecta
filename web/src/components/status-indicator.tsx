@@ -13,7 +13,8 @@ export function StatusIndicator({ status, size = 'sm' }: StatusIndicatorProps) {
           'rounded-full bg-green-600/20 p-1',
 
           status === 'em breve' && 'bg-sky-700/20',
-          status === ('fechada' || 'inativo') && 'bg-zinc-500/20',
+          status === 'fechada' && 'bg-zinc-500/20',
+          status === 'inativo' && 'bg-zinc-500/20',
 
           size === 'xs' && 'p-0.5',
         )}
@@ -23,7 +24,8 @@ export function StatusIndicator({ status, size = 'sm' }: StatusIndicatorProps) {
             'size-2 rounded-full bg-green-600',
 
             status === 'em breve' && 'bg-sky-700',
-            status === ('fechada' || 'inativo') && 'bg-zinc-500',
+            status === 'fechada' && 'bg-zinc-500',
+            status === 'inativo' && 'bg-zinc-500',
 
             size === 'xs' && 'size-1.5',
           )}
@@ -34,7 +36,8 @@ export function StatusIndicator({ status, size = 'sm' }: StatusIndicatorProps) {
           'text-sm font-medium capitalize text-green-600',
 
           status === 'em breve' && 'text-sky-700',
-          status === ('fechada' || 'inativo') && 'text-zinc-500',
+          status === 'fechada' && 'text-zinc-500',
+          status === 'inativo' && 'text-zinc-500',
 
           size === 'base' && 'text-base',
           size === 'xs' && 'text-xs',
