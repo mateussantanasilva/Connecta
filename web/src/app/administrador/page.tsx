@@ -1,9 +1,8 @@
-import { CheckSquare, Search, HandHeart, Trophy, X, Check } from 'lucide-react'
+import { CheckSquare, Search, HandHeart, Trophy, X, Check, UserRound } from 'lucide-react'
 import StatusCard from '@/components/status-card'
 import { HeaderAdmin } from '@/components/sections/header-admin'
 import { Button } from '@/components/button'
 import { Pagination } from '@/components/pagination'
-import { Avatar } from '@/components/avatar'
 import { AdminFilter } from '@/components/admin-filter'
 
 export default function Administrador() {
@@ -44,111 +43,95 @@ export default function Administrador() {
 
         <AdminFilter />
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-fixed border-collapse rounded-lg border border-zinc-300">
-            <thead>
-              <tr className="bg-zinc-100">
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Doador
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Campanha
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Item
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Pendente há
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b">
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <Avatar
-                      className="flex items-center gap-2 rounded-md border border-zinc-300 bg-transparent p-2 hover:bg-zinc-100"
-                      src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                      alt="Foto de perfil da Molly Jensen"
-                    />
-                    <td className="flex-grow">
-                      Maria Oliveira Rocha
-                      <br />
-                      mariaoliveirarochar@gmail.com
-                    </td>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Multirão de Natal
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Pacote de arroz
-                  <br />
-                  3kg
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  há cerca de 2 meses
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <Button size="xs" variant="danger">
-                      <X className="size-5 shrink-0" />
-                    </Button>
+        <section
+          role="table"
+          className="divide-y divide-zinc-400 rounded-lg border border-zinc-400"
+        >
 
-                    <Button size="xs">
-                      <Check className="size-5 shrink-0" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
+          <header className="flex h-10 items-center gap-5 px-5 text-sm font-medium uppercase text-zinc-800">
+            <div className="flex items-center">
+              <div className="not-sr-only" />
+              <strong className="w-60">Doador</strong>
+            </div>
+            <strong className="flex-1">Campanha</strong>
+            <strong className="w-56">Item</strong>
+            <strong className="w-48">Pendente há</strong>
+            <strong className="w-32">Ações</strong>
+          </header>
 
-              <tr className="border-b">
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <Avatar
-                      className="flex items-center gap-2 rounded-md border border-zinc-300 bg-transparent p-2 hover:bg-zinc-100"
-                      src="https://images.unsplash.com/photo-1446511437394-36cdff3ae1b3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                      alt="Foto de perfil da Molly Jensen"
-                    />
-                    <td className="flex-grow">
-                      Luciana Cardoso Arlinda
-                      <br />
-                      lucianacarali@gmail.com
-                    </td>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Multirão de ano novo
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Pacote de feijão
-                  <br />
-                  2kg
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  há cerca de 9 meses
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <Button size="xs" variant="danger">
-                      <X className="size-5 shrink-0" />
-                    </Button>
+          <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div className="flex items-center gap-3 w-60">
+              <div className="w-10 h-10 rounded-full bg-orange-600/20 flex items-center justify-center p-3">
+                <UserRound className="w-5 h-5 text-orange-600" />
+              </div>
 
-                    <Button size="xs">
-                      <Check className="size-5 shrink-0" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
+              <div className='gap-1 flex flex-col'>
+                <span className="w-44 truncate">Maria Oliveira Rocha</span>
+                <span className="w-44 truncate">mariaoliveirarocha@gmail.com</span>
+              </div>
+            </div>
+
+
+            <span className="flex-1">Multirão de Natal</span>
+
+            <div className="w-56">
+              <span className="w-56 truncate">Pacote de arroz</span>
+              <span className="block truncate">3kg</span>
+            </div>
+
+            <span className="w-48 truncate">há cerca de 2 meses</span>
+
+            <div className="flex items-center gap-2 w-32">
+              <Button size="xs" variant="danger">
+                <X className="size-5 shrink-0" />
+              </Button>
+
+              <Button size="xs">
+                <Check className="size-5 shrink-0" />
+              </Button>
+            </div>
+
+          </div>
+
+          <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div className="flex items-center gap-3 w-60">
+              <div className="w-10 h-10  rounded-full bg-orange-600/20 flex items-center justify-center p-3">
+                <UserRound className="w-5 h-5 text-orange-600" />
+              </div>
+              <div className='gap-1 flex flex-col'>
+                <span className="w-44 truncate">Luciana Cardoso Arlinda</span>
+                <span className="w-44 truncate">lucianacarali@gmail.com</span>
+              </div>
+            </div>
+
+
+
+            <span className="flex-1">Multirão de ano novo</span>
+
+            <div className="w-56">
+              <span className="w-56 truncate">Pacote de feijão</span>
+              <span className="block truncate">2kg</span>
+            </div>
+
+            <span className="w-48 truncate">há cerca de 9 meses</span>
+
+            <div className="flex items-center gap-2 w-32">
+              <Button size="xs" variant="danger">
+                <X className="size-5 shrink-0" />
+              </Button>
+
+              <Button size="xs">
+                <Check className="size-5 shrink-0" />
+              </Button>
+            </div>
+          </div>
+
+
+        </section>
 
         <Pagination />
-      </main>
+      </main >
     </>
   )
 }
