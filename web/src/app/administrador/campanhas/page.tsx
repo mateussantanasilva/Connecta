@@ -6,6 +6,8 @@ import { OpenCampaignModal } from '@/components/modals/open-campaign-modal'
 import { CloseCampaignModal } from '@/components/modals/close-campaign-modal'
 import { ClosedCampaignModal } from '@/components/modals/closed-campaign-modal'
 import { CampaignFilter } from '@/components/campaign-filter'
+import { StatusIndicator } from '@/components/status-indicator'
+
 
 export default function Campanha() {
   return (
@@ -20,142 +22,118 @@ export default function Campanha() {
 
         <CampaignFilter />
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-fixed border-collapse rounded-lg border border-zinc-300">
-            <thead>
-              <tr className="bg-zinc-100">
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Identificador
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Status
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Nome
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Categorias
-                </th>
-                <th className="border border-zinc-300 px-4 py-2 text-left">
-                  Progresso
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b">
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <CloseCampaignModal />
-                    <span className="flex-grow">398dfg39-9def-42340</span>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center">
-                    <span className="mr-2 h-2 w-2 rounded-full bg-green-600"></span>
-                    <span className="text-[#0369A1]">Iniciada há 20 dias</span>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Mutirão de Natal
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Vestuário, Alimentação
-                </td>
+        <section
+          role="table"
+          className="divide-y divide-zinc-400 rounded-lg border border-zinc-400"
+        >
+          <header className="flex h-10 items-center gap-5 px-5 text-sm font-medium uppercase text-zinc-800">
+            <div className="flex items-center gap-5">
+              <div className="not-sr-only size-9" />
+              <strong className="w-48">Identificador</strong>
+            </div>
+            <strong className="w-48">Status</strong>
+            <strong className="flex-1">Nome</strong>
+            <strong className="w-48">Categorias</strong>
+            <strong className="w-56">Progresso</strong>
+          </header>
 
-                <div className="flex items-center gap-2">
-                  <td className="px-4 py-2">
-                    72%
-                    <br />
-                    13 doação(s)
-                  </td>
-                  <a
-                    href="http://localhost:3000/campanhas/1"
-                    target="_blank"
-                    rel="noopener"
-                    className="inline-flex items-center rounded px-4 py-2 font-semibold text-[#DD720F] transition duration-300 hover:underline"
-                  >
-                    Detalhes
-                    <ArrowUpRight className="size-5 shrink-0" />
-                  </a>
-                </div>
-              </tr>
-              <tr className="border-b">
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <ClosedCampaignModal />
-                    <span className="flex-grow">39uyie39-9wrf-4wg30</span>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center">
-                    <span className="mr-2 h-2 w-2 rounded-full bg-zinc-500"></span>
-                    <span className="text-zinc-500">Encerrada há 20 dias</span>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Mutirão de Aniversário
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Brinquedos, Alimentação
-                </td>
+          <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div className="flex items-center gap-5">
+              <CloseCampaignModal />
+              <span className="w-48 truncate">4fugy5b5-9def-48db-575798</span>
+            </div>
 
-                <div className="flex items-center gap-2">
-                  <td className="px-4 py-2">
-                    22%
-                    <br />
-                    10 doação(s)
-                  </td>
-                  <a
-                    href="http://localhost:3000/campanhas/2"
-                    target="_blank"
-                    rel="noopener"
-                    className="inline-flex items-center rounded px-4 py-2 font-semibold text-[#DD720F] transition duration-300 hover:underline"
-                  >
-                    Detalhes
-                    <ArrowUpRight className="size-5 shrink-0" />
-                  </a>
-                </div>
-              </tr>
-              <tr className="border-b">
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <OpenCampaignModal />
-                    <span className="flex-grow">39u04329-93r5-4fg30</span>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  <div className="flex items-center">
-                    <span className="mr-2 h-2 w-2 rounded-full bg-blue-500"></span>
-                    <span className="text-blue-500">Não iniciada</span>
-                  </div>
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Mutirão de Ano novo
-                </td>
-                <td className="border border-zinc-300 px-4 py-2">
-                  Limpeza, Alimentação
-                </td>
+            <div className="w-48">
+              <StatusIndicator status="Iniciada" />
+            </div>
 
-                <div className="flex items-center gap-2">
-                  <td className="px-4 py-2">
-                    62%
-                    <br />
-                    17 doação(s)
-                  </td>
-                  <a
-                    href="http://localhost:3000/campanhas/3"
-                    target="_blank"
-                    rel="noopener"
-                    className="inline-flex items-center rounded px-4 py-2 font-semibold text-[#DD720F] transition duration-300 hover:underline"
-                  >
-                    Detalhes
-                    <ArrowUpRight className="size-5 shrink-0" />
-                  </a>
-                </div>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <span className="flex-1">Mutirão de Natal</span>
+
+            <span className="w-48 truncate">Vestuário, Alimentação</span>
+
+            <div className="flex items-center w-56">
+              <td className='w-28'>
+                72%
+                <br />
+                13 doação(s)
+              </td>
+              <a
+                href="http://localhost:3000/campanhas/1"
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"
+              >
+                Detalhes
+                <ArrowUpRight className="size-5 shrink-0" />
+              </a>
+            </div>
+          </div>
+
+          <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div className="flex items-center gap-5">
+              <ClosedCampaignModal />
+              <span className="w-48 truncate">39uyie39-9wrf-4wg30isi0</span>
+            </div>
+
+            <div className="w-48">
+              <StatusIndicator status="fechada" />
+            </div>
+
+            <span className="flex-1">Mutirão de Aniversário</span>
+
+            <span className="w-48 truncate">Brinquedos, Alimentação</span>
+
+            <div className="flex items-center w-56">
+              <td className='w-28'>
+                22%
+                <br />
+                10 doação(s)
+              </td>
+              <a
+                href="http://localhost:3000/campanhas/2"
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"
+              >
+                Detalhes
+                <ArrowUpRight className="size-5 shrink-0" />
+              </a>
+            </div>
+          </div>
+
+          <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div className="flex items-center gap-5">
+              <OpenCampaignModal />
+              <span className="w-48 truncate">39u043290ij0-93r5-4fg30ius9</span>
+            </div>
+
+            <div className="w-48">
+              <StatusIndicator status="em breve" />
+            </div>
+
+            <span className="flex-1">Mutirão de Ano novo</span>
+
+            <span className="w-48 truncate">Limpeza, Alimentação</span>
+
+            <div className="flex items-center w-56">
+              <td className='w-28'>
+                63%
+                <br />
+                17 doação(s)
+              </td>
+              <a
+                href="http://localhost:3000/campanhas/3"
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"
+              >
+                Detalhes
+                <ArrowUpRight className="size-5 shrink-0" />
+              </a>
+            </div>
+          </div>
+        </section>
+
         <Pagination />
       </main>
     </>

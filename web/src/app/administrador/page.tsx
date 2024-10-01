@@ -65,13 +65,11 @@ export default function Administrador() {
                 <UserRound className="w-5 h-5 text-orange-600" />
               </div>
 
-
               <div className='gap-1 flex flex-col'>
                 <span className="w-44 truncate">Maria Oliveira Rocha</span>
                 <span className="w-44 truncate">mariaoliveirarocha@gmail.com</span>
               </div>
             </div>
-
 
             <span className="flex-1">Multirão de Natal</span>
 
@@ -91,7 +89,6 @@ export default function Administrador() {
                 <Check className="size-5 shrink-0" />
               </Button>
             </div>
-
           </div>
 
           <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
@@ -104,8 +101,6 @@ export default function Administrador() {
                 <span className="w-44 truncate">lucianacarali@gmail.com</span>
               </div>
             </div>
-
-
 
             <span className="flex-1">Multirão de ano novo</span>
 
@@ -127,9 +122,7 @@ export default function Administrador() {
             </div>
           </div>
 
-
         </section>
-
         <Pagination />
       </main >
     </>
