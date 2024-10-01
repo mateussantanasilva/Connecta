@@ -12,7 +12,7 @@ export function DoneeFilter() {
 
       <Input placeholder="Nome do donatário" className="w-80" />
 
-      <StatusPopover />
+      <StatusPopover statuses={['Apto', 'Inativo', 'Em análise']} />
 
       <Button>
         <span>Filtrar resultados</span>

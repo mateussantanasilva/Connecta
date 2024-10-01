@@ -1,14 +1,37 @@
 'use client'
 
 import * as Popover from '@radix-ui/react-popover'
+import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
-export default function StatusPopover() {
+interface StatusPopoverProps {
+  statuses: string[]
+}
+
+export default function StatusPopover({ statuses }: StatusPopoverProps) {
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([])
+
+  const handleStatusClick = (status: string) => {
+    if (selectedStatuses.includes(status)) {
+      setSelectedStatuses(selectedStatuses.filter(s => s !== status))
+    } else {
+      setSelectedStatuses([...selectedStatuses, status])
+    }
+  }
+
+  const getButtonLabel = () => {
+    if (selectedStatuses.length === 0) {
+      return 'Todos os status'
+    } else {
+      return selectedStatuses.join(', ')
+    }
+  }
+
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
         <button className="flex h-10 w-48 items-center justify-between gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800">
-          <span>Todos os status</span>
+          <span className="truncate">{getButtonLabel()}</span>
           <ChevronDown className="h-5 w-5" />
         </button>
       </Popover.Trigger>
@@ -19,15 +42,17 @@ export default function StatusPopover() {
           sideOffset={5}
         >
           <div className="p-2">
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
-              Apto
-            </button>
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
-              Inativo
-            </button>
-            <button className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100">
-              Em análise
-            </button>
+            {statuses.map((status, index) => (
+              <button
+                key={index}
+                onClick={() => handleStatusClick(status)}
+                className={`w-full px-4 py-2 text-left text-sm hover:bg-zinc-100 ${
+                  selectedStatuses.includes(status) ? 'bg-zinc-200' : ''
+                }`}
+              >
+                {status}
+              </button>
+            ))}
           </div>
           <Popover.Arrow className="fill-white" />
         </Popover.Content>
