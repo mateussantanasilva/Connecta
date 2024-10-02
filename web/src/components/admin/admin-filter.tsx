@@ -6,8 +6,10 @@ import { Input } from '@/components/input'
 
 export function AdminFilter() {
   return (
-    <div className="flex items-center gap-4">
-      <h3 className="text-lg font-bold text-zinc-800">Filtros</h3>
+    <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
+      <h3 className="hidden text-lg font-bold text-zinc-800 sm:flex">
+        Filtros
+      </h3>
 
       <Input placeholder="Nome do Doador" className="w-80" />
 
@@ -16,7 +18,7 @@ export function AdminFilter() {
         <Search className="size-5 shrink-0" />
       </Button>
 
-      <Button variant="outline">
+      <Button variant="outline" className="hidden md:flex">
         <span>Remover filtros</span>
         <X className="size-5 shrink-0" />
       </Button>
