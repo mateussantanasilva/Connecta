@@ -21,7 +21,7 @@ export function CreateCampaignModal() {
       <Dialog.Trigger asChild>
         <Button>
           <span>Criar campanhas</span>
-          <Plus className="size-5 shrink-0"/>
+          <Plus className="size-5 shrink-0" />
         </Button>
       </Dialog.Trigger>
 

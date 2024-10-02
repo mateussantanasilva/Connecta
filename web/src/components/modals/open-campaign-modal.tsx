@@ -94,9 +94,9 @@ export function OpenCampaignModal() {
 
           <div className="mt-auto h-px w-full bg-zinc-400" />
 
-          <div className="flex justify-between">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row">
             <div className="flex items-center gap-2">
-              <Button variant="outline">
+              <Button variant="danger">
                 <span>Excluir</span>
                 <Trash className="size-5 shrink-0" />
               </Button>

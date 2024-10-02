@@ -116,12 +116,12 @@ export function CategoryCheckboxes({
             </div>
 
             {selectedCategoriesState[category] && (
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 space-y-5 sm:space-y-2">
                 <label className="mb-1 flex flex-col gap-1 text-sm font-medium text-zinc-800">
                   Nome do item
                 </label>
                 {items[category]?.map((item, index) => (
-                  <div key={index} className="flex items-center space-x-2">
+                  <div key={index} className="flex flex-col gap-2 sm:flex-row">
                     <Input
                       type="text"
                       value={item.nome}
@@ -136,41 +136,44 @@ export function CategoryCheckboxes({
                       className="flex-grow"
                       disabled={disabled}
                     />
-                    <Input
-                      type="text"
-                      placeholder="Ex.: 10kg, 5 pacotes, peças..."
-                      value={item.quantidade}
-                      onChange={(e) =>
-                        handleItemChange(
-                          category,
-                          index,
-                          'quantidade',
-                          e.target.value,
-                        )
-                      }
-                      disabled={disabled}
-                    />
 
-                    {!disabled && (
-                      <Button
-                        variant="outline"
-                        type="button"
-                        onClick={() => handleRemoveItem(category, index)}
-                        className="border border-zinc-300 bg-transparent text-red-500 hover:bg-zinc-200"
-                      >
-                        <Trash />
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="text"
+                        placeholder="Ex.: 10kg, 5 pacotes, peças..."
+                        value={item.quantidade}
+                        onChange={(e) =>
+                          handleItemChange(
+                            category,
+                            index,
+                            'quantidade',
+                            e.target.value,
+                          )
+                        }
+                        disabled={disabled}
+                      />
+
+                      {!disabled && (
+                        <Button
+                          variant="danger"
+                          size="xxs"
+                          type="button"
+                          onClick={() => handleRemoveItem(category, index)}
+                        >
+                          <Trash className="size-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
                 {!disabled && (
                   <Button
                     type="button"
+                    variant="outline"
                     onClick={() => handleAddItem(category)}
-                    className="mt-2 flex items-center space-x-1 rounded border border-zinc-300 bg-white p-2 text-black hover:text-white"
                   >
                     <span>Adicionar item</span>
-                    <Plus className="shrink-0" />
+                    <Plus className="size-5 shrink-0" />
                   </Button>
                 )}
               </div>

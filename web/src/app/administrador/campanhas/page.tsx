@@ -39,7 +39,10 @@ export default function Campanha() {
               <strong className="w-56">Progresso</strong>
             </header>
 
-            <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div
+              role="row"
+              className="flex h-16 items-center gap-5 px-5 text-sm"
+            >
               <div className="flex items-center gap-5">
                 <CloseCampaignModal />
                 <span className="w-48 truncate">4fugy5b5-9def-48db-575798</span>
@@ -53,12 +56,12 @@ export default function Campanha() {
 
               <span className="w-48 truncate">Vestuário, Alimentação</span>
 
-              <div className="flex w-56 items-center">
-                <td className="w-28">
+              <div className="flex w-56 items-center gap-5">
+                <span className="w-28">
                   72%
                   <br />
                   13 doação(s)
-                </td>
+                </span>
                 <a
                   href="http://localhost:3000/campanhas/1"
                   target="_blank"
@@ -71,28 +74,31 @@ export default function Campanha() {
               </div>
             </div>
 
-            <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div
+              role="row"
+              className="flex h-16 items-center gap-5 px-5 text-sm"
+            >
               <div className="flex items-center gap-5">
-                <ClosedCampaignModal />
-                <span className="w-48 truncate">39uyie39-9wrf-4wg30isi0</span>
+                <OpenCampaignModal />
+                <span className="w-48 truncate">4fugy5b5-9def-48db-575798</span>
               </div>
 
               <div className="w-48">
-                <StatusIndicator status="fechada" />
+                <StatusIndicator status="em breve" />
               </div>
 
-              <span className="flex-1">Mutirão de Aniversário</span>
+              <span className="flex-1">Mutirão de Natal</span>
 
-              <span className="w-48 truncate">Brinquedos, Alimentação</span>
+              <span className="w-48 truncate">Vestuário, Alimentação</span>
 
-              <div className="flex w-56 items-center">
-                <td className="w-28">
-                  22%
+              <div className="flex w-56 items-center gap-5">
+                <span className="w-28">
+                  72%
                   <br />
-                  10 doação(s)
-                </td>
+                  13 doação(s)
+                </span>
                 <a
-                  href="http://localhost:3000/campanhas/2"
+                  href="http://localhost:3000/campanhas/1"
                   target="_blank"
                   rel="noopener"
                   className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"
@@ -103,28 +109,31 @@ export default function Campanha() {
               </div>
             </div>
 
-            <div role="row" className="flex h-16 items-center gap-5 px-5 text-sm">
+            <div
+              role="row"
+              className="flex h-16 items-center gap-5 px-5 text-sm"
+            >
               <div className="flex items-center gap-5">
-                <OpenCampaignModal />
-                <span className="w-48 truncate">39u043290ij0-93r5-4fg30ius9</span>
+                <ClosedCampaignModal />
+                <span className="w-48 truncate">4fugy5b5-9def-48db-575798</span>
               </div>
 
               <div className="w-48">
-                <StatusIndicator status="em breve" />
+                <StatusIndicator status="fechada" />
               </div>
 
-              <span className="flex-1">Mutirão de Ano novo</span>
+              <span className="flex-1">Mutirão de Natal</span>
 
-              <span className="w-48 truncate">Limpeza, Alimentação</span>
+              <span className="w-48 truncate">Vestuário, Alimentação</span>
 
-              <div className="flex w-56 items-center">
-                <td className="w-28">
-                  63%
+              <div className="flex w-56 items-center gap-5">
+                <span className="w-28">
+                  72%
                   <br />
-                  17 doação(s)
-                </td>
+                  13 doação(s)
+                </span>
                 <a
-                  href="http://localhost:3000/campanhas/3"
+                  href="http://localhost:3000/campanhas/1"
                   target="_blank"
                   rel="noopener"
                   className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"

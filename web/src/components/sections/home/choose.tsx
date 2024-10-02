@@ -29,7 +29,7 @@ export function Choose() {
         </ul>
       </div>
 
-      <div className="mx-auto hidden items-start gap-6 xs:flex md:gap-10 lg:gap-6">
+      <div className="mx-auto hidden items-start gap-6 md:flex md:gap-10 lg:gap-6">
         <Image src={Grid1Img} alt="" quality={90} className="rounded-2xl" />
         <Image
           src={Grid2Img}

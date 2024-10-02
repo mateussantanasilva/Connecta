@@ -57,7 +57,7 @@ export function CollectionPoints({
       </label>
       <div className="space-y-4">
         {points.map((point, index) => (
-          <div key={index} className="flex items-center space-x-2">
+          <div key={index} className="flex items-center gap-2">
             <Input
               value={point.endereco}
               onChange={(e) => handlePointChange(index, e.target.value)}
@@ -68,10 +68,11 @@ export function CollectionPoints({
             {!disabled && index > 0 && (
               <Button
                 variant="danger"
+                size="xxs"
                 type="button"
                 onClick={() => handleRemovePoint(index)}
               >
-                <Trash />
+                <Trash className="size-4" />
               </Button>
             )}
           </div>

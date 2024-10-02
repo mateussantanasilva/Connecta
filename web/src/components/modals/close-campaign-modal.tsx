@@ -102,7 +102,7 @@ export function CloseCampaignModal() {
           </form>
 
           <div className="flex justify-end">
-            <Button variant="outline">
+            <Button variant="danger">
               <span>Fechar Campanha</span>
               <Lock className="size-5 shrink-0" />
             </Button>
