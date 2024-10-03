@@ -1,5 +1,7 @@
 import { Be_Vietnam_Pro } from 'next/font/google'
 import type { Metadata } from 'next'
+import { VLibrasPlugin } from '@/components/vlibras-plugin'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 const beVieatnamPro = Be_Vietnam_Pro({
@@ -36,10 +38,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ptBR">
+    <html lang="pt-BR">
       <body
         className={`${beVieatnamPro.className} bg-white text-zinc-700 antialiased`}
       >
+        <Toaster richColors />
+        <VLibrasPlugin />
         {children}
       </body>
     </html>
