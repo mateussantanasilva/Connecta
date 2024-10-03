@@ -5,12 +5,12 @@ import { ClientError } from '../../errors/client-error'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 const ParamsCampaignIdSchema = z.object({
-  campaignId: z.string().uuid(),
+  campaignId: z.string(),
 })
 
 export async function deleteCampaign(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().delete(
-    '/campaign/:campaignId',
+    '/campaigns/:campaignId',
     {
       schema: {
         params: {
