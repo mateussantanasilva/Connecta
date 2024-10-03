@@ -9,7 +9,7 @@ import { ClientError } from '../../errors/client-error'
 
 export const donationStatus = z.enum(['pendente', 'confirmada'])
 
-const donationSchema = z.object({
+export const donationSchema = z.object({
   item_name: z.string().min(1),
   quantity: z.number().min(1),
   measure: z.string().min(1),
