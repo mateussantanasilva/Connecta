@@ -16,12 +16,12 @@ export function SettingsMenu({ isAuthenticated }: SettingsMenuProps) {
           <NavigationMenu.Trigger>
             {isAuthenticated ? (
               <>
-                <Settings className="hidden size-6 text-zinc-700 transition-colors hover:text-green-600 md:flex" />
+                <Settings className="hidden size-6 transition-colors hover:text-green-600 md:flex" />
 
-                <Menu className="flex size-6 text-zinc-700 transition-colors hover:text-green-600 md:hidden" />
+                <Menu className="flex size-6 transition-colors hover:text-green-600 md:hidden" />
               </>
             ) : (
-              <Menu className="flex size-6 text-zinc-700 transition-colors hover:text-green-600 md:hidden" />
+              <Menu className="flex size-6 transition-colors hover:text-green-600 md:hidden" />
             )}
           </NavigationMenu.Trigger>
 

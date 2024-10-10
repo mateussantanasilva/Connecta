@@ -34,7 +34,7 @@ export function StatusPopover({ status, className }: StatusPopoverProps) {
       <Popover.Trigger asChild>
         <button
           className={twMerge(
-            'flex h-10 w-48 items-center justify-between gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm text-zinc-700 focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800',
+            'flex h-10 w-48 items-center justify-between gap-2 rounded-lg border border-zinc-400 bg-white px-2 py-3 text-sm focus:outline-none enabled:hover:border-zinc-800 enabled:hover:text-zinc-800',
             className,
           )}
         >

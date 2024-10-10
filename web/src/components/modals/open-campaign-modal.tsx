@@ -3,7 +3,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { Button } from '@/components/button'
-import { X, Search, Trash, Pencil, Megaphone } from 'lucide-react'
+import { X, Search, Trash, Pencil, Megaphone, ArrowUpRight } from 'lucide-react'
 import { Input } from '../input'
 import { CollectionPoints } from '../admin/collection-points'
 import { TextArea } from '../text-area'
@@ -62,6 +62,16 @@ export function OpenCampaignModal() {
               exclua, conforme necessário.
             </Dialog.Description>
           </header>
+
+          <a
+            href="http://localhost:3000/campanhas/1"
+            target="_blank"
+            rel="noopener"
+            className="flex items-center gap-1.5 font-bold text-orange-600 transition-colors hover:text-orange-700"
+          >
+            Acompanhe os detalhes desta campanha
+            <ArrowUpRight className="size-5 shrink-0" />
+          </a>
 
           <form className="space-y-5">
             <Input

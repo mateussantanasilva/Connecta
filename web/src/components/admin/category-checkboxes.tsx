@@ -94,7 +94,9 @@ export function CategoryCheckboxes({
 
   return (
     <div>
-      <label className="mb-2 block font-medium text-zinc-700">{title}</label>
+      <label className="mb-2 block text-sm font-medium text-zinc-800">
+        {title}
+      </label>
       <div className="space-y-4">
         {categories.map((category) => (
           <div key={category}>
@@ -104,7 +106,7 @@ export function CategoryCheckboxes({
                 type="checkbox"
                 checked={!!selectedCategoriesState[category]}
                 onChange={() => handleCheckboxChange(category)}
-                className="h-4 w-4 rounded border-zinc-300"
+                className="h-4 w-4 rounded border-zinc-400"
                 disabled={disabled}
               />
               <label

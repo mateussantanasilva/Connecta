@@ -35,13 +35,13 @@ export default function Perfil() {
             <h3 className="text-lg font-bold text-zinc-800">Sobre</h3>
 
             <div className="flex items-center gap-1.5">
-              <Mail className="size-5 shrink-0 text-zinc-700" />
+              <Mail className="size-5 shrink-0" />
               <span>{user.email}</span>
             </div>
 
             {user.telephone && (
               <div className="flex items-center gap-1.5">
-                <Phone className="size-5 shrink-0 text-zinc-700" />
+                <Phone className="size-5 shrink-0" />
                 <span>{user.telephone}</span>
               </div>
             )}
@@ -55,7 +55,7 @@ export default function Perfil() {
                 <h3 className="text-lg font-bold text-zinc-800">Endereço</h3>
 
                 <div className="flex gap-1.5">
-                  <MapPin className="size-5 shrink-0 text-zinc-700" />
+                  <MapPin className="size-5 shrink-0" />
                   <span>{user.address}</span>
                 </div>
               </div>

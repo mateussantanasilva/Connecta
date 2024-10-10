@@ -66,7 +66,7 @@ export default function Campanha() {
                   href="http://localhost:3000/campanhas/1"
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"
+                  className="flex items-center gap-1.5 font-bold text-orange-600 transition-colors hover:text-orange-700"
                 >
                   Detalhes
                   <ArrowUpRight className="size-5 shrink-0" />
@@ -101,7 +101,7 @@ export default function Campanha() {
                   href="http://localhost:3000/campanhas/1"
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"
+                  className="flex items-center gap-1.5 font-bold text-orange-600 transition-colors hover:text-orange-700"
                 >
                   Detalhes
                   <ArrowUpRight className="size-5 shrink-0" />
@@ -136,7 +136,7 @@ export default function Campanha() {
                   href="http://localhost:3000/campanhas/1"
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex items-center rounded font-semibold text-[#DD720F] transition duration-300 hover:underline"
+                  className="flex items-center gap-1.5 font-bold text-orange-600 transition-colors hover:text-orange-700"
                 >
                   Detalhes
                   <ArrowUpRight className="size-5 shrink-0" />

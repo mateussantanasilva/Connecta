@@ -9,9 +9,9 @@ export function SettingsMenuAdmin() {
       <NavigationMenu.List>
         <NavigationMenu.Item className="relative flex">
           <NavigationMenu.Trigger>
-            <Settings className="hidden size-6 text-zinc-700 transition-colors hover:text-green-600 md:flex" />
+            <Settings className="hidden size-6 transition-colors hover:text-green-600 md:flex" />
 
-            <Menu className="flex size-6 text-zinc-700 transition-colors hover:text-green-600 md:hidden" />
+            <Menu className="flex size-6 transition-colors hover:text-green-600 md:hidden" />
           </NavigationMenu.Trigger>
 
           <NavigationMenu.Content className="absolute right-0 top-10 z-10 flex w-max flex-col gap-5 rounded-2xl bg-white p-5 font-medium shadow transition-colors md:left-1/2 md:-translate-x-1/2">
