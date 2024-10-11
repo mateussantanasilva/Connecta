@@ -10,6 +10,7 @@ import { getDonations } from './routes/donation/get-donations'
 import { getDonationByCampaign } from './routes/donation/get-donation-campaign'
 import { updateDonation } from './routes/donation/update-donation'
 import { deleteDonation } from './routes/donation/delete-donation'
+import { createUser } from './routes/user/create-user'
 // import { getDonationByUser } from './routes/donation/get-donation-user'
 
 const app = fastify()
@@ -33,6 +34,8 @@ app.register(getDonationByCampaign)
 // app.register(getDonationByUser)
 app.register(updateDonation)
 app.register(deleteDonation)
+
+app.register(createUser)
 
 app.listen({ port: 3333 }).then(() => {
   console.log('Server is running on port 3333')
