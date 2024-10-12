@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -15,7 +14,9 @@ const itemCampaignSchema = z.object({
   measure: z.string().min(1),
   goal: z.number().min(1),
   amount_donated: z.number().optional().default(0),
-  status: z.enum(['disponível', 'reservado', 'concluído']).default('disponível'),
+  status: z
+    .enum(['disponível', 'reservado', 'concluído'])
+    .default('disponível'),
 })
 
 const donationSchema = z.object({

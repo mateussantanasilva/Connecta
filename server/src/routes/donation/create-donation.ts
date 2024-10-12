@@ -45,7 +45,6 @@ export async function createDonation(app: FastifyInstance) {
           throw new ClientError('Dados da campanha não encontrados')
         }
 
-        // Verificar se o item da doação existe na campanha
         const itemExists = campaignData.items.find(
           (item: { name: string; measure: string; status: string }) =>
             item.name === item_name &&
@@ -63,10 +62,6 @@ export async function createDonation(app: FastifyInstance) {
         const updatedAmountDonated = currentAmountDonated + quantity
         const remainingGoal = itemExists.goal - updatedAmountDonated
 
-        // Arrumar depois
-        // O amount_donated tem que parar quando for igual a meta, no momento não está somando a ultima doação
-
-        // Impedir doações se a meta já foi atingida
         if (remainingGoal < 0) {
           throw new ClientError(
             `A doação excede o objetivo para o item ${item_name}`,
@@ -85,77 +80,48 @@ export async function createDonation(app: FastifyInstance) {
 
         const donationRef = await db.collection('donations').add(donationData)
 
+        console.log(
+          `Item: ${item_name} - Quantidade: ${quantity} - Restante: ${remainingGoal}`,
+        )
+
+        const updatedItems = campaignData.items.map(
+          (item: {
+            name: string
+            measure: string
+            amount_donated?: number
+            goal: number
+            status?: string
+          }) =>
+            item.name === item_name && item.measure === measure
+              ? {
+                  ...item,
+                  amount_donated: updatedAmountDonated,
+                  status:
+                    updatedAmountDonated === item.goal
+                      ? campaignData.donations.some(
+                          (donation: {
+                            item_name: string
+                            measure: string
+                            status: string
+                          }) =>
+                            donation.item_name === item_name &&
+                            donation.measure === measure &&
+                            donation.status === 'pendente',
+                        )
+                        ? 'reservada'
+                        : 'concluida'
+                      : item.status,
+                }
+              : item,
+        )
+
         await db
           .collection('campaigns')
           .doc(campaign_id)
           .update({
-            items: campaignData.items.map(
-              (item: {
-                name: string
-                measure: string
-                amount_donated?: number
-                goal: number
-                status?: string
-              }) =>
-                item.name === item_name && item.measure === measure
-                  ? { ...item, amount_donated: updatedAmountDonated }
-                  : item,
-            ),
+            items: updatedItems,
             donations: FieldValue.arrayUnion(donationData),
           })
-
-        const donationsForItem = campaignData.donations.filter(
-          (donation: { item_name: string; measure: string; status: string }) =>
-            donation.item_name === item_name && donation.measure === measure,
-        )
-
-        const pendingDonations = donationsForItem.filter(
-          (donation: { item_name: string; measure: string; status: string }) =>
-            donation.status === 'pendente',
-        )
-
-        if (remainingGoal === 0 && pendingDonations.length === 0) {
-          await db
-            .collection('campaigns')
-            .doc(campaign_id)
-            .update({
-              items: campaignData.items.map(
-                (item: {
-                  name: string
-                  measure: string
-                  amount_donated?: number
-                  goal: number
-                  status?: string
-                }) =>
-                  item.name === item_name && item.measure === measure
-                    ? { ...item, status: 'concluida' }
-                    : item,
-              ),
-            })
-        } else if (remainingGoal === 0 && pendingDonations.length > 0) {
-          await db
-            .collection('campaigns')
-            .doc(campaign_id)
-            .update({
-              items: campaignData.items.map(
-                (item: {
-                  name: string
-                  measure: string
-                  amount_donated?: number
-                  goal: number
-                  status?: string
-                }) =>
-                  item.name === item_name && item.measure === measure
-                    ? { ...item, status: 'reservada' }
-                    : item,
-              ),
-            })
-        }
-
-        // Exibir os valores para debug
-        console.log(
-          `Item: ${item_name}, Doado: ${updatedAmountDonated}, Meta Restante: ${remainingGoal}`,
-        )
 
         return reply.status(201).send({ donationId: donationRef.id })
       } catch (error) {

@@ -1,6 +1,4 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
-/* eslint-disable prettier/prettier */
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { db } from '../../lib/firebase'
@@ -27,9 +25,7 @@ export async function deleteDonation(app: FastifyInstance) {
     },
 
     async (request, reply) => {
-      const { donation_id } = request.params as z.infer<
-        typeof ParamsSchema
-      >
+      const { donation_id } = request.params as z.infer<typeof ParamsSchema>
 
       try {
         const donation_ref = db.collection('donations').doc(donation_id)
@@ -49,9 +45,7 @@ export async function deleteDonation(app: FastifyInstance) {
         }
       } catch (error) {
         console.error(error)
-        return reply
-          .status(500)
-          .send(new ClientError('Erro ao deletar doação'))
+        return reply.status(500).send(new ClientError('Erro ao deletar doação'))
       }
     },
   )

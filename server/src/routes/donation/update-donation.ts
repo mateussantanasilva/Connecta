@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
