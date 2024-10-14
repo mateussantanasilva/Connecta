@@ -7,7 +7,7 @@ import { FieldValue } from 'firebase-admin/firestore'
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from '../../errors/client-error'
 
-export const donationStatus = z.enum(['pendente', 'confirmada'])
+export const donationStatus = z.enum(['pendente', 'confirmada', 'cancelada'])
 
 export const donationSchema = z.object({
   item_name: z.string().min(1),
@@ -51,7 +51,7 @@ export async function createDonation(app: FastifyInstance) {
             item.measure === measure &&
             item.status === 'disponível',
         )
-        // Separar validações depois
+
         if (!itemExists) {
           throw new ClientError(
             'Item não encontrado, medida não corresponde ou item não disponível',
@@ -79,6 +79,13 @@ export async function createDonation(app: FastifyInstance) {
         }
 
         const donationRef = await db.collection('donations').add(donationData)
+
+        const donationId = donationRef.id
+
+        const updatedDonationData = {
+          ...donationData,
+          id_donation: donationId,
+        }
 
         console.log(
           `Item: ${item_name} - Quantidade: ${quantity} - Restante: ${remainingGoal}`,
@@ -120,10 +127,10 @@ export async function createDonation(app: FastifyInstance) {
           .doc(campaign_id)
           .update({
             items: updatedItems,
-            donations: FieldValue.arrayUnion(donationData),
+            donations: FieldValue.arrayUnion(updatedDonationData),
           })
 
-        return reply.status(201).send({ donationId: donationRef.id })
+        return reply.status(201).send({ donationId })
       } catch (error) {
         if (error instanceof ClientError) {
           return reply.status(400).send({ error: error.message })

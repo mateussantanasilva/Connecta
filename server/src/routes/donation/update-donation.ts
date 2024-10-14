@@ -8,13 +8,7 @@ import { ClientError } from '../../errors/client-error'
 import { donationStatus } from './create-donation'
 
 const donationSchema = z.object({
-  item_name: z.string().min(1),
-  quantity: z.number().min(1),
-  measure: z.string().min(1),
   status: donationStatus,
-  campaign_id: z.string().min(1),
-
-  //  user_id: z.string().min(1),
 })
 
 const ParamsSchema = z.object({
@@ -32,27 +26,34 @@ export async function updateDonation(app: FastifyInstance) {
     },
     async (request, reply) => {
       const { donation_id } = request.params as z.infer<typeof ParamsSchema>
-      const {
-        item_name,
-        quantity,
-        measure,
-        status,
-        campaign_id,
-
-        // user_id,
-      } = request.body as z.infer<typeof donationSchema>
+      const { status } = request.body as z.infer<typeof donationSchema>
 
       try {
-        const donation_ref = db.collection('donations').doc(donation_id)
-        const donation_doc = await donation_ref.get()
+        const donationRef = db.collection('donations').doc(donation_id)
+        const donationDoc = await donationRef.get()
 
-        if (!donation_doc.exists) {
+        if (!donationDoc.exists) {
           throw new ClientError('Doação não encontrada')
         }
+
+        const donationData = donationDoc.data()
+        if (!donationData) {
+          throw new ClientError('Dados da doação não encontrados')
+        }
+
+        const item_name = donationData.item_name
+        const campaign_id = donationData.campaign_id
+
+        await donationRef.update({ status })
+
         const campaignRef = await db
           .collection('campaigns')
           .doc(campaign_id)
           .get()
+
+        if (!campaignRef.exists) {
+          throw new ClientError('Campanha não encontrada')
+        }
 
         const campaignData = campaignRef.data()
 
@@ -60,26 +61,37 @@ export async function updateDonation(app: FastifyInstance) {
           throw new ClientError('Dados da campanha não encontrados')
         }
 
-        const itemExists = campaignData.items.some(
-          (item: { name: string; measure: string }) =>
-            item.name === item_name && item.measure === measure,
+        const updatedDonations = campaignData.donations.map(
+          (donation: { id_donation: string; status: string }) => {
+            if (donation.id_donation === donation_id) {
+              return { ...donation, status }
+            }
+            return donation
+          },
         )
 
-        if (!itemExists) {
-          throw new ClientError(
-            'Item não existe na campanha ou medida não corresponde',
+        await db.collection('campaigns').doc(campaign_id).update({
+          donations: updatedDonations,
+        })
+
+        const pendingDonations = updatedDonations.filter(
+          (donation: { item_name: string; status: string }) =>
+            donation.item_name === item_name && donation.status === 'pendente',
+        )
+
+        if (pendingDonations.length === 0) {
+          const updatedItems = campaignData.items.map(
+            (item: { name: string; status: string }) => {
+              return item.name === item_name
+                ? { ...item, status: 'concluida' }
+                : item
+            },
           )
-        }
 
-        const updatedDonationData = {
-          item_name,
-          quantity,
-          measure,
-          status,
-          // user_id,
+          await db.collection('campaigns').doc(campaign_id).update({
+            items: updatedItems,
+          })
         }
-
-        await donation_ref.update(updatedDonationData)
 
         return reply.send({ donation_id })
       } catch (error) {
