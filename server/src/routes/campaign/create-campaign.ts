@@ -20,6 +20,7 @@ const itemCampaignSchema = z.object({
 })
 
 const donationSchema = z.object({
+  id_donation: z.string().min(1),
   item_name: z.string().min(1),
   quantity: z.number().min(1),
   measure: z.string().min(1),

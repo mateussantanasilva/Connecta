@@ -6,7 +6,7 @@ import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from '../../errors/client-error'
 
-const CampaignStatus = z.enum(['ABERTA', 'EM_BREVE', 'FECHADA'])
+const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
 
 const itemCampaignSchema = z.object({
   name: z.string().min(1),
