@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from "../../errors/client-error"
-import { readdirSync } from "fs"
 
 const UserRole = z.enum(['doador', 'donatário', 'administrador'])
 

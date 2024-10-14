@@ -11,6 +11,10 @@ import { getDonationByCampaign } from './routes/donation/get-donation-campaign'
 import { updateDonation } from './routes/donation/update-donation'
 import { deleteDonation } from './routes/donation/delete-donation'
 import { createUser } from './routes/user/create-user'
+import { getUsers } from './routes/user/get-users'
+import { getUserById } from './routes/user/get-user'
+import { updateUser } from './routes/user/update-user'
+import { deleteUser } from './routes/user/delete-user'
 // import { getDonationByUser } from './routes/donation/get-donation-user'
 
 const app = fastify()
@@ -36,6 +40,10 @@ app.register(updateDonation)
 app.register(deleteDonation)
 
 app.register(createUser)
+app.register(getUsers)
+app.register(getUserById)
+app.register(updateUser)
+app.register(deleteUser)
 
 app.listen({ port: 3333 }).then(() => {
   console.log('Server is running on port 3333')
