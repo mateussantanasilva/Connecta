@@ -1,5 +1,8 @@
-import fastify from 'fastify'
+import Fastify from 'fastify'
+import fastifyOAuth2 from '@fastify/oauth2';
+import fastifyCookie from '@fastify/cookie';
 import cors from '@fastify/cors'
+import dotenv from 'dotenv'
 import { getCampaigns } from './routes/campaign/get-campaigns'
 import { getByIdCampaigns } from './routes/campaign/get-campaign'
 import { createCampaign } from './routes/campaign/create-campaign'
@@ -17,34 +20,81 @@ import { updateUser } from './routes/user/update-user'
 import { deleteUser } from './routes/user/delete-user'
 // import { getDonationByUser } from './routes/donation/get-donation-user'
 
-const app = fastify()
+const fastify = Fastify()
 
-app.register(cors, {
+dotenv.config()
+const googleClientId = process.env.GOOGLE_CLIENT_ID!;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET!;
+const sessionSecret = process.env.SESSION_SECRET;
+
+fastify.register(cors, {
   origin: '#',
 })
 
-app.get('/', async (request, reply) => {
+fastify.register(fastifyCookie, {
+  secret: sessionSecret
+});
+
+fastify.register(fastifyOAuth2, {
+  name: 'googleOAuth2',
+  scope: ['email', 'profile'],
+  credentials: {
+    client: {
+      id: googleClientId,
+      secret: googleClientSecret,
+    },
+    auth: fastifyOAuth2.GOOGLE_CONFIGURATION,
+  },
+  startRedirectPath: '/login/google',
+  callbackUri: 'http://localhost:3333/login/google/callback'
+});
+
+fastify.get('/login/google/callback', async (req, res) => {
+  const token = await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req);
+  const accessToken = token.token.access_token
+  res.setCookie('token', accessToken, { httpOnly: true, path: '/' });
+  res.redirect('/');
+});
+
+// Middleware
+fastify.addHook('onRequest', async (req, res) => {
+  const publicRoutes = ['/login/google', '/login/google/callback', '/logout']; // Rotas públicas
+  if (req.routeOptions.url && publicRoutes.includes(req.routeOptions.url)) {
+    return;
+  }
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).send({ error: 'Usuário não autenticado' });
+  }
+});
+
+fastify.get('/logout', async (req, res) => {
+  res.clearCookie('token', { path: '/' });
+  res.redirect('/');
+});
+
+fastify.get('/', async (req, res) => {
   return 'Hello World!'
 })
 
-app.register(getCampaigns)
-app.register(getByIdCampaigns)
-app.register(createCampaign)
-app.register(deleteCampaign)
-app.register(updateCampaign)
-app.register(createDonation)
-app.register(getDonations)
-app.register(getDonationByCampaign)
+fastify.register(getCampaigns)
+fastify.register(getByIdCampaigns)
+fastify.register(createCampaign)
+fastify.register(deleteCampaign)
+fastify.register(updateCampaign)
+fastify.register(createDonation)
+fastify.register(getDonations)
+fastify.register(getDonationByCampaign)
 // app.register(getDonationByUser)
-app.register(updateDonation)
-app.register(deleteDonation)
+fastify.register(updateDonation)
+fastify.register(deleteDonation)
 
-app.register(createUser)
-app.register(getUsers)
-app.register(getUserById)
-app.register(updateUser)
-app.register(deleteUser)
+fastify.register(createUser)
+fastify.register(getUsers)
+fastify.register(getUserById)
+fastify.register(updateUser)
+fastify.register(deleteUser)
 
-app.listen({ port: 3333 }).then(() => {
+fastify.listen({ port: 3333 }).then(() => {
   console.log('Server is running on port 3333')
 })
