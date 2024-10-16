@@ -16,7 +16,6 @@ export async function getUsers(app: FastifyInstance) {
                         z.object({
                             id: z.string(),
                             name: z.string(),
-                            surname: z.string(),
                             email: z.string(),
                             role: UserRole,
                             telephone: z.string(),
@@ -35,7 +34,6 @@ export async function getUsers(app: FastifyInstance) {
                     return {
                         id: doc.id,
                         name: data.name,
-                        surname: data.surname,
                         email: data.email,
                         role: data.role,
                         telephone: data.telephone,

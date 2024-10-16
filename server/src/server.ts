@@ -1,8 +1,9 @@
 import Fastify from 'fastify'
-import fastifyOAuth2 from '@fastify/oauth2';
-import fastifyCookie from '@fastify/cookie';
+import fastifyOAuth2 from '@fastify/oauth2'
+import fastifyCookie from '@fastify/cookie'
 import cors from '@fastify/cors'
 import dotenv from 'dotenv'
+import { db } from './lib/firebase'
 import { getCampaigns } from './routes/campaign/get-campaigns'
 import { getByIdCampaigns } from './routes/campaign/get-campaign'
 import { createCampaign } from './routes/campaign/create-campaign'
@@ -23,9 +24,9 @@ import { deleteUser } from './routes/user/delete-user'
 const fastify = Fastify()
 
 dotenv.config()
-const googleClientId = process.env.GOOGLE_CLIENT_ID!;
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET!;
-const sessionSecret = process.env.SESSION_SECRET;
+const googleClientId = process.env.GOOGLE_CLIENT_ID!
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET!
+const sessionSecret = process.env.SESSION_SECRET
 
 fastify.register(cors, {
   origin: '#',
@@ -33,7 +34,7 @@ fastify.register(cors, {
 
 fastify.register(fastifyCookie, {
   secret: sessionSecret
-});
+})
 
 fastify.register(fastifyOAuth2, {
   name: 'googleOAuth2',
@@ -47,14 +48,36 @@ fastify.register(fastifyOAuth2, {
   },
   startRedirectPath: '/login/google',
   callbackUri: 'http://localhost:3333/login/google/callback'
-});
+})
 
 fastify.get('/login/google/callback', async (req, res) => {
-  const token = await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req);
-  const accessToken = token.token.access_token
-  res.setCookie('token', accessToken, { httpOnly: true, path: '/' });
-  res.redirect('/');
-});
+  try {
+    const token = await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req)
+    const accessToken = token.token.access_token
+
+    const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    const userInfo = await userInfoResponse.json()
+    const { name, email } = userInfo
+    const userRef = await db.collection('users').where('email', '==', email).get()
+    if (userRef.empty) {
+      const newUser = {
+        name,
+        email,
+        role: 'doador'
+      }
+      await db.collection('users').add(newUser);
+    }
+    res.setCookie('token', accessToken, { httpOnly: true, path: '/' })
+    res.redirect('/');
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+    res.status(500).send({ error: 'Não foi possível fazer login' })
+  }
+})
 
 // Middleware
 fastify.addHook('onRequest', async (req, res) => {
@@ -64,14 +87,14 @@ fastify.addHook('onRequest', async (req, res) => {
   }
   const token = req.cookies.token;
   if (!token) {
-    return res.status(401).send({ error: 'Usuário não autenticado' });
+    return res.status(401).send({ error: 'Usuário não autenticado' })
   }
-});
+})
 
 fastify.get('/logout', async (req, res) => {
-  res.clearCookie('token', { path: '/' });
-  res.redirect('/');
-});
+  res.clearCookie('token', { path: '/' })
+  res.redirect('/')
+})
 
 fastify.get('/', async (req, res) => {
   return 'Hello World!'

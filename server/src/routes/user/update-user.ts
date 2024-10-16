@@ -9,7 +9,6 @@ const UserRole = z.enum(['doador', 'donatário', 'administrador'])
 
 const userSchema = z.object({
     name: z.string(),
-    surname: z.string(),
     email: z.string(),
     role: UserRole.default('doador'),
     telephone: z.string().min(11).max(11),
@@ -34,7 +33,6 @@ export async function updateUser(app: FastifyInstance) {
             const {id} = req.params as z.infer<typeof ParamsSchema>
             const {
                 name,
-                surname,
                 email,
                 role,
                 telephone,
@@ -49,7 +47,6 @@ export async function updateUser(app: FastifyInstance) {
                 }
                 const updatedUser = {
                     name,
-                    surname,
                     email,
                     role,
                     telephone,

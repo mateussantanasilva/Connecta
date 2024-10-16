@@ -9,7 +9,6 @@ const UserRole = z.enum(['doador', 'donatário', 'administrador'])
 
 const userSchema = z.object({
     name: z.string(),
-    surname: z.string(),
     email: z.string(),
     role: UserRole.default('doador')
 })
@@ -25,14 +24,12 @@ export async function createUser(app: FastifyInstance) {
         async (req, res) => {
             const {
                 name,
-                surname,
                 email,
                 role
             } = req.body as z.infer<typeof userSchema>
             try {
                 const userData = {
                     name,
-                    surname,
                     email,
                     role
                 }
