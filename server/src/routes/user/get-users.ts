@@ -17,10 +17,10 @@ export async function getUsers(app: FastifyInstance) {
                             id: z.string(),
                             name: z.string(),
                             email: z.string(),
+                            avatar: z.string(),
                             role: UserRole,
                             telephone: z.string(),
-                            cpf: z.string(),
-                            cep: z.string()
+                            address: z.string()
                         })
                     )
                 }
@@ -35,10 +35,10 @@ export async function getUsers(app: FastifyInstance) {
                         id: doc.id,
                         name: data.name,
                         email: data.email,
+                        avatar: data.avatar,
                         role: data.role,
                         telephone: data.telephone,
-                        cpf: data.cpf,
-                        cep: data.cep
+                        address: data.address
                     }
                 })
                 if(users.length === 0) {

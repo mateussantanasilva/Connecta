@@ -10,6 +10,7 @@ const UserRole = z.enum(['doador', 'donatário', 'administrador'])
 const userSchema = z.object({
     name: z.string(),
     email: z.string(),
+    avatar: z.string(),
     role: UserRole.default('doador')
 })
 
@@ -25,12 +26,14 @@ export async function createUser(app: FastifyInstance) {
             const {
                 name,
                 email,
+                avatar,
                 role
             } = req.body as z.infer<typeof userSchema>
             try {
                 const userData = {
                     name,
                     email,
+                    avatar,
                     role
                 }
                 const userRef = await db.collection('users').add(userData)

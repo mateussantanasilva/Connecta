@@ -9,11 +9,8 @@ const UserRole = z.enum(['doador', 'donatário', 'administrador'])
 
 const userSchema = z.object({
     name: z.string(),
-    email: z.string(),
-    role: UserRole.default('doador'),
     telephone: z.string().min(11).max(11),
-    cpf: z.string().min(11).max(11),
-    cep: z.string().min(8).max(8)
+    address: z.string()
 })
 
 const ParamsSchema = z.object({
@@ -33,11 +30,8 @@ export async function updateUser(app: FastifyInstance) {
             const {id} = req.params as z.infer<typeof ParamsSchema>
             const {
                 name,
-                email,
-                role,
                 telephone,
-                cpf,
-                cep
+                address
             } = req.body as z.infer<typeof userSchema>
             try {
                 const userRef = db.collection('users').doc(id)
@@ -47,11 +41,8 @@ export async function updateUser(app: FastifyInstance) {
                 }
                 const updatedUser = {
                     name,
-                    email,
-                    role,
                     telephone,
-                    cpf,
-                    cep
+                    address
                 }
                 await userRef.update(updatedUser)
                 return res.status(200).send({id})

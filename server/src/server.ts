@@ -62,28 +62,39 @@ fastify.get('/login/google/callback', async (req, res) => {
     })
     const userInfo = await userInfoResponse.json()
     const { name, email } = userInfo
+    const avatar = userInfo.picture
     const userRef = await db.collection('users').where('email', '==', email).get()
     if (userRef.empty) {
       const newUser = {
         name,
         email,
+        avatar,
         role: 'doador'
       }
       await db.collection('users').add(newUser);
+    } else {
+      const userDoc = userRef.docs[0]
+      const userData = userDoc.data()
+      if (userData.avatar !== avatar) {
+        // Atualiza a foto de perfil se for diferente
+        await db.collection('users').doc(userDoc.id).update({
+          avatar
+        });
+      }
     }
     res.setCookie('token', accessToken, { httpOnly: true, path: '/' })
-    res.redirect('/');
+    res.redirect('/')
   } catch (error) {
-    console.error('Erro ao fazer login:', error);
+    console.error('Erro ao fazer login:', error)
     res.status(500).send({ error: 'Não foi possível fazer login' })
   }
 })
 
 // Middleware
 fastify.addHook('onRequest', async (req, res) => {
-  const publicRoutes = ['/login/google', '/login/google/callback', '/logout']; // Rotas públicas
+  const publicRoutes = ['/login/google', '/login/google/callback', '/logout'] // Rotas públicas
   if (req.routeOptions.url && publicRoutes.includes(req.routeOptions.url)) {
-    return;
+    return
   }
   const token = req.cookies.token;
   if (!token) {
