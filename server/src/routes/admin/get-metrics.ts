@@ -11,11 +11,10 @@ export async function getMetrics(app: FastifyInstance) {
             var totalDonatedItems = 0
             const donationSnapshotData = donationSnapshot.docs
             donationSnapshotData.forEach(donation => {
-                console.log(totalDonatedItems)
                 totalDonatedItems = totalDonatedItems + donation.data().quantity
             });
-            const totalCampaigns = await (await db.collection('campaigns').where('progress', '==', 0).get()).size
-            const totalFamilies = await (await db.collection('campaigns').get()).size
+            const totalCampaigns = await (await db.collection('campaigns').get()).size
+            const totalFamilies = await (await db.collection('users').where('role', '==', 'donatário').get()).size
             const MetricsSchema = {
                 totalDonatedItems,
                 totalCampaigns,
