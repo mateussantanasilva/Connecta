@@ -19,6 +19,7 @@ import { getUsers } from './routes/user/get-users'
 import { getUserById } from './routes/user/get-user'
 import { updateUser } from './routes/user/update-user'
 import { deleteUser } from './routes/user/delete-user'
+import { getMetrics } from './routes/admin/get-metrics'
 // import { getDonationByUser } from './routes/donation/get-donation-user'
 
 const fastify = Fastify()
@@ -128,6 +129,8 @@ fastify.register(getUsers)
 fastify.register(getUserById)
 fastify.register(updateUser)
 fastify.register(deleteUser)
+
+fastify.register(getMetrics)
 
 fastify.listen({ port: 3333 }).then(() => {
   console.log('Server is running on port 3333')
