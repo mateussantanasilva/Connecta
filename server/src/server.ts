@@ -92,7 +92,7 @@ fastify.get('/login/google/callback', async (req, res) => {
 })
 
 // Middleware
-fastify.addHook('onRequest', async (req, res) => {
+/*fastify.addHook('onRequest', async (req, res) => {
   const publicRoutes = ['/login/google', '/login/google/callback', '/logout'] // Rotas públicas
   if (req.routeOptions.url && publicRoutes.includes(req.routeOptions.url)) {
     return
@@ -101,7 +101,7 @@ fastify.addHook('onRequest', async (req, res) => {
   if (!token) {
     return res.status(401).send({ error: 'Usuário não autenticado' })
   }
-})
+})*/
 
 fastify.get('/logout', async (req, res) => {
   res.clearCookie('token', { path: '/' })
