@@ -101,6 +101,17 @@ export async function updateDonation(app: FastifyInstance) {
               status: 'fechada',
             })
           }
+
+          // Calcular porcentagem de progresso com base nos itens concluídos
+          const totalItems = updatedItems.length
+          const completedItems = updatedItems.filter(
+            (item: { status: string }) => item.status === 'concluida',
+          ).length
+          const progressPercentage = (completedItems / totalItems) * 100
+
+          await db.collection('campaigns').doc(campaign_id).update({
+            progress: progressPercentage,
+          })
         }
 
         return reply.send({ donation_id })
