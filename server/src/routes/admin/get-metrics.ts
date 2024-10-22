@@ -13,9 +13,15 @@ export async function getMetrics(app: FastifyInstance) {
 
             const donationsData = (await donationsSnapshot.where('status', '==', 'confirmada').get()).docs
             var totalDonatedItems = 0
+            var annualDonations = 0
 
             donationsData.forEach(donation => {
                 totalDonatedItems = totalDonatedItems + donation.data().quantity
+                let donationYear = new Date(donation.data().donation_date).getFullYear()
+                let year = new Date().getFullYear()
+                if (donationYear == year) {
+                    annualDonations = annualDonations + donation.data().quantity
+                }
             });
 
             const totalCampaigns = (await campaignsSnapshot.get()).size
@@ -28,7 +34,8 @@ export async function getMetrics(app: FastifyInstance) {
                 totalCampaigns,
                 totalFamilies,
                 totalCompletedCampaigns,
-                openCampaigns
+                openCampaigns,
+                annualDonations
             }
             res.status(200).send(MetricsSchema)
         }
