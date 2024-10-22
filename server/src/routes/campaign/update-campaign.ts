@@ -11,6 +11,7 @@ const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
 const itemCampaignSchema = z.object({
   name: z.string().min(1),
   measure: z.string().min(1),
+  status: z.enum(['disponível', 'reservado', 'concluído'])
 })
 
 const campaignSchema = z.object({
@@ -90,6 +91,17 @@ export async function updateCampaign(app: FastifyInstance) {
         }
 
         await campaignRef.update(updatedCampaignData)
+
+        const totalItems = items.length
+        const completedItems = items.filter((item) => item.status === 'concluído').length
+
+        const progressPercentage = (completedItems / totalItems) * 100
+
+        await campaignRef.update({ progress: progressPercentage })
+
+        if (completedItems === totalItems) {
+          await campaignRef.update({ status: 'fechada' })
+        }
 
         return reply.send({ campaignId })
       } catch (error) {
