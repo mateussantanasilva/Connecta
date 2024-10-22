@@ -3,13 +3,13 @@ import fastifyOAuth2 from '@fastify/oauth2'
 import fastifyCookie from '@fastify/cookie'
 import cors from '@fastify/cors'
 import dotenv from 'dotenv'
-import { getMetrics } from './routes/admin/get-metrics'
 import { authenticationMiddleware } from './routes/authentication/middleware'
 import { login } from './routes/authentication/login'
 import { logout } from './routes/authentication/logout'
 import { userRoutes } from './routes/user/user-routes'
 import { donationRoutes } from './routes/donation/donation-routes'
 import { campaignRoutes } from './routes/campaign/campaign-routes'
+import { adminRoutes } from './routes/admin/admin-routes'
 
 const fastify = Fastify()
 
@@ -50,7 +50,7 @@ fastify.register(logout)
 fastify.register(campaignRoutes)
 fastify.register(donationRoutes)
 fastify.register(userRoutes)
-fastify.register(getMetrics)
+fastify.register(adminRoutes)
 
 fastify.listen({ port: 3333 }).then(() => {
   console.log('Server is running on port 3333')
