@@ -91,6 +91,16 @@ export async function updateDonation(app: FastifyInstance) {
           await db.collection('campaigns').doc(campaign_id).update({
             items: updatedItems,
           })
+
+          const allItemsCompleted = updatedItems.every(
+            (item: { status: string }) => item.status === 'concluida',
+          )
+
+          if (allItemsCompleted) {
+            await db.collection('campaigns').doc(campaign_id).update({
+              status: 'fechada',
+            })
+          }
         }
 
         return reply.send({ donation_id })
