@@ -4,8 +4,8 @@ import { z } from 'zod'
 import { ClientError } from '../../errors/client-error'
 import { db } from '../../lib/firebase'
 import { donationStatus } from '../donation/create-donation'
+import { CampaignStatus } from './create-campaign'
 
-const CampaignStatus = z.enum(['ABERTA', 'EM_BREVE', 'FECHADA'])
 
 const itemCampaignSchema = z.object({
   name: z.string().min(1),
@@ -19,12 +19,18 @@ const donationSchema = z.object({
   measure: z.string().min(1),
   status: donationStatus,
 })
-
 export async function getCampaigns(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
     '/campaigns',
     {
       schema: {
+        querystring: {
+          type: 'object',
+          properties: { 
+            page: { type: 'number', minimum: 1, default: 1 },
+            limit: { type: 'number', minimum: 1, default: 8 },
+          },
+        },
         response: {
           200: z.array(
             z.object({
@@ -52,11 +58,13 @@ export async function getCampaigns(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
+      const { page, limit } = request.query as { page: number; limit: number };
+
       try {
-        const campaignsSnapshot = await db.collection('campaigns').get()
+        const campaignsSnapshot = await db.collection('campaigns').get();
 
         const campaigns = campaignsSnapshot.docs.map((doc) => {
-          const data = doc.data()
+          const data = doc.data();
           return {
             id: doc.id,
             name: data.name,
@@ -74,18 +82,22 @@ export async function getCampaigns(app: FastifyInstance) {
             grantee: data.grantee
               ? { full_name: data.grantee.full_name }
               : null,
-          }
-        })
+          };
+        });
 
         if (campaigns.length === 0) {
-          throw new ClientError('Sem campanhas no momento!')
+          throw new ClientError('Sem campanhas no momento!');
         }
 
-        return reply.status(200).send(campaigns)
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginatedCampaigns = campaigns.slice(startIndex, endIndex);
+
+        return reply.status(200).send(paginatedCampaigns);
       } catch (error) {
-        console.error(error)
-        return reply.status(500).send()
+        console.error(error);
+        return reply.status(500).send();
       }
     },
-  )
+  );
 }
