@@ -41,9 +41,6 @@ export async function getUsers(app: FastifyInstance) {
                         address: data.address
                     }
                 })
-                if(users.length === 0) {
-                    throw new ClientError("Não há usuários cadastrados!")
-                }
                 return res.status(200).send(users)
             } catch(e) {
                 console.error(e)
