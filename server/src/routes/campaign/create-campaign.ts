@@ -14,20 +14,19 @@ const itemCampaignSchema = z.object({
   measure: z.string().min(1),
   goal: z.number().min(1),
   amount_donated: z.number().optional().default(0),
-  status: z
-    .enum(['disponível', 'reservado', 'concluído'])
-    .default('disponível'),
+  status: z.enum(['disponível', 'reservado', 'concluído']).default('disponível'),
 })
 
-const donationSchema = z.object({
+export const donationSchema = z.object({
   id_donation: z.string().min(1),
   item_name: z.string().min(1),
   quantity: z.number().min(1),
   measure: z.string().min(1),
   status: donationStatus,
+  user_id: z.string().min(1),
 })
 
-const campaignSchema = z.object({
+export const campaignSchema = z.object({
   name: z.string().min(1),
   collection_point: z.array(z.string()).min(1),
   description: z.string().min(1),
@@ -40,9 +39,7 @@ const campaignSchema = z.object({
   goal: z.number().min(1),
   items: z.array(itemCampaignSchema).min(1),
   donations: z.array(donationSchema).optional().default([]),
-  grantee_name: z.string(),
-  grantee_email: z.string().email(),
-  grantee_user_type: z.string().optional().default('grantee'),
+  grantees: z.array(z.string()).optional().default([]),  
 })
 
 export async function createCampaign(app: FastifyInstance) {
@@ -67,12 +64,20 @@ export async function createCampaign(app: FastifyInstance) {
         goal,
         items,
         donations,
-        grantee_name,
-        grantee_email,
-        grantee_user_type,
+        grantees,
       } = request.body as z.infer<typeof campaignSchema>
 
       try {
+        if (grantees && grantees.length > 0) {
+          for (const grantee_id of grantees) {
+            const userRef = await db.collection('users').doc(grantee_id).get()
+
+            if (!userRef.exists) {
+              throw new ClientError(`Usuário com ID ${grantee_id} não encontrado!`)
+            }
+          }
+        }
+
         const campaignData = {
           name,
           collection_point,
@@ -86,11 +91,7 @@ export async function createCampaign(app: FastifyInstance) {
           goal,
           items,
           donations,
-          grantee: {
-            full_name: grantee_name,
-            email: grantee_email,
-            user_type: grantee_user_type,
-          },
+          grantees,
         }
 
         const campaignRef = await db.collection('campaigns').add(campaignData)
@@ -102,7 +103,7 @@ export async function createCampaign(app: FastifyInstance) {
         return reply.status(201).send({ campaignId: campaignRef.id })
       } catch (error) {
         console.error(error)
-        return reply.status(500).send({ error: 'Server error' })
+        return reply.status(500).send({ error: 'Erro no servidor' })
       }
     },
   )
