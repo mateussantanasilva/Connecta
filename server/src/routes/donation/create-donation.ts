@@ -1,20 +1,19 @@
-/* eslint-disable camelcase */
-import { FastifyInstance } from 'fastify'
-import { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
-import { db } from '../../lib/firebase'
-import { FieldValue } from 'firebase-admin/firestore'
-import fromZodSchema from 'zod-to-json-schema'
-import { ClientError } from '../../errors/client-error'
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import { db } from '../../lib/firebase';
+import { FieldValue } from 'firebase-admin/firestore';
+import fromZodSchema from 'zod-to-json-schema';
+import { ClientError } from '../../errors/client-error';
 
-export const donationStatus = z.enum(['pendente', 'confirmada', 'cancelada'])
+export const donationStatus = z.enum(['pendente', 'confirmada', 'cancelada']);
 
 export const donationSchema = z.object({
   item_name: z.string().min(1),
   quantity: z.number().min(1),
   measure: z.string().min(1),
   campaign_id: z.string().min(1),
-})
+});
 
 export async function createDonation(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -25,22 +24,25 @@ export async function createDonation(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { item_name, quantity, measure, campaign_id } =
-        request.body as z.infer<typeof donationSchema>
+      //const user_id = request.cookies.userId;
 
-      // const user_id = request.session?.user_id || request.user?.id;
+      ////if (!user_id) {
+        //return reply.status(401).send({ error: 'Usuário não autenticado' });
+     // }
+
+      const { item_name, quantity, measure, campaign_id } = request.body as z.infer<typeof donationSchema>;
 
       try {
-        const campaignRef = await db.collection('campaigns').doc(campaign_id).get()
+        const campaignRef = await db.collection('campaigns').doc(campaign_id).get();
 
         if (!campaignRef.exists) {
-          throw new ClientError('Campanha não encontrada')
+          throw new ClientError('Campanha não encontrada');
         }
 
-        const campaignData = campaignRef.data()
+        const campaignData = campaignRef.data();
 
         if (!campaignData) {
-          throw new ClientError('Dados da campanha não encontrados')
+          throw new ClientError('Dados da campanha não encontrados');
         }
 
         const itemExists = campaignData.items.find(
@@ -56,7 +58,7 @@ export async function createDonation(app: FastifyInstance) {
         
         if (!itemExists) {
           throw new ClientError(
-            'Item não encontrado ou  medida não corresponde.',
+            'Item não encontrado ou medida não corresponde.',
           )
         }
 
@@ -66,45 +68,41 @@ export async function createDonation(app: FastifyInstance) {
           )
         }
 
-        const currentAmountDonated = itemExists.amount_donated || 0
-        const updatedAmountDonated = currentAmountDonated + quantity
-        const remainingGoal = itemExists.goal - updatedAmountDonated
+        const currentAmountDonated = itemExists.amount_donated || 0;
+        const updatedAmountDonated = currentAmountDonated + quantity;
+        const remainingGoal = itemExists.goal - updatedAmountDonated;
 
         if (remainingGoal < 0) {
           throw new ClientError(
-            `A doação excede o objetivo para o item ${item_name}`,
-          )
+            `A doação excede o objetivo para o item ${item_name}`
+          );
         }
 
         const donationData = {
           item_name,
           quantity,
-         // user_id,
+         // user_id, 
           campaign_id,
           status: 'pendente',
           measure,
           donation_date: new Date().toISOString(),
-        }
+        };
 
-        const donationRef = await db.collection('donations').add(donationData)
-        const donationId = donationRef.id
+        const donationRef = await db.collection('donations').add(donationData);
+        const donationId = donationRef.id;
 
         const updatedDonationData = {
           ...donationData,
           id_donation: donationId,
-        }
-
-        console.log(
-          `Item: ${item_name} - Quantidade: ${quantity} - Restante: ${remainingGoal}`,
-        )
+        };
 
         const updatedItems = campaignData.items.map(
           (item: {
-            name: string
-            measure: string
-            amount_donated?: number
-            goal: number
-            status?: string
+            name: string;
+            measure: string;
+            amount_donated?: number;
+            goal: number;
+            status?: string;
           }) =>
             item.name === item_name && item.measure === measure
               ? {
@@ -112,48 +110,25 @@ export async function createDonation(app: FastifyInstance) {
                   amount_donated: updatedAmountDonated,
                   status:
                     updatedAmountDonated === item.goal
-                      ? campaignData.donations.some(
-                          (donation: {
-                            item_name: string
-                            measure: string
-                            status: string
-                          }) =>
-                            donation.item_name === item_name &&
-                            donation.measure === measure &&
-                            donation.status === 'pendente',
-                        )
-                        ? 'reservada'
-                        : 'concluida'
+                      ? 'concluida'
                       : item.status,
                 }
               : item,
-        )
-
-        const donationSnapshots = await db
-          .collection('donations')
-          .where('campaign_id', '==', campaign_id)
-          .get()
-
-        const totalDonations = donationSnapshots.size
-        const uniqueParticipants = new Set(
-          donationSnapshots.docs.map((doc) => doc.data().user_id)
-        ).size
+        );
 
         await db.collection('campaigns').doc(campaign_id).update({
           items: updatedItems,
           donations: FieldValue.arrayUnion(updatedDonationData),
-         // total_donations: totalDonations,
-          participants: uniqueParticipants,
-        })
+        });
 
-        return reply.status(201).send({ donationId })
+        return reply.status(201).send({ donationId });
       } catch (error) {
         if (error instanceof ClientError) {
-          return reply.status(400).send({ error: error.message })
+          return reply.status(400).send({ error: error.message });
         }
-        console.error(error)
-        return reply.status(500).send({ error: 'Erro no servidor' })
+        console.error(error);
+        return reply.status(500).send({ error: 'Erro no servidor' });
       }
     },
-  )
+  );
 }
