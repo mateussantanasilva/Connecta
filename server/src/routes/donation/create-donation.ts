@@ -14,7 +14,6 @@ export const donationSchema = z.object({
   quantity: z.number().min(1),
   measure: z.string().min(1),
   campaign_id: z.string().min(1),
-  user_id: z.string().min(1),
 })
 
 export async function createDonation(app: FastifyInstance) {
@@ -26,14 +25,13 @@ export async function createDonation(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { item_name, quantity, measure, campaign_id, user_id } =
+      const { item_name, quantity, measure, campaign_id } =
         request.body as z.infer<typeof donationSchema>
 
+      // const user_id = request.session?.user_id || request.user?.id;
+
       try {
-        const campaignRef = await db
-          .collection('campaigns')
-          .doc(campaign_id)
-          .get()
+        const campaignRef = await db.collection('campaigns').doc(campaign_id).get()
 
         if (!campaignRef.exists) {
           throw new ClientError('Campanha não encontrada')
@@ -46,15 +44,25 @@ export async function createDonation(app: FastifyInstance) {
         }
 
         const itemExists = campaignData.items.find(
-          (item: { name: string; measure: string; status: string }) =>
+          (item: { name: string; measure: string; }) =>
             item.name === item_name &&
-            item.measure === measure &&
-            item.status === 'disponível',
+            item.measure === measure
         )
-
+        
+        const itemStatus = campaignData.items.find(
+          (item: { status: string }) =>
+            item.status === 'disponível'
+        )
+        
         if (!itemExists) {
           throw new ClientError(
-            'Item não encontrado, medida não corresponde ou item não disponível',
+            'Item não encontrado ou  medida não corresponde.',
+          )
+        }
+
+        if (!itemStatus) {
+          throw new ClientError(
+            'Item não disponível para doação.',
           )
         }
 
@@ -71,7 +79,7 @@ export async function createDonation(app: FastifyInstance) {
         const donationData = {
           item_name,
           quantity,
-          user_id,
+         // user_id,
           campaign_id,
           status: 'pendente',
           measure,
@@ -79,7 +87,6 @@ export async function createDonation(app: FastifyInstance) {
         }
 
         const donationRef = await db.collection('donations').add(donationData)
-
         const donationId = donationRef.id
 
         const updatedDonationData = {
@@ -122,13 +129,22 @@ export async function createDonation(app: FastifyInstance) {
               : item,
         )
 
-        await db
-          .collection('campaigns')
-          .doc(campaign_id)
-          .update({
-            items: updatedItems,
-            donations: FieldValue.arrayUnion(updatedDonationData),
-          })
+        const donationSnapshots = await db
+          .collection('donations')
+          .where('campaign_id', '==', campaign_id)
+          .get()
+
+        const totalDonations = donationSnapshots.size
+        const uniqueParticipants = new Set(
+          donationSnapshots.docs.map((doc) => doc.data().user_id)
+        ).size
+
+        await db.collection('campaigns').doc(campaign_id).update({
+          items: updatedItems,
+          donations: FieldValue.arrayUnion(updatedDonationData),
+         // total_donations: totalDonations,
+          participants: uniqueParticipants,
+        })
 
         return reply.status(201).send({ donationId })
       } catch (error) {
