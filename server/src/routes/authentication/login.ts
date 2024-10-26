@@ -17,6 +17,7 @@ export async function login(app: FastifyInstance) {
                 const { name, email } = userInfo
                 const avatar = userInfo.picture
                 const userRef = await db.collection('users').where('email', '==', email).get()
+                var userId = ""
                 if (userRef.empty) {
                     const newUser = {
                     name,
@@ -24,19 +25,21 @@ export async function login(app: FastifyInstance) {
                     avatar,
                     role: 'doador'
                     }
-                    await db.collection('users').add(newUser);
+                    const newUserRef = await db.collection('users').add(newUser);
+                    userId = newUserRef.id
                 } else {
                     const userDoc = userRef.docs[0]
                     const userData = userDoc.data()
+                    userId = userDoc.id
                     if (userData.avatar !== avatar) {
                     // Atualiza a foto de perfil se for diferente
-                    await db.collection('users').doc(userDoc.id).update({
+                    await db.collection('users').doc(userId).update({
                         avatar
                     });
                     }
                 }
                 res.setCookie('token', accessToken, { httpOnly: true, path: '/' })
-                res.redirect('/')
+                res.status(201).send({userId: userId})
             } catch (error) {
                 console.error('Erro ao fazer login:', error)
                 res.status(500).send({ error: 'Não foi possível fazer login' })
