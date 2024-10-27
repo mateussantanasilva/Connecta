@@ -39,7 +39,6 @@ export const campaignSchema = z.object({
   goal: z.number().min(1),
   items: z.array(itemCampaignSchema).min(1),
   donations: z.array(donationSchema).optional().default([]),
-  grantees: z.array(z.string()).optional().default([]),  
 })
 
 export async function createCampaign(app: FastifyInstance) {
@@ -64,20 +63,10 @@ export async function createCampaign(app: FastifyInstance) {
         goal,
         items,
         donations,
-        grantees,
       } = request.body as z.infer<typeof campaignSchema>
 
       try {
-        if (grantees && grantees.length > 0) {
-          for (const grantee_id of grantees) {
-            const userRef = await db.collection('users').doc(grantee_id).get()
-
-            if (!userRef.exists) {
-              throw new ClientError(`Usuário com ID ${grantee_id} não encontrado!`)
-            }
-          }
-        }
-
+    
         const campaignData = {
           name,
           collection_point,
@@ -91,7 +80,6 @@ export async function createCampaign(app: FastifyInstance) {
           goal,
           items,
           donations,
-          grantees,
         }
 
         const campaignRef = await db.collection('campaigns').add(campaignData)
