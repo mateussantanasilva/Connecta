@@ -26,9 +26,6 @@ const campaignSchema = z.object({
   started_at: z.string().min(1),
   goal: z.string().min(1),
   items: z.array(itemCampaignSchema).min(1),
-  grantee_name: z.string(),
-  grantee_email: z.string().email(),
-  grantee_user_type: z.string().optional().default('grantee'),
 })
 
 const ParamsSchema = z.object({
@@ -58,9 +55,6 @@ export async function updateCampaign(app: FastifyInstance) {
         started_at,
         goal,
         items,
-        grantee_name,
-        grantee_email,
-        grantee_user_type,
       } = request.body as z.infer<typeof campaignSchema>
 
       try {
@@ -83,11 +77,6 @@ export async function updateCampaign(app: FastifyInstance) {
           started_at,
           goal,
           items,
-          grantee: {
-            full_name: grantee_name,
-            email: grantee_email,
-            user_type: grantee_user_type,
-          },
         }
 
         await campaignRef.update(updatedCampaignData)
