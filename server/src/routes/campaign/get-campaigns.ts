@@ -41,11 +41,6 @@ export async function getCampaigns(app: FastifyInstance) {
               goal: z.string(),
               items: z.array(itemCampaignSchema).min(1),
               donations: z.array(donationSchema).optional().default([]),
-              grantees: z.array(
-                z.object({
-                  name: z.string(),
-                })
-              ).optional()
             }),
           ),
         },
@@ -61,17 +56,6 @@ export async function getCampaigns(app: FastifyInstance) {
           campaignsSnapshot.docs.map(async (doc) => {
             const data = doc.data()
 
-            const grantees = await Promise.all(
-              (data.grantees || []).map(async (granteeId: string) => {
-                const userSnapshot = await db.collection('users').doc(granteeId).get()
-                if (userSnapshot.exists) {
-                  const userData = userSnapshot.data()
-                  return { name: userData?.name }
-                }
-                return { name: 'Usuário Não Existe' }
-              })
-            )
-
             return {
               id: doc.id,
               name: data.name,
@@ -86,7 +70,6 @@ export async function getCampaigns(app: FastifyInstance) {
               goal: data.goal,
               items: data.items || [],
               donations: data.donations || [],
-              grantees,  
             }
           })
         )
