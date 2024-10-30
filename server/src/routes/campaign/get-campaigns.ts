@@ -11,8 +11,6 @@ const itemCampaignSchema = z.object({
   measure: z.string().min(1),
 })
 
-
-
 export async function getCampaigns(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
     '/campaigns',
@@ -47,7 +45,10 @@ export async function getCampaigns(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { page, limit } = request.query as { page: number; limit: number }
+      const { page, limit } = request.query as {
+        page: number
+        limit: number
+      }
 
       try {
         const campaignsSnapshot = await db.collection('campaigns').get()
@@ -71,7 +72,7 @@ export async function getCampaigns(app: FastifyInstance) {
               items: data.items || [],
               donations: data.donations || [],
             }
-          })
+          }),
         )
 
         if (campaigns.length === 0) {
