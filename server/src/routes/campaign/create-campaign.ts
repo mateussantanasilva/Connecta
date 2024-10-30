@@ -14,7 +14,9 @@ const itemCampaignSchema = z.object({
   measure: z.string().min(1),
   goal: z.number().min(1),
   amount_donated: z.number().optional().default(0),
-  status: z.enum(['disponível', 'reservado', 'concluído']).default('disponível'),
+  status: z
+    .enum(['disponível', 'reservado', 'concluído'])
+    .default('disponível'),
 })
 
 export const donationSchema = z.object({
@@ -66,7 +68,6 @@ export async function createCampaign(app: FastifyInstance) {
       } = request.body as z.infer<typeof campaignSchema>
 
       try {
-    
         const campaignData = {
           name,
           collection_point,
