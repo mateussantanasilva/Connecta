@@ -9,6 +9,13 @@ export async function getDoneeRequests(app: FastifyInstance) {
         '/users/donee-requests',
         {
             schema: {
+                querystring: {
+                    type: 'object',
+                    properties: {
+                        page: { type: 'number', minimum: 1, default: 1 },
+                        limit: { type: 'number', minimum: 1, default: 8 },
+                    },
+                },
                 response: {
                     200: z.array(
                         z.object({
@@ -25,6 +32,7 @@ export async function getDoneeRequests(app: FastifyInstance) {
             }
         },
         async (req, res) => {
+            const { page, limit } = req.query as { page: number; limit: number }
             try {
                 const doneeRequestsSnapshot = await db.collection('donee-request').get()
                 const requests = await Promise.all(doneeRequestsSnapshot.docs.map(async (doc) => {
@@ -48,7 +56,12 @@ export async function getDoneeRequests(app: FastifyInstance) {
                 if(requests.length === 0) {
                     throw new ClientError("Não há solicitações no momento!")
                 }
-                return res.status(200).send(requests)
+
+                const startIndex = (page - 1) * limit
+                const endIndex = startIndex + limit
+                const paginatedRequests = requests.slice(startIndex, endIndex)
+
+                return res.status(200).send(paginatedRequests)
             } catch(e) {
                 console.error(e)
                 return res.status(500).send()
