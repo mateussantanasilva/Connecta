@@ -39,6 +39,7 @@ export async function login(app: FastifyInstance) {
                     }
                 }
                 res.setCookie('token', accessToken, { httpOnly: true, path: '/' })
+                res.setCookie('user', userId, { httpOnly: true, path: '/' })
                 res.status(201).send({userId: userId})
             } catch (error) {
                 console.error('Erro ao fazer login:', error)

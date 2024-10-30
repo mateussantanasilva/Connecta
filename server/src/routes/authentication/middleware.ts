@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify"
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { db } from '../../lib/firebase'
 
 export async function authenticationMiddleware(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().addHook('onRequest', async (req, res) => {
@@ -9,8 +10,15 @@ export async function authenticationMiddleware(app: FastifyInstance) {
           return
         }
         const token = req.cookies.token;
-        if (!token) {
+        const userId = req.cookies.user
+        const userSnapshot = await db.collection('users').doc(userId).get()
+        if (!token || !userId || !userSnapshot.exists) {
           return res.status(401).send({ error: 'Usuário não autenticado' })
         }
-    })
+        const userData = userSnapshot.data()
+        if (req.routeOptions.url && (req.routeOptions.url.includes('/admin/') && userData?.role !== 'administrador')) {
+          return res.status(403).send({ message: 'Acesso negado. Rota para administradores' })
+      }
+    }
+  )
 }

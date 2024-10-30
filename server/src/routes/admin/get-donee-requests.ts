@@ -6,7 +6,7 @@ import { db } from '../../lib/firebase'
 
 export async function getDoneeRequests(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
-        '/users/donee-requests',
+        '/admin/donee-requests',
         {
             schema: {
                 querystring: {

@@ -10,7 +10,7 @@ const ParamsSchema = z.object({
 
 export async function getAcceptDoneeRequest(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
-        '/users/donee-requests/:id/accept',
+        '/admin/donee-requests/:id/accept',
         {
             schema: {
                 params: {

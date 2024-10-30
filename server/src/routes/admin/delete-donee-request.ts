@@ -10,7 +10,7 @@ const ParamsSchema = z.object({
 
 export async function deleteDoneeRequest(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().delete(
-        '/users/donee-request/:id',
+        '/admin/donee-requests/:id',
         {
             schema: {
                 params: {
