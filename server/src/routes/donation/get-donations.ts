@@ -10,6 +10,13 @@ export async function getDonations(app: FastifyInstance) {
     '/donations',
     {
       schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { type: 'number', minimum: 1, default: 1 },
+            limit: { type: 'number', minimum: 1, default: 8 },
+          },
+        },
         response: {
           200: z.array(
             z.object({
@@ -26,6 +33,10 @@ export async function getDonations(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
+      const { page, limit } = request.query as {
+        page: number
+        limit: number
+      }
       try {
         const donationsSnapshot = await db.collection('donations').get()
 
@@ -47,7 +58,11 @@ export async function getDonations(app: FastifyInstance) {
           throw new ClientError('Sem doações no momento!')
         }
 
-        return reply.status(200).send(donations)
+        const startIndex = (page - 1) * limit
+        const endIndex = startIndex + limit
+        const paginatedCampaigns = donations.slice(startIndex, endIndex)
+
+        return reply.status(200).send(paginatedCampaigns)
       } catch (error) {
         console.error(error)
         return reply.status(500).send()
