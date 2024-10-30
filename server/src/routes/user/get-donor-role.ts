@@ -4,46 +4,39 @@ import { z } from "zod"
 import { db } from "../../lib/firebase"
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from "../../errors/client-error"
-
-const UserRole = z.enum(['doador', 'donatário', 'administrador'])
-
-const userSchema = z.object({
-    name: z.string(),
-    telephone: z.string().min(11).max(11),
-    address: z.string()
-})
+import { FieldValue } from "firebase-admin/firestore"
 
 const ParamsSchema = z.object({
     id: z.string(),
 })
 
-export async function updateUser(app: FastifyInstance) {
-    app.withTypeProvider<ZodTypeProvider>().put(
-        '/users/:id',
+export async function getDonorRole(app: FastifyInstance) {
+    app.withTypeProvider<ZodTypeProvider>().get(
+        '/users/:id/donor-role',
         {
             schema: {
-                params: fromZodSchema(ParamsSchema),
-                body: fromZodSchema(userSchema)
+                params: fromZodSchema(ParamsSchema)
             }
         },
         async (req, res) => {
             const {id} = req.params as z.infer<typeof ParamsSchema>
-            const {
-                name,
-                telephone,
-                address
-            } = req.body as z.infer<typeof userSchema>
             try {
                 const userRef = db.collection('users').doc(id)
                 const userDoc = await userRef.get()
+                const userData = userDoc.data()
                 if(!userDoc.exists) {
-                    throw new ClientError("Usuário não encontrao")
+                    throw new ClientError("Usuário não encontrado")
                 }
+                
                 const updatedUser = {
-                    name,
-                    telephone,
-                    address
+                    name: userData?.name,
+                    email: userData?.email,
+                    avatar: userData?.avatar,
+                    address: FieldValue.delete(),
+                    telephone: FieldValue.delete(),
+                    role: 'doador'
                 }
+
                 await userRef.update(updatedUser)
                 return res.status(200).send({id})
             } catch(e) {

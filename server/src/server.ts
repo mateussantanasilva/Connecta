@@ -10,6 +10,7 @@ import { userRoutes } from './routes/user/user-routes'
 import { donationRoutes } from './routes/donation/donation-routes'
 import { campaignRoutes } from './routes/campaign/campaign-routes'
 import { adminRoutes } from './routes/admin/admin-routes'
+import { getPublicMetrics } from './routes/public/get-public-metrics'
 
 const fastify = Fastify()
 
@@ -51,6 +52,7 @@ fastify.register(campaignRoutes)
 fastify.register(donationRoutes)
 fastify.register(userRoutes)
 fastify.register(adminRoutes)
+fastify.register(getPublicMetrics)
 
 fastify.listen({ port: 3333 }).then(() => {
   console.log('Server is running on port 3333')
