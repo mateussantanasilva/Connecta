@@ -11,7 +11,7 @@ const ParamsSchema = z.object({
 
 export async function getDonationByUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    '/donations/:user_id',
+    '/donations/user/:user_id',
     {
       schema: {
         params: {
