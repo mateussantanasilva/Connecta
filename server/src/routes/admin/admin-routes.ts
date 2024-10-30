@@ -5,6 +5,7 @@ import { deleteDoneeRequest } from "./delete-donee-request"
 import { getAcceptDoneeRequest } from "./get-accept-donee-request"
 import { getDoneeRequest } from "./get-donee-request"
 import { getDoneeRequests } from "./get-donee-requests"
+import { getDonees } from "./get-donees"
 
 export async function adminRoutes(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -13,4 +14,5 @@ export async function adminRoutes(app: FastifyInstance) {
         .register(getDoneeRequest)
         .register(getDoneeRequests)
         .register(getMetrics)
+        .register(getDonees)
 }
