@@ -1,6 +1,11 @@
 import { FastifyInstance } from "fastify"
 import { ZodTypeProvider } from "fastify-type-provider-zod"
 import { db } from "../../lib/firebase"
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
+const JWT_SECRET = process.env.SESSION_SECRET!
 
 export async function login(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
@@ -38,8 +43,9 @@ export async function login(app: FastifyInstance) {
                     });
                     }
                 }
+                const jwtToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' })
+                res.setCookie('user', jwtToken, { httpOnly: true, path: '/' })
                 res.setCookie('token', accessToken, { httpOnly: true, path: '/' })
-                res.setCookie('user', userId, { httpOnly: true, path: '/' })
                 res.status(201).send({userId: userId})
             } catch (error) {
                 console.error('Erro ao fazer login:', error)
