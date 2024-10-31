@@ -15,6 +15,7 @@ export const donationSchema = z.object({
   quantity: z.number().min(1),
   measure: z.string().min(1),
   campaign_id: z.string().min(1),
+  user_id: z.string().min(1),
 })
 
 export async function createDonation(app: FastifyInstance) {
@@ -26,31 +27,8 @@ export async function createDonation(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      // const user_id = request.cookies.userId;
-
-      // if (!user_id) {
-      // return reply.status(401).send({ error: 'Usuário não autenticado' });
-      // }
-
-      // const userRef = await db.collection('users').doc(user_id).get();
-
-      //  if (!userRef.exists) {
-      //   return reply.status(404).send({ error: 'Usuário não encontrado' });
-      // }
-
-      // const userData = userRef.data();
-
-      // if (userData?.role === 'donatário') {
-      //   return reply.status(403).send({ error: 'Usuário não permitido a realizar doações' });
-      //  }
-
-      // if (userData?.role !== 'doador' && userData?.role !== 'administrador') {
-      //   return reply.status(403).send({ error: 'Ação não autorizada para este usuário' });
-      //  }
-
-      const { item_name, quantity, measure, campaign_id } =
+      const { item_name, quantity, measure, campaign_id, user_id } =
         request.body as z.infer<typeof donationSchema>
-
       try {
         const campaignRef = await db
           .collection('campaigns')
@@ -59,6 +37,21 @@ export async function createDonation(app: FastifyInstance) {
 
         if (!campaignRef.exists) {
           throw new ClientError('Campanha não encontrada')
+        }
+
+        const userRef = await db
+          .collection('users')
+          .doc(user_id)
+          .get()
+
+        if (!userRef.exists) {
+          throw new ClientError('Usuário não encontrado')
+        }
+
+        const userData = userRef.data()
+        
+        if (userData?.role !== 'doador') {
+          return reply.status(403).send({ error: 'Ação não autorizada para este usuário' });
         }
 
         const campaignData = campaignRef.data()
@@ -99,7 +92,7 @@ export async function createDonation(app: FastifyInstance) {
         const donationData = {
           item_name,
           quantity,
-          // user_id,
+          user_id,
           campaign_id,
           status: 'pendente',
           measure,
