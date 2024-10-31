@@ -15,6 +15,8 @@ export async function getDonations(app: FastifyInstance) {
           properties: {
             page: { type: 'number', minimum: 1, default: 1 },
             limit: { type: 'number', minimum: 1, default: 8 },
+            filterBy: { type: 'string', default: '' },
+            filterValue: { type: 'string', default: '' }
           },
         },
         response: {
@@ -33,14 +35,17 @@ export async function getDonations(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { page, limit } = request.query as {
-        page: number
-        limit: number
+      const { page, limit, filterBy, filterValue } = request.query as {
+        page: number;
+        limit: number;
+        filterBy: string;
+        filterValue: string
       }
+   
       try {
         const donationsSnapshot = await db.collection('donations').get()
 
-        const donations = donationsSnapshot.docs.map((doc) => {
+        let donations = donationsSnapshot.docs.map((doc) => {
           const data = doc.data()
           return {
             id: doc.id,
@@ -58,6 +63,16 @@ export async function getDonations(app: FastifyInstance) {
           throw new ClientError('Sem doações no momento!')
         }
 
+        const filterIsValid = (key: string): key is keyof typeof donations[0] => {
+          return key in donations[0]
+        }
+
+          if (filterBy && filterValue && filterIsValid(filterBy)) {
+            donations = donations.filter(donee =>
+              donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+            )
+          }
+        
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
         const paginatedCampaigns = donations.slice(startIndex, endIndex)

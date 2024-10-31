@@ -14,6 +14,15 @@ export async function getDonationByUser(app: FastifyInstance) {
     '/donations/user/:user_id',
     {
       schema: {
+          querystring: {
+                    type: 'object',
+                    properties: {
+                        page: { type: 'number', minimum: 1, default: 1 },
+                        limit: { type: 'number', minimum: 1, default: 8 },
+                        filterBy: { type: 'string', default: '' },
+                        filterValue: { type: 'string', default: '' }
+                    },
+                },
         params: {
           type: 'object',
           properties: {
@@ -24,6 +33,8 @@ export async function getDonationByUser(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
+      const { page, limit, filterBy, filterValue } = request.query as { page: number; limit: number; filterBy: string; filterValue: string }
+
       try {
         const { user_id } = request.params as z.infer<typeof ParamsSchema>
 
@@ -38,7 +49,7 @@ export async function getDonationByUser(app: FastifyInstance) {
           .where('user_id', '==', user_id)
           .get()
 
-        const donations = donationsSnapshot.docs.map((doc) => ({
+        let donations = donationsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }))
@@ -47,7 +58,20 @@ export async function getDonationByUser(app: FastifyInstance) {
           throw new ClientError('Usuário sem doações no momento!')
         }
 
-        return reply.status(200).send(donations)
+        const filterIsValid = (key: string): key is keyof typeof donations[0] => {
+          return key in donations[0]
+        }
+                if (filterBy && filterValue && filterIsValid(filterBy)) {
+                    donations = donations.filter(donee =>
+                        donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+                    )
+                }
+
+        const startIndex = (page - 1) * limit
+        const endIndex = startIndex + limit
+        const paginatedDonationsByUser = donations.slice(startIndex, endIndex)
+        
+        return reply.status(200).send(paginatedDonationsByUser)
       } catch (error) {
         console.error(error)
         return reply.status(500).send()
