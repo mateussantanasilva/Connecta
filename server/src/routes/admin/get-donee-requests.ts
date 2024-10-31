@@ -14,6 +14,8 @@ export async function getDoneeRequests(app: FastifyInstance) {
                     properties: {
                         page: { type: 'number', minimum: 1, default: 1 },
                         limit: { type: 'number', minimum: 1, default: 8 },
+                        filterBy: { type: 'string', default: '' },
+                        filterValue: { type: 'string', default: '' }
                     },
                 },
                 response: {
@@ -32,10 +34,10 @@ export async function getDoneeRequests(app: FastifyInstance) {
             }
         },
         async (req, res) => {
-            const { page, limit } = req.query as { page: number; limit: number }
+            const { page, limit, filterBy, filterValue } = req.query as { page: number; limit: number; filterBy: string; filterValue: string }
             try {
                 const doneeRequestsSnapshot = await db.collection('donee-request').get()
-                const requests = await Promise.all(doneeRequestsSnapshot.docs.map(async (doc) => {
+                let requests = await Promise.all(doneeRequestsSnapshot.docs.map(async (doc) => {
                     const data = doc.data()
                     const userSnapshot = await db.collection('users').doc(data.userID).get()
 
@@ -55,6 +57,15 @@ export async function getDoneeRequests(app: FastifyInstance) {
                 }))
                 if(requests.length === 0) {
                     throw new ClientError("Não há solicitações no momento!")
+                }
+
+                const filterIsValid = (key: string): key is keyof typeof requests[0] => {
+                    return key in requests[0]
+                }
+                if (filterBy && filterValue && filterIsValid(filterBy)) {
+                    requests = requests.filter(request =>
+                        request[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+                    )
                 }
 
                 const startIndex = (page - 1) * limit

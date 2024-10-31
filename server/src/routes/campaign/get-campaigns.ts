@@ -21,6 +21,8 @@ export async function getCampaigns(app: FastifyInstance) {
           properties: {
             page: { type: 'number', minimum: 1, default: 1 },
             limit: { type: 'number', minimum: 1, default: 8 },
+            filterBy: { type: 'string', default: '' },
+            filterValue: { type: 'string', default: '' }
           },
         },
         response: {
@@ -45,15 +47,17 @@ export async function getCampaigns(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { page, limit } = request.query as {
+      const { page, limit, filterBy, filterValue } = request.query as {
         page: number
         limit: number
+        filterBy: string
+        filterValue: string
       }
 
       try {
         const campaignsSnapshot = await db.collection('campaigns').get()
 
-        const campaigns = await Promise.all(
+        let campaigns = await Promise.all(
           campaignsSnapshot.docs.map(async (doc) => {
             const data = doc.data()
 
@@ -77,6 +81,15 @@ export async function getCampaigns(app: FastifyInstance) {
 
         if (campaigns.length === 0) {
           throw new ClientError('Sem campanhas no momento!')
+        }
+
+        const filterIsValid = (key: string): key is keyof typeof campaigns[0] => {
+          return key in campaigns[0]
+        }
+        if (filterBy && filterValue && filterIsValid(filterBy)) {
+          campaigns = campaigns.filter(campaign =>
+            campaign[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+          )
         }
 
         const startIndex = (page - 1) * limit
