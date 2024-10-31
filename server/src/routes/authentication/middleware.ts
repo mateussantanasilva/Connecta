@@ -11,9 +11,12 @@ export async function authenticationMiddleware(app: FastifyInstance) {
         }
         const token = req.cookies.token;
         const userId = req.cookies.user
-        const userSnapshot = await db.collection('users').doc(userId).get()
-        if (!token || !userId || !userSnapshot.exists) {
+        if (!token || !userId) {
           return res.status(401).send({ error: 'Usuário não autenticado' })
+        }
+        const userSnapshot = await db.collection('users').doc(userId).get()
+        if (!userSnapshot.exists) {
+          return res.status(401).send({ error: 'Usuário não encontrado' })
         }
         const userData = userSnapshot.data()
         if (req.routeOptions.url && (req.routeOptions.url.includes('/admin/') && userData?.role !== 'administrador')) {
