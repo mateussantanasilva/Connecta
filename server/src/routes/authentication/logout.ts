@@ -5,7 +5,7 @@ export async function logout(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
         '/logout', async (req, res) => {
             res.clearCookie('token', { path: '/' })
-            res.redirect('/')
+            res.clearCookie('user', { path: '/' })
         }
     )
 }

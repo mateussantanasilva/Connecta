@@ -41,10 +41,6 @@ fastify.register(fastifyOAuth2, {
   callbackUri: 'http://localhost:3333/login/google/callback'
 })
 
-fastify.get('/', async (req, res) => {
-  return 'Hello World!'
-})
-
 authenticationMiddleware(fastify)
 fastify.register(login)
 fastify.register(logout)
