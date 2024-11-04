@@ -6,6 +6,11 @@ import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from '../../errors/client-error'
 import { donationStatus } from '../donation/create-donation'
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
+const JWT_SECRET = process.env.SESSION_SECRET!
 
 export const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
 
@@ -66,7 +71,10 @@ export async function createCampaign(app: FastifyInstance) {
         items,
         donations,
       } = request.body as z.infer<typeof campaignSchema>
-
+      const user = request.cookies.user
+      const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
+      const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
+      const userData = userSnapshot.data()
       try {
         const campaignData = {
           name,
@@ -83,6 +91,10 @@ export async function createCampaign(app: FastifyInstance) {
           donations,
         }
 
+        if (userData?.role == 'doador') {
+          return reply.status(403).send({ error: 'Ação não autorizada para este usuário' });
+        }
+        
         const campaignRef = await db.collection('campaigns').add(campaignData)
 
         if (!campaignRef) {

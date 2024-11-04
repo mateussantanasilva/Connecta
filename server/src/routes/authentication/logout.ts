@@ -6,6 +6,7 @@ export async function logout(app: FastifyInstance) {
         '/logout', async (req, res) => {
             res.clearCookie('token', { path: '/' })
             res.clearCookie('user', { path: '/' })
+            return res.redirect('/').status(200)
         }
     )
 }

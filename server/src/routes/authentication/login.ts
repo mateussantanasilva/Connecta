@@ -1,6 +1,11 @@
 import { FastifyInstance } from "fastify"
 import { ZodTypeProvider } from "fastify-type-provider-zod"
 import { db } from "../../lib/firebase"
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
+const JWT_SECRET = process.env.SESSION_SECRET!
 
 export async function login(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
@@ -18,6 +23,7 @@ export async function login(app: FastifyInstance) {
                 const avatar = userInfo.picture
                 const userRef = await db.collection('users').where('email', '==', email).get()
                 var userId = ""
+                var userRole = "doador"
                 if (userRef.empty) {
                     const newUser = {
                     name,
@@ -31,6 +37,7 @@ export async function login(app: FastifyInstance) {
                     const userDoc = userRef.docs[0]
                     const userData = userDoc.data()
                     userId = userDoc.id
+                    userRole = userData.role
                     if (userData.avatar !== avatar) {
                     // Atualiza a foto de perfil se for diferente
                     await db.collection('users').doc(userId).update({
@@ -38,9 +45,13 @@ export async function login(app: FastifyInstance) {
                     });
                     }
                 }
+                const jwtToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' })
+                res.setCookie('user', jwtToken, { httpOnly: true, path: '/' })
                 res.setCookie('token', accessToken, { httpOnly: true, path: '/' })
-                res.setCookie('user', userId, { httpOnly: true, path: '/' })
-                res.status(201).send({userId: userId})
+                if(userRole == 'administrador') {
+                    return res.redirect('/admin/panel').status(200)
+                }
+                return res.redirect('/users/profile').status(200)
             } catch (error) {
                 console.error('Erro ao fazer login:', error)
                 res.status(500).send({ error: 'Não foi possível fazer login' })

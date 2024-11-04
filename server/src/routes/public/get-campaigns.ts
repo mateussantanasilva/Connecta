@@ -3,7 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { ClientError } from '../../errors/client-error'
 import { db } from '../../lib/firebase'
-import { CampaignStatus } from './create-campaign'
+import { CampaignStatus } from '../campaign/create-campaign'
 import { donationSchema } from '../donation/create-donation'
 
 const itemCampaignSchema = z.object({
@@ -13,7 +13,7 @@ const itemCampaignSchema = z.object({
 
 export async function getCampaigns(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    '/campaigns',
+    '/public/campaigns',
     {
       schema: {
         querystring: {

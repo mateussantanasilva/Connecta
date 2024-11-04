@@ -10,7 +10,7 @@ const ParamsSchema = z.object({
 
 export async function getByIdCampaigns(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    '/campaigns/:campaignId',
+    '/public/campaigns/:campaignId',
     {
       schema: {
         params: {
