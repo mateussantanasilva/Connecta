@@ -4,6 +4,7 @@ import { getUserById } from "./get-user"
 import { deleteUser } from "./delete-user"
 import { createDoneeRequest } from "./create-donee-request"
 import { getDonorRole } from "./get-donor-role"
+import { getUserProfile } from "./get-profile"
 
 export async function userRoutes(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -11,4 +12,5 @@ export async function userRoutes(app: FastifyInstance) {
         .register(deleteUser)
         .register(createDoneeRequest)
         .register(getDonorRole)
+        .register(getUserProfile)
 }

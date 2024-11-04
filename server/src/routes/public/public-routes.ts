@@ -5,6 +5,7 @@ import { login } from '../authentication/login'
 import { logout } from '../authentication/logout'
 import { getCampaigns } from './get-campaigns'
 import { getByIdCampaigns } from './get-campaign'
+import { getRootRoute } from './get-root-route'
 
 export async function publicRoutes(app: FastifyInstance) {
   app
@@ -14,4 +15,5 @@ export async function publicRoutes(app: FastifyInstance) {
     .register(logout)
     .register(getCampaigns)
     .register(getByIdCampaigns)
+    .register(getRootRoute)
 }
