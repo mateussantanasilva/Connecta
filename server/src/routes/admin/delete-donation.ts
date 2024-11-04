@@ -11,7 +11,7 @@ const ParamsSchema = z.object({
 
 export async function deleteDonation(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().delete(
-    '/donations/:donation_id',
+    '/admin/donations/:donation_id',
     {
       schema: {
         params: {

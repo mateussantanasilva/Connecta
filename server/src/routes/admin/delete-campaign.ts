@@ -10,7 +10,7 @@ const ParamsCampaignIdSchema = z.object({
 
 export async function deleteCampaign(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().delete(
-    '/campaigns/:campaignId',
+    '/admin/campaigns/:campaignId',
     {
       schema: {
         params: {

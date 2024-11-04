@@ -4,7 +4,6 @@ import { createDonation } from './create-donation'
 import { getDonations } from './get-donations'
 import { getDonationByCampaign } from './get-donation-campaign'
 import { updateDonation } from './update-donation'
-import { deleteDonation } from './delete-donation'
 import { getDonationByUser } from './get-donation-user'
 
 export async function donationRoutes(app: FastifyInstance) {
@@ -14,6 +13,5 @@ export async function donationRoutes(app: FastifyInstance) {
     .register(getDonations)
     .register(getDonationByCampaign)
     .register(updateDonation)
-    .register(deleteDonation)
     .register(getDonationByUser)
 }
