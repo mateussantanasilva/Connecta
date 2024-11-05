@@ -16,6 +16,7 @@ dotenv.config()
 const googleClientId = process.env.GOOGLE_CLIENT_ID!
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET!
 const sessionSecret = process.env.SESSION_SECRET
+const PORT = process.env.PORT
 
 fastify.register(cors, {
   origin: '#',
@@ -46,6 +47,6 @@ fastify.register(donationRoutes)
 fastify.register(userRoutes)
 fastify.register(adminRoutes)
 
-fastify.listen({ port: 3333 }).then(() => {
-  console.log('Server is running on port 3333')
+fastify.listen({host: '0.0.0.0', port: PORT ? Number(PORT) : 3333}).then(() => {
+  console.log(`Server is running on port ${PORT ? PORT : 3333}`)
 })
