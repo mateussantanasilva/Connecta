@@ -37,7 +37,7 @@ fastify.register(fastifyOAuth2, {
     auth: fastifyOAuth2.GOOGLE_CONFIGURATION,
   },
   startRedirectPath: '/login/google',
-  callbackUri: 'http://localhost:3333/login/google/callback'
+  callbackUri: `${PORT ? 'https://connecta-1azy.onrender.com' : 'http://localhost:3333'}/login/google/callback`
 })
 
 authenticationMiddleware(fastify)
