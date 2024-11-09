@@ -19,19 +19,6 @@ export async function getDonations(app: FastifyInstance) {
             filterValue: { type: 'string', default: '' }
           },
         },
-        response: {
-          200: z.array(
-            z.object({
-              id: z.string(),
-              item_name: z.string(),
-              quantity: z.number(),
-              measure: z.string(),
-              campaign_id: z.string(),
-              status: donationStatus,
-              user_id: z.string(),
-            }),
-          ),
-        },
       },
     },
     async (request, reply) => {
@@ -59,10 +46,6 @@ export async function getDonations(app: FastifyInstance) {
           }
         })
 
-        if (donations.length === 0) {
-          throw new ClientError('Sem doações no momento!')
-        }
-
         const filterIsValid = (key: string): key is keyof typeof donations[0] => {
           return key in donations[0]
         }
@@ -80,7 +63,7 @@ export async function getDonations(app: FastifyInstance) {
         return reply.status(200).send(paginatedCampaigns)
       } catch (error) {
         console.error(error)
-        return reply.status(500).send()
+        return reply.status(500).send(new ClientError('Erro ao buscar doações'))
       }
     },
   )

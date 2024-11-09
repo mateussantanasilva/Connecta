@@ -24,12 +24,17 @@ export async function getUserById(app: FastifyInstance) {
         },
         async (req, res) => {
             const { id } = req.params as z.infer<typeof ParamsSchema>
-            const userDoc = await db.collection('users').doc(id).get()
-            if(!userDoc.exists) {
-                throw new ClientError("Usuário não encontrado")
+            try {
+                const userDoc = await db.collection('users').doc(id).get()
+                if(!userDoc.exists) {
+                    return res.status(404).send(new ClientError("Usuário não encontrado"))
+                }
+                const user = {id: userDoc.id, ...userDoc.data()}
+                return res.status(200).send(user)
+            } catch(e) {
+                console.error(e)
+                return res.status(500).send(new ClientError("Erro ao buscar usuário"))
             }
-            const user = {id: userDoc.id, ...userDoc.data()}
-            return res.status(200).send(user)
         }
     )
 }

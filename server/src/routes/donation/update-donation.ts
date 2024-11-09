@@ -33,12 +33,12 @@ export async function updateDonation(app: FastifyInstance) {
         const donationDoc = await donationRef.get()
 
         if (!donationDoc.exists) {
-          throw new ClientError('Doação não encontrada')
+          return reply.status(404).send(new ClientError('Doação não encontrada'))
         }
 
         const donationData = donationDoc.data()
         if (!donationData) {
-          throw new ClientError('Dados da doação não encontrados')
+          return reply.status(404).send(new ClientError('Dados da doação não encontrados'))
         }
 
         const item_name = donationData.item_name
@@ -52,13 +52,13 @@ export async function updateDonation(app: FastifyInstance) {
           .get()
 
         if (!campaignRef.exists) {
-          throw new ClientError('Campanha não encontrada')
+          return reply.status(404).send(new ClientError('Campanha não encontrada'))
         }
 
         const campaignData = campaignRef.data()
 
         if (!campaignData) {
-          throw new ClientError('Dados da campanha não encontrados')
+          return reply.status(404).send(new ClientError('Dados da campanha não encontrados'))
         }
 
         const updatedDonations = campaignData.donations.map(
@@ -113,7 +113,7 @@ export async function updateDonation(app: FastifyInstance) {
           })
         }
 
-        return reply.send({ donation_id })
+        return reply.status(200).send()
       } catch (error) {
         console.error(error)
         return reply

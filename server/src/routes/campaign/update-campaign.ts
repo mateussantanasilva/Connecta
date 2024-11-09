@@ -62,7 +62,7 @@ export async function updateCampaign(app: FastifyInstance) {
         const campaignDoc = await campaignRef.get()
 
         if (!campaignDoc.exists) {
-          throw new ClientError('Campanha não encontrada')
+          return reply.status(404).send(new ClientError('Campanha não encontrada'))
         }
 
         const updatedCampaignData = {
@@ -94,7 +94,7 @@ export async function updateCampaign(app: FastifyInstance) {
           await campaignRef.update({ status: 'fechada' })
         }
 
-        return reply.send({ campaignId })
+        return reply.status(200).send()
       } catch (error) {
         console.error(error)
         return reply

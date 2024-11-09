@@ -40,7 +40,7 @@ fastify.register(fastifyOAuth2, {
   callbackUri: `${PORT ? 'https://connecta-1azy.onrender.com' : 'http://localhost:3333'}/login/google/callback`
 })
 
-authenticationMiddleware(fastify)
+//authenticationMiddleware(fastify)
 fastify.register(publicRoutes)
 fastify.register(campaignRoutes)
 fastify.register(donationRoutes)

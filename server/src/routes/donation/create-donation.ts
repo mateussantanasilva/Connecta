@@ -43,17 +43,17 @@ export async function createDonation(app: FastifyInstance) {
           .get()
 
         if (!campaignRef.exists) {
-          throw new ClientError('Campanha não encontrada')
+          return reply.status(404).send(new ClientError('Campanha não encontrada'))
         }
         
         if (userData?.role != 'doador') {
-          return reply.status(403).send({ error: 'Ação não autorizada para este usuário' });
+          return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'));
         }
 
         const campaignData = campaignRef.data()
 
         if (!campaignData) {
-          throw new ClientError('Dados da campanha não encontrados')
+          return reply.status(404).send(new ClientError('Dados da campanha não encontrados'))
         }
 
         const itemExists = campaignData.items.find(
@@ -66,13 +66,13 @@ export async function createDonation(app: FastifyInstance) {
         )
 
         if (!itemExists) {
-          throw new ClientError(
-            'Item não encontrado ou medida não corresponde.',
-          )
+          return reply.status(400).send(new ClientError(
+            'Item não encontrado ou medida não corresponde.'
+          ))
         }
 
         if (!itemStatus) {
-          throw new ClientError('Item não disponível para doação.')
+          return reply.status(400).send(new ClientError('Item não disponível para doação.'))
         }
 
         const currentAmountDonated = itemExists.amount_donated || 0
@@ -80,9 +80,9 @@ export async function createDonation(app: FastifyInstance) {
         const remainingGoal = itemExists.goal - updatedAmountDonated
 
         if (remainingGoal < 0) {
-          throw new ClientError(
+          return reply.status(400).send(new ClientError(
             `A doação excede o objetivo para o item ${item_name}`,
-          )
+          ))
         }
 
         const donationData = {
@@ -130,13 +130,14 @@ export async function createDonation(app: FastifyInstance) {
             donations: FieldValue.arrayUnion(updatedDonationData),
           })
 
-        return reply.status(201).send({ donationId })
+        return reply.status(201).send()
       } catch (error) {
         if (error instanceof ClientError) {
-          return reply.status(400).send({ error: error.message })
+          console.error(error.message)
+          return reply.status(500).send(new ClientError('Erro ao criar doação'))
         }
         console.error(error)
-        return reply.status(500).send({ error: 'Erro no servidor' })
+        return reply.status(500).send(new ClientError('Erro ao criar doação'))
       }
     },
   )

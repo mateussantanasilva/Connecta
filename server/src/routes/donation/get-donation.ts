@@ -10,7 +10,7 @@ const ParamsSchema = z.object({
 
 export async function getDonation(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    '/donation/:donationId',
+    '/donations/:donationId',
     {
       schema: {
         params: {
@@ -22,18 +22,23 @@ export async function getDonation(app: FastifyInstance) {
         },
       },
     },
-    async (request) => {
-      const { donationId } = request.params as z.infer<typeof ParamsSchema>
+    async (request, response) => {
+      try {
+        const { donationId } = request.params as z.infer<typeof ParamsSchema>
 
-      const donationDoc = await db.collection('donations').doc(donationId).get()
+        const donationDoc = await db.collection('donations').doc(donationId).get()
 
-      if (!donationDoc.exists) {
-        throw new ClientError('Doação não encontrada')
+        if (!donationDoc.exists) {
+          return response.status(404).send(new ClientError('Doação não encontrada'))
+        }
+
+        const donation = { id: donationDoc.id, ...donationDoc.data() }
+
+        return response.status(200).send(donation)
+      } catch (error) {
+        console.error(error)
+        return response.status(500).send(new ClientError('Erro ao buscar doação por id'))
       }
-
-      const donation = { id: donationDoc.id, ...donationDoc.data() }
-
-      return { donation }
-    },
+    }
   )
 }

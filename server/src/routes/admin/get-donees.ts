@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { db } from '../../lib/firebase'
+import { ClientError } from '../../errors/client-error'
 
 const UserRole = z.enum(['doador', 'donatário', 'administrador'])
 
@@ -18,19 +19,6 @@ export async function getDonees(app: FastifyInstance) {
                         filterBy: { type: 'string', default: '' },
                         filterValue: { type: 'string', default: '' }
                     },
-                },
-                response: {
-                    200: z.array(
-                        z.object({
-                            id: z.string(),
-                            name: z.string(),
-                            email: z.string(),
-                            avatar: z.string(),
-                            role: UserRole,
-                            telephone: z.string(),
-                            address: z.string()
-                        })
-                    )
                 }
             }
         },
@@ -66,7 +54,7 @@ export async function getDonees(app: FastifyInstance) {
                 return res.status(200).send(paginatedDonees)
             } catch(e) {
                 console.error(e)
-                return res.status(500).send()
+                return res.status(500).send(new ClientError('Erro ao buscar todos os donatários'))
             }
         }
     )

@@ -28,18 +28,14 @@ export async function getAcceptDoneeRequest(app: FastifyInstance) {
                 const { id } = req.params as z.infer<typeof ParamsSchema>
                 const doneeRequestRef = await db.collection('donee-request').doc(id)
                 const doneeRequestSnapshot = await doneeRequestRef.get()
-
                 if(!doneeRequestSnapshot.exists) {
-                    throw new ClientError(`Solicitação ${doneeRequestSnapshot.id} inexistente`)
+                    return res.status(404).send(new ClientError(`Solicitação ${doneeRequestSnapshot.id} inexistente`))
                 }
-
                 const data = doneeRequestSnapshot.data()
                 const userRef = await db.collection('users').doc(data?.userID)
-
                 if(!(await userRef.get()).exists) {
-                    throw new ClientError(`Solicitação ${doneeRequestSnapshot.id} com usuário inexistente`)
+                    return res.status(404).send(new ClientError(`Solicitação ${doneeRequestSnapshot.id} com usuário inexistente`))
                 }
-
                 const updatedDoneeUser = {
                     role: 'donatário',
                     telephone: data?.telephone,
@@ -50,7 +46,7 @@ export async function getAcceptDoneeRequest(app: FastifyInstance) {
                 return res.status(200).send()
             } catch(e) {
                 console.error(e)
-                return res.status(500).send()
+                return res.status(500).send(new ClientError('Erro ao aceitar solicitação'))
             }
         }
     )

@@ -43,7 +43,7 @@ export async function getDonationByCampaign(app: FastifyInstance) {
           .get()
 
         if (!campaignDoc.exists) {
-          throw new ClientError('Campanha não encontrada')
+          return reply.status(404).send(new ClientError('Campanha não encontrada'))
         }
 
         const donationsSnapshot = await db
@@ -55,10 +55,6 @@ export async function getDonationByCampaign(app: FastifyInstance) {
           id: doc.id,
           ...doc.data(),
         }))
-
-        if (donations.length === 0) {
-          throw new ClientError('Campanha sem doações no momento!')
-        }
 
          const filterIsValid = (key: string): key is keyof typeof donations[0] => {
           return key in donations[0]
@@ -76,7 +72,7 @@ export async function getDonationByCampaign(app: FastifyInstance) {
         return reply.status(200).send(paginatedDonationsByCampaign)
       } catch (error) {
         console.error(error)
-        return reply.status(500).send()
+        return reply.status(500).send(new ClientError('Erro ao buscar doações por campanha'))
       }
     },
   )
