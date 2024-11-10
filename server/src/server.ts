@@ -19,7 +19,8 @@ const sessionSecret = process.env.SESSION_SECRET
 const PORT = process.env.PORT
 
 fastify.register(cors, {
-  origin: '#',
+  origin: 'https://connecta-test.vercel.app',
+  credentials: true,
 })
 
 fastify.register(fastifyCookie, {

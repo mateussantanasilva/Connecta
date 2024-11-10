@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { db } from '../../lib/firebase'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { ClientError } from '../../errors/client-error'
 
 export async function getMetrics(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
@@ -35,7 +36,7 @@ export async function getMetrics(app: FastifyInstance) {
                 res.status(200).send(MetricsSchema)
             } catch(e) {
                 console.error(e)
-                return res.status(500).send({error:'Server error'})
+                return res.status(500).send(new ClientError('Erro ao buscar métricas administrativas'))
             }
         }
     )

@@ -25,25 +25,6 @@ export async function getCampaigns(app: FastifyInstance) {
             filterValue: { type: 'string', default: '' }
           },
         },
-        response: {
-          200: z.array(
-            z.object({
-              id: z.string(),
-              name: z.string(),
-              collection_point: z.array(z.string()),
-              description: z.string(),
-              observation: z.string().nullable(),
-              categories: z.array(z.string()),
-              progress: z.number(),
-              status: CampaignStatus,
-              participants: z.number(),
-              started_at: z.string(),
-              goal: z.string(),
-              items: z.array(itemCampaignSchema).min(1),
-              donations: z.array(donationSchema).optional().default([]),
-            }),
-          ),
-        },
       },
     },
     async (request, reply) => {
@@ -79,10 +60,6 @@ export async function getCampaigns(app: FastifyInstance) {
           }),
         )
 
-        if (campaigns.length === 0) {
-          throw new ClientError('Sem campanhas no momento!')
-        }
-
         const filterIsValid = (key: string): key is keyof typeof campaigns[0] => {
           return key in campaigns[0]
         }
@@ -99,7 +76,7 @@ export async function getCampaigns(app: FastifyInstance) {
         return reply.status(200).send(paginatedCampaigns)
       } catch (error) {
         console.error(error)
-        return reply.status(500).send()
+        return reply.status(500).send(new ClientError("Erro ao buscar campanhas"))
       }
     },
   )

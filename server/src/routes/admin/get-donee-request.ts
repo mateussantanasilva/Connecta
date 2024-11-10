@@ -28,14 +28,14 @@ export async function getDoneeRequest(app: FastifyInstance) {
                 const doneeRequestSnapshot = await db.collection('donee-request').doc(id).get()
 
                 if(!doneeRequestSnapshot.exists) {
-                    throw new ClientError(`Solicitação ${doneeRequestSnapshot.id} inexistente`)
+                    return res.status(404).send(new ClientError(`Solicitação ${doneeRequestSnapshot.id} inexistente`))
                 }
 
                 const data = doneeRequestSnapshot.data()
                 const userSnapshot = await db.collection('users').doc(data?.userID).get()
 
                 if(!userSnapshot.exists) {
-                    throw new ClientError(`Solicitação ${doneeRequestSnapshot.id} com usuário inexistente`)
+                    return res.status(404).send(new ClientError(`Solicitação ${doneeRequestSnapshot.id} com usuário inexistente`))
                 }
                     
                 const userData = userSnapshot.data()
@@ -51,7 +51,7 @@ export async function getDoneeRequest(app: FastifyInstance) {
                 return res.status(200).send(request)
             } catch(e) {
                 console.error(e)
-                return res.status(500).send()
+                return res.status(500).send(new ClientError('Erro ao buscar solicitação por id'))
             }
         }
     )

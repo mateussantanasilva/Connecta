@@ -38,6 +38,10 @@ export async function createDoneeRequest(app: FastifyInstance) {
                 request
             } = req.body as z.infer<typeof doneeBodySchema>
             try {
+                const userDoc = await db.collection('users').doc(userID).get()
+                if(!userDoc.exists) {
+                    res.status(404).send(new ClientError("Usuário não encontrado"))
+                }
                 const doneeData = {
                     userID,
                     telephone,
@@ -46,12 +50,12 @@ export async function createDoneeRequest(app: FastifyInstance) {
                 }
                 const doneeRef = await db.collection('donee-request').add(doneeData)
                 if(!doneeRef) {
-                    throw new ClientError("Erro ao solicitar função donatário")
+                    res.status(400).send(new ClientError("Erro ao solicitar função donatário"))
                 }
                 return res.status(201).send()
             } catch(e) {
                 console.error(e)
-                return res.status(500).send({error:'Server error'})
+                return res.status(500).send(new ClientError("Erro ao solicitar função donatário"))
             }
         }
     )

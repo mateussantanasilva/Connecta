@@ -3,6 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod"
 import { db } from "../../lib/firebase"
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { ClientError } from "../../errors/client-error"
 
 dotenv.config()
 const JWT_SECRET = process.env.SESSION_SECRET!
@@ -45,16 +46,19 @@ export async function login(app: FastifyInstance) {
                     });
                     }
                 }
-                const jwtToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' })
-                res.setCookie('user', jwtToken, { httpOnly: true, path: '/' })
-                res.setCookie('token', accessToken, { httpOnly: true, path: '/' })
+                const userData = (await db.collection('users').doc(userId).get()).data()
+                const jwtUser = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' })
+                const jwtUserData = jwt.sign({ userData }, JWT_SECRET, { expiresIn: '1h' })
+                res.setCookie('user', jwtUser, { domain: 'connecta-1azy.onrender.com', path: '/', secure: true, httpOnly: true, sameSite: 'none' })
+                res.setCookie('userData', jwtUserData, { domain: 'connecta-1azy.onrender.com', path: '/', secure: true, httpOnly: true, sameSite: 'none' })
+                res.setCookie('token', accessToken, { domain: 'connecta-1azy.onrender.com', path: '/', secure: true, httpOnly: true, sameSite: 'none' })
                 if(userRole == 'administrador') {
-                    return res.redirect('/admin/panel').status(200)
+                    return res.redirect('https://connecta-test.vercel.app/administrador')
                 }
-                return res.redirect('/users/profile').status(200)
+                return res.redirect('https://connecta-test.vercel.app/perfil')
             } catch (error) {
                 console.error('Erro ao fazer login:', error)
-                res.status(500).send({ error: 'Não foi possível fazer login' })
+                res.status(500).send(new ClientError('Não foi possível fazer login'))
             }
         }
     )

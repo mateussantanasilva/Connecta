@@ -92,19 +92,19 @@ export async function createCampaign(app: FastifyInstance) {
         }
 
         if (userData?.role == 'doador') {
-          return reply.status(403).send({ error: 'Ação não autorizada para este usuário' });
+          return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'))
         }
         
         const campaignRef = await db.collection('campaigns').add(campaignData)
 
         if (!campaignRef) {
-          throw new ClientError('Erro ao criar campanha!')
+          return reply.status(503).send(new ClientError('Erro ao criar campanha'))
         }
 
-        return reply.status(201).send({ campaignId: campaignRef.id })
+        return reply.status(201).send()
       } catch (error) {
         console.error(error)
-        return reply.status(500).send({ error: 'Erro no servidor' })
+        return reply.status(500).send(new ClientError('Erro ao criar campanha'))
       }
     },
   )

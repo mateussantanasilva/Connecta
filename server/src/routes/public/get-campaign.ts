@@ -22,18 +22,23 @@ export async function getByIdCampaigns(app: FastifyInstance) {
         },
       },
     },
-    async (request) => {
-      const { campaignId } = request.params as z.infer<typeof ParamsSchema>
-
-      const campaignDoc = await db.collection('campaigns').doc(campaignId).get()
-
-      if (!campaignDoc.exists) {
-        throw new ClientError('Campanha não encontrada')
+    async (request, response) => {
+      try {
+        const { campaignId } = request.params as z.infer<typeof ParamsSchema>
+        
+        const campaignDoc = await db.collection('campaigns').doc(campaignId).get()
+        
+        if (!campaignDoc.exists) {
+          return response.status(404).send(new ClientError('Campanha não encontrada'))
+        }
+        
+        const campaign = { id: campaignDoc.id, ...campaignDoc.data() }
+        
+        return response.status(200).send(campaign)
+      } catch (error) {
+        console.error(error)
+        return response.status(500).send(new ClientError('Erro ao buscar campanha por id'))
       }
-
-      const campaign = { id: campaignDoc.id, ...campaignDoc.data() }
-
-      return { campaign }
     },
   )
 }

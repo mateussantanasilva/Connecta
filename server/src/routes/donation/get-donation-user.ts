@@ -41,7 +41,7 @@ export async function getDonationByUser(app: FastifyInstance) {
         const user_doc = await db.collection('users').doc(user_id).get()
 
         if (!user_doc.exists) {
-          throw new ClientError('Usuário não encontrada')
+          return reply.status(404).send(new ClientError('Usuário não encontrado'))
         }
 
         const donationsSnapshot = await db
@@ -53,10 +53,6 @@ export async function getDonationByUser(app: FastifyInstance) {
           id: doc.id,
           ...doc.data(),
         }))
-
-        if (donations.length === 0) {
-          throw new ClientError('Usuário sem doações no momento!')
-        }
 
         const filterIsValid = (key: string): key is keyof typeof donations[0] => {
           return key in donations[0]
@@ -74,7 +70,7 @@ export async function getDonationByUser(app: FastifyInstance) {
         return reply.status(200).send(paginatedDonationsByUser)
       } catch (error) {
         console.error(error)
-        return reply.status(500).send()
+        return reply.status(500).send(new ClientError('Erro ao buscar doações por usuário'))
       }
     },
   )

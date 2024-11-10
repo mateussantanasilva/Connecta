@@ -25,7 +25,7 @@ export async function getDonorRole(app: FastifyInstance) {
                 const userDoc = await userRef.get()
                 const userData = userDoc.data()
                 if(!userDoc.exists) {
-                    throw new ClientError("Usuário não encontrado")
+                    return res.status(404).send(new ClientError("Usuário não encontrado"))
                 }
                 
                 const updatedUser = {
@@ -38,10 +38,10 @@ export async function getDonorRole(app: FastifyInstance) {
                 }
 
                 await userRef.update(updatedUser)
-                return res.status(200).send({id})
+                return res.status(200).send()
             } catch(e) {
                 console.error(e)
-                return res.status(500).send()
+                return res.status(500).send(new ClientError("Erro ao solicitar função doador"))
             }
         }
     )

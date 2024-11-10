@@ -17,19 +17,6 @@ export async function getDoneeRequests(app: FastifyInstance) {
                         filterBy: { type: 'string', default: '' },
                         filterValue: { type: 'string', default: '' }
                     },
-                },
-                response: {
-                    200: z.array(
-                        z.object({
-                            id: z.string(),
-                            name: z.string(),
-                            email: z.string(),
-                            avatar: z.string(),
-                            telephone: z.string(),
-                            address: z.string(),
-                            request: z.string()
-                        })
-                    )
                 }
             }
         },
@@ -42,7 +29,7 @@ export async function getDoneeRequests(app: FastifyInstance) {
                     const userSnapshot = await db.collection('users').doc(data.userID).get()
 
                     if(!userSnapshot.exists) {
-                        throw new ClientError(`Solicitação ${doc.id} com usuário inexistente`)
+                        return res.status(404).send(new ClientError(`Solicitação ${doc.id} com usuário inexistente`))
                     }
                     const userData = userSnapshot.data()
                     return {
@@ -55,9 +42,6 @@ export async function getDoneeRequests(app: FastifyInstance) {
                         request: data.request
                     }
                 }))
-                if(requests.length === 0) {
-                    throw new ClientError("Não há solicitações no momento!")
-                }
 
                 const filterIsValid = (key: string): key is keyof typeof requests[0] => {
                     return key in requests[0]
@@ -75,7 +59,7 @@ export async function getDoneeRequests(app: FastifyInstance) {
                 return res.status(200).send(paginatedRequests)
             } catch(e) {
                 console.error(e)
-                return res.status(500).send()
+                return res.status(500).send(new ClientError('Erro ao buscar todas as solicitações'))
             }
         }
     )
