@@ -9,8 +9,8 @@ import { donationStatus } from '../donation/create-donation'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
-dotenv.config()
-const JWT_SECRET = process.env.SESSION_SECRET!
+//dotenv.config()
+//const JWT_SECRET = process.env.SESSION_SECRET!
 
 export const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
 
@@ -42,7 +42,6 @@ export const campaignSchema = z.object({
   progress: z.number().min(0).max(100),
   status: CampaignStatus,
   participants: z.number().nonnegative(),
-  started_at: z.string().min(1),
   goal: z.number().min(1),
   items: z.array(itemCampaignSchema).min(1),
   donations: z.array(donationSchema).optional().default([]),
@@ -66,15 +65,14 @@ export async function createCampaign(app: FastifyInstance) {
         progress,
         status,
         participants,
-        started_at,
         goal,
         items,
         donations,
       } = request.body as z.infer<typeof campaignSchema>
       const user = request.cookies.user
-      const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
-      const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
-      const userData = userSnapshot.data()
+     // const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
+      //const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
+      //const userData = userSnapshot.data()
       try {
         const campaignData = {
           name,
@@ -85,15 +83,15 @@ export async function createCampaign(app: FastifyInstance) {
           progress,
           status,
           participants,
-          started_at: new Date(started_at),
+          started_at: new Date().toISOString(),
           goal,
           items,
           donations,
         }
 
-        if (userData?.role == 'doador') {
-          return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'))
-        }
+      //  if (userData?.role == 'doador') {
+      //    return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'))
+      //  }
         
         const campaignRef = await db.collection('campaigns').add(campaignData)
 
@@ -101,7 +99,7 @@ export async function createCampaign(app: FastifyInstance) {
           return reply.status(503).send(new ClientError('Erro ao criar campanha'))
         }
 
-        return reply.status(201).send()
+        return reply.status(201).send(campaignData)
       } catch (error) {
         console.error(error)
         return reply.status(500).send(new ClientError('Erro ao criar campanha'))
