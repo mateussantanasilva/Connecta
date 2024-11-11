@@ -47,12 +47,12 @@ export async function login(app: FastifyInstance) {
                     }
                 }
                 const jwtUser = await jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' })
-                res.setCookie('user', jwtUser, { path: '/', httpOnly: false, secure: true, sameSite: 'none' })
-                res.setCookie('token', accessToken, { path: '/', httpOnly: false, secure: true, sameSite: 'none' })
+                res.setCookie('user', jwtUser, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
+                res.setCookie('token', accessToken, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
                 if(userRole == 'administrador') {
-                    return res.redirect('https://connecta-test.vercel.app/administrador')
+                    return res.redirect(`https://connecta-test.vercel.app/administrador?token=${encodeURIComponent(accessToken)}&user=${encodeURIComponent(jwtUser)}`)
                 }
-                return res.redirect('https://connecta-test.vercel.app/perfil')
+                return res.redirect(`https://connecta-test.vercel.app/perfil?token=${encodeURIComponent(accessToken)}&user=${encodeURIComponent(jwtUser)}`)
             } catch (error) {
                 console.error('Erro ao fazer login:', error)
                 res.status(500).send(new ClientError('Não foi possível fazer login'))
