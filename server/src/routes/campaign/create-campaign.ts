@@ -42,7 +42,6 @@ export const campaignSchema = z.object({
   progress: z.number().min(0).max(100),
   status: CampaignStatus,
   participants: z.number().nonnegative(),
-  started_at: z.string().min(1),
   goal: z.number().min(1),
   items: z.array(itemCampaignSchema).min(1),
   donations: z.array(donationSchema).optional().default([]),
@@ -66,7 +65,6 @@ export async function createCampaign(app: FastifyInstance) {
         progress,
         status,
         participants,
-        started_at,
         goal,
         items,
         donations,
@@ -85,7 +83,7 @@ export async function createCampaign(app: FastifyInstance) {
           progress,
           status,
           participants,
-          started_at: new Date(started_at),
+          started_at: new Date().toISOString(),
           goal,
           items,
           donations,
@@ -101,7 +99,7 @@ export async function createCampaign(app: FastifyInstance) {
           return reply.status(503).send(new ClientError('Erro ao criar campanha'))
         }
 
-        return reply.status(201).send()
+        return reply.status(201).send(campaignData)
       } catch (error) {
         console.error(error)
         return reply.status(500).send(new ClientError('Erro ao criar campanha'))

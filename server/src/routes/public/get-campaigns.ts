@@ -3,13 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { ClientError } from '../../errors/client-error'
 import { db } from '../../lib/firebase'
-import { CampaignStatus } from '../campaign/create-campaign'
-import { donationSchema } from '../donation/create-donation'
 
-const itemCampaignSchema = z.object({
-  name: z.string().min(1),
-  measure: z.string().min(1),
-})
 
 export async function getCampaigns(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
@@ -54,8 +48,6 @@ export async function getCampaigns(app: FastifyInstance) {
               participants: data.participants,
               started_at: data.started_at,
               goal: data.goal,
-              items: data.items || [],
-              donations: data.donations || [],
             }
           }),
         )
