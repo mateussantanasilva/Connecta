@@ -50,6 +50,7 @@ export async function login(app: FastifyInstance) {
                 const userData = (await db.collection('users').doc(userId).get()).data()
                 const jwtUserData = await jwt.sign({ userData }, JWT_SECRET, { expiresIn: '1h' })
                 res.setCookie('user', jwtUser, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
+                res.setCookie('userData', jwtUserData, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
                 res.setCookie('token', accessToken, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
                 if(userRole == 'administrador') {
                     return res.redirect(`https://connecta-test.vercel.app/administrador?token=${encodeURIComponent(accessToken)}&userId=${encodeURIComponent(jwtUser)}&userData=${encodeURIComponent(jwtUserData)}`)
