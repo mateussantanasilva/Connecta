@@ -7,6 +7,7 @@ import { ClientError } from "../../errors/client-error"
 
 dotenv.config()
 const JWT_SECRET = process.env.SESSION_SECRET!
+const redirectURL = process.env.DEV ? 'https://connecta-test.vercel.app' : 'http://localhost:3000'
 
 export async function login(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
@@ -46,16 +47,14 @@ export async function login(app: FastifyInstance) {
                     });
                     }
                 }
-                const jwtUser = await jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' })
                 const userData = (await db.collection('users').doc(userId).get()).data()
-                const jwtUserData = await jwt.sign({ userData }, JWT_SECRET, { expiresIn: '1h' })
+                const jwtUser = await jwt.sign({ userId, ...userData }, JWT_SECRET, { expiresIn: '1h' })
                 res.setCookie('user', jwtUser, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
-                res.setCookie('userData', jwtUserData, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
                 res.setCookie('token', accessToken, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
                 if(userRole == 'administrador') {
-                    return res.redirect(`https://connecta-test.vercel.app/administrador?token=${encodeURIComponent(accessToken)}&userId=${encodeURIComponent(jwtUser)}&userData=${encodeURIComponent(jwtUserData)}`)
+                    return res.redirect(`${redirectURL}/administrador?token=${encodeURIComponent(accessToken)}&user=${encodeURIComponent(jwtUser)}`)
                 }
-                return res.redirect(`https://connecta-test.vercel.app/perfil?token=${encodeURIComponent(accessToken)}&user=${encodeURIComponent(jwtUser)}&userData=${encodeURIComponent(jwtUserData)}`)
+                return res.redirect(`${redirectURL}/perfil?token=${encodeURIComponent(accessToken)}&user=${encodeURIComponent(jwtUser)}`)
             } catch (error) {
                 console.error('Erro ao fazer login:', error)
                 res.status(500).send(new ClientError('Não foi possível fazer login'))
