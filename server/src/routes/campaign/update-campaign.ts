@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from '../../errors/client-error'
+import { campaignSection } from './create-campaign'
 
 const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
 
@@ -25,7 +26,7 @@ const campaignSchema = z.object({
   participants: z.number().nonnegative(),
   started_at: z.string().min(1),
   goal: z.string().min(1),
-  items: z.array(itemCampaignSchema).min(1),
+  section: z.array(campaignSection).min(1),
 })
 
 const ParamsSchema = z.object({
@@ -54,7 +55,7 @@ export async function updateCampaign(app: FastifyInstance) {
         participants,
         started_at,
         goal,
-        items,
+        section,
       } = request.body as z.infer<typeof campaignSchema>
 
       try {
@@ -76,15 +77,15 @@ export async function updateCampaign(app: FastifyInstance) {
           participants,
           started_at,
           goal,
-          items,
+          section,
         }
 
         await campaignRef.update(updatedCampaignData)
 
-        const totalItems = items.length
-        const completedItems = items.filter(
-          (item) => item.status === 'concluído',
-        ).length
+        const totalItems = section.flatMap(sec => sec.items).length
+        const completedItems = section.flatMap(sec => sec.items).filter(
+          item => item.status === 'concluído').length
+
 
         const progressPercentage = (completedItems / totalItems) * 100
 

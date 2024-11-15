@@ -24,6 +24,11 @@ const itemCampaignSchema = z.object({
     .default('disponível'),
 })
 
+export const campaignSection = z.object({
+  category: z.string().min(1),
+  items: z.array(itemCampaignSchema).min(1),
+})
+
 export const donationSchema = z.object({
   id_donation: z.string().min(1),
   item_name: z.string().min(1),
@@ -43,7 +48,7 @@ export const campaignSchema = z.object({
   status: CampaignStatus,
   participants: z.number().nonnegative(),
   goal: z.number().min(1),
-  items: z.array(itemCampaignSchema).min(1),
+  section: z.array(campaignSection).min(1),
   donations: z.array(donationSchema).optional().default([]),
 })
 
@@ -66,7 +71,7 @@ export async function createCampaign(app: FastifyInstance) {
         status,
         participants,
         goal,
-        items,
+        section,
         donations,
       } = request.body as z.infer<typeof campaignSchema>
       const user = request.cookies.user
@@ -85,12 +90,12 @@ export async function createCampaign(app: FastifyInstance) {
           participants,
           started_at: new Date().toISOString(),
           goal,
-          items,
+          section,
           donations,
         }
 
-        if (userData?.role == 'doador') {
-          return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'))
+       if (userData?.role == 'doador') {
+         return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'))
         }
         
         const campaignRef = await db.collection('campaigns').add(campaignData)
