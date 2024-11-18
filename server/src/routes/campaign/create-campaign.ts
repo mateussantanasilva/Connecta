@@ -47,9 +47,9 @@ export const campaignSchema = z.object({
   progress: z.number().min(0).max(100),
   status: CampaignStatus,
   participants: z.number().nonnegative(),
-  goal: z.number().min(1),
   section: z.array(campaignSection).min(1),
   donations: z.array(donationSchema).optional().default([]),
+   participants_ids: z.array(z.string()).default([])
 })
 
 export async function createCampaign(app: FastifyInstance) {
@@ -70,9 +70,9 @@ export async function createCampaign(app: FastifyInstance) {
         progress,
         status,
         participants,
-        goal,
         section,
         donations,
+        participants_ids,
       } = request.body as z.infer<typeof campaignSchema>
       const user = request.cookies.user
       const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
@@ -89,9 +89,9 @@ export async function createCampaign(app: FastifyInstance) {
           status,
           participants,
           started_at: new Date().toISOString(),
-          goal,
           section,
           donations,
+          participants_ids,
         }
 
        if (userData?.role == 'doador') {

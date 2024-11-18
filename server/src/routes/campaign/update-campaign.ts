@@ -25,8 +25,8 @@ const campaignSchema = z.object({
   status: CampaignStatus,
   participants: z.number().nonnegative(),
   started_at: z.string().min(1),
-  goal: z.string().min(1),
   section: z.array(campaignSection).min(1),
+  closed_at: z.string().optional(),
 })
 
 const ParamsSchema = z.object({
@@ -54,7 +54,6 @@ export async function updateCampaign(app: FastifyInstance) {
         status,
         participants,
         started_at,
-        goal,
         section,
       } = request.body as z.infer<typeof campaignSchema>
 
@@ -76,7 +75,6 @@ export async function updateCampaign(app: FastifyInstance) {
           status,
           participants,
           started_at,
-          goal,
           section,
         }
 
@@ -86,13 +84,16 @@ export async function updateCampaign(app: FastifyInstance) {
         const completedItems = section.flatMap(sec => sec.items).filter(
           item => item.status === 'concluído').length
 
-
         const progressPercentage = (completedItems / totalItems) * 100
 
         await campaignRef.update({ progress: progressPercentage })
 
         if (completedItems === totalItems) {
-          await campaignRef.update({ status: 'fechada' })
+          const currentDate = new Date().toISOString() 
+          await campaignRef.update({
+            status: 'fechada',
+            closed_at: currentDate, 
+          })
         }
 
         return reply.status(200).send()
