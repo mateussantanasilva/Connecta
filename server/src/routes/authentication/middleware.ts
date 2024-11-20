@@ -15,12 +15,11 @@ export async function authenticationMiddleware(app: FastifyInstance) {
         if (req.routeOptions.url && (authRoutes.includes(req.routeOptions.url) || req.routeOptions.url.includes('/public/'))) {
           return
         }
-        const token = req.cookies.token
-        const user = req.cookies.user
-        if (!token || !user) {
+        const user = req.headers['user']
+        if (!user) {
           return res.status(401).send(new ClientError('Usuário não autenticado'))
         }
-        const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
+        const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
         const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
         if (!userSnapshot.exists) {
           return res.status(401).send(new ClientError('Usuário não encontrado'))

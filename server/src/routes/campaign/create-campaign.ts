@@ -74,8 +74,13 @@ export async function createCampaign(app: FastifyInstance) {
         donations,
         participants_ids,
       } = request.body as z.infer<typeof campaignSchema>
-      const user = request.cookies.user
-      const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
+      const user = request.headers['user']
+
+      if (!user) {
+        return reply.status(401).send(new ClientError('Erro de autenticação'))
+      }
+
+      const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
       const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
       const userData = userSnapshot.data()
       try {
