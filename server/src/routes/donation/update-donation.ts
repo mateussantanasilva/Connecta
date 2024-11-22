@@ -42,6 +42,7 @@ export async function updateDonation(app: FastifyInstance) {
         }
 
         const item_name = donationData.item_name
+        const section_id = donationData.section_id // Agora estamos lidando com section_id
         const campaign_id = donationData.campaign_id
 
         await donationRef.update({ status })
@@ -61,17 +62,23 @@ export async function updateDonation(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Dados da campanha não encontrados'))
         }
 
-        const updatedDonations = campaignData.donations.map(
-          (donation: { id_donation: string; status: string }) => {
-            if (donation.id_donation === donation_id) {
-              return { ...donation, status }
-            }
-            return donation
-          },
-        )
+        const section = campaignData.sections.find((section: { id: string }) => section.id === section_id)
+        
+        if (!section) {
+          return reply.status(404).send(new ClientError('Seção não encontrada'))
+        }
+
+        const updatedDonations = section.donations.map((donation: { id_donation: string; status: string }) => {
+          if (donation.id_donation === donation_id) {
+            return { ...donation, status }
+          }
+          return donation
+        })
+
+        section.donations = updatedDonations
 
         await db.collection('campaigns').doc(campaign_id).update({
-          donations: updatedDonations,
+          sections: campaignData.sections, 
         })
 
         const pendingDonations = updatedDonations.filter(
