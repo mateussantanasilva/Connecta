@@ -32,15 +32,15 @@ export async function createDonation(app: FastifyInstance) {
     async (request, reply) => {
       const { item_name, quantity, measure, campaign_id } =
         request.body as z.infer<typeof donationSchema>
-      const user = request.headers['user']
-
+      
+        const user = request.headers['user']
       if (!user) {
         return reply.status(401).send(new ClientError('Erro de autenticação'))
       }
-
       const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
-      const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
-      const userData = userSnapshot.data()
+      
+     const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
+     const userData = userSnapshot.data()
       try {
         const campaignRef = await db
           .collection('campaigns')
@@ -50,8 +50,8 @@ export async function createDonation(app: FastifyInstance) {
         if (!campaignRef.exists) {
           return reply.status(404).send(new ClientError('Campanha não encontrada'))
         }
-        
-        if (userData?.role != 'doador') {
+
+         if (userData?.role != 'doador') {
           return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'));
         }
 
@@ -61,12 +61,16 @@ export async function createDonation(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Dados da campanha não encontrados'))
         }
 
-        const itemExists = campaignData.items.find(
+        const itemExists = campaignData.section?.flatMap(
+          (section: { items: { name: string; measure: string }[] }) => section.items
+        ).find(
           (item: { name: string; measure: string }) =>
             item.name === item_name && item.measure === measure,
         )
 
-        const itemStatus = campaignData.items.find(
+        const itemStatus = campaignData.section?.flatMap(
+          (section: { items: { status: string }[] }) => section.items
+        ).find(
           (item: { status: string }) => item.status === 'disponível',
         )
 
@@ -86,7 +90,7 @@ export async function createDonation(app: FastifyInstance) {
 
         if (remainingGoal < 0) {
           return reply.status(400).send(new ClientError(
-            `A doação excede o objetivo para o item ${item_name}`,
+            `A doação excede o objetivo para o item ${item_name}`
           ))
         }
 
@@ -107,35 +111,48 @@ export async function createDonation(app: FastifyInstance) {
           id_donation: donationId,
         }
 
-        const updatedItems = campaignData.items.map(
-          (item: {
-            name: string
-            measure: string
-            amount_donated?: number
-            goal: number
-            status?: string
-          }) =>
-            item.name === item_name && item.measure === measure
-              ? {
-                  ...item,
-                  amount_donated: updatedAmountDonated,
-                  status:
-                    updatedAmountDonated === item.goal
-                      ? 'concluida'
-                      : item.status,
-                }
-              : item,
+        const updatedSections = campaignData.section?.map(
+          (section: {
+            items: {
+              name: string;
+              measure: string;
+              amount_donated?: number;
+              goal: number;
+              status?: string
+            }[]
+          }) => ({
+            ...section,
+            items: section.items.map(
+              (item: {
+                name: string;
+                measure: string;
+                amount_donated?: number;
+                goal: number;
+                status?: string
+              }) =>
+                item.name === item_name && item.measure === measure
+                  ? {
+                      ...item,
+                      amount_donated: updatedAmountDonated,
+                      status:
+                        updatedAmountDonated === item.goal
+                          ? 'concluida'
+                          : item.status,
+                    }
+                  : item,
+            ),
+          })
         )
 
         await db
           .collection('campaigns')
           .doc(campaign_id)
           .update({
-            items: updatedItems,
+            section: updatedSections,
             donations: FieldValue.arrayUnion(updatedDonationData),
           })
 
-        return reply.status(201).send()
+        return reply.status(201).send(donationData)
       } catch (error) {
         if (error instanceof ClientError) {
           console.error(error.message)
