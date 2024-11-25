@@ -1,5 +1,5 @@
 import { HeartHandshake } from 'lucide-react'
-import { Button } from '../../button'
+import { Button } from '../button'
 import Image from 'next/image'
 import Hand1Img from '@/assets/get-started-1.png'
 import Hand2Img from '@/assets/get-started-2.png'

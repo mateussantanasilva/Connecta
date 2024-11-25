@@ -1,11 +1,11 @@
 import { Header } from '@/components/sections/header'
 import { Footer } from '@/components/sections/footer'
-import { Hero } from '@/components/sections/home/hero'
-import { About } from '@/components/sections/home/about'
-import { Choose } from '@/components/sections/home/choose'
-import { GetStarted } from '@/components/sections/home/get-started'
-import { Resources } from '@/components/sections/home/resources'
-import { LatestCampaigns } from '@/components/sections/home/latest-campaigns'
+import { Hero } from '@/components/home/hero'
+import { About } from '@/components/home/about'
+import { Choose } from '@/components/home/choose'
+import { GetStarted } from '@/components/home/get-started'
+import { Resources } from '@/components/home/resources'
+import { LatestCampaigns } from '@/components/home/latest-campaigns'
 
 export default function Home() {
   return (

@@ -1,11 +1,13 @@
+import { Campaign } from '@/@types/Campaign'
 import { Button } from '@/components/button'
 import { CampaignCard } from '@/components/campaign-card'
-import { CAMPAIGNS } from '@/constants/campaigns'
+import { api } from '@/utils/api'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
-export function LatestCampaigns() {
-  const campaigns = CAMPAIGNS.slice(0, 4)
+export async function LatestCampaigns() {
+  const data = await fetch(`${api}/public/campaigns?limit=4`)
+  const campaigns: Campaign[] = await data.json()
 
   if (campaigns.length === 0) return
 

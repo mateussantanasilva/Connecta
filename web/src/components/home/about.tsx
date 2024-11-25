@@ -1,8 +1,20 @@
 import Image from 'next/image'
 import HandsImg from '@/assets/about-hands.png'
 import ArrowImg from '@/assets/about-arrow.svg'
+import { api } from '@/utils/api'
 
-export function About() {
+interface Metrics {
+  totalDonatedItems: number
+  totalCampaigns: number
+  totalFamilies: number
+}
+
+export async function About() {
+  const data = await fetch(`${api}/public/metrics`)
+  const metrics: Metrics = await data.json()
+
+  console.log(metrics)
+
   return (
     <section className="mx-auto mb-20 mt-20 max-w-7xl space-y-10 px-4 md:mb-0 md:space-y-16 2xl:px-0">
       <div className="flex flex-col justify-between gap-5 lg:flex-row lg:gap-16">
@@ -21,7 +33,9 @@ export function About() {
       <div className="grid grid-cols-1 items-center justify-center gap-6 xs:grid-cols-2 xs:gap-9 md:grid-cols-about">
         <div className="space-y-6 xs:space-y-20 lg:space-y-40">
           <div className="relative min-h-24 space-y-2 text-center">
-            <strong className="text-3xl font-bold text-green-600">+200</strong>
+            <strong className="text-3xl font-bold text-green-600">
+              +{metrics.totalDonatedItems}
+            </strong>
             <p>Itens arrecadados para quem precisa</p>
 
             <Image
@@ -32,7 +46,9 @@ export function About() {
           </div>
 
           <div className="relative min-h-24 space-y-2 text-center">
-            <strong className="text-3xl font-bold text-green-600">50</strong>
+            <strong className="text-3xl font-bold text-green-600">
+              {metrics.totalFamilies}
+            </strong>
             <p>Famílias ajudadas com doações essenciais</p>
 
             <Image
@@ -52,7 +68,9 @@ export function About() {
 
         <div className="space-y-6 xs:space-y-20 lg:space-y-40">
           <div className="relative min-h-24 space-y-2 text-center">
-            <strong className="text-3xl font-bold text-green-600">15</strong>
+            <strong className="text-3xl font-bold text-green-600">
+              {metrics.totalCampaigns}
+            </strong>
             <p>Campanhas realizadas para diversas causas</p>
 
             <Image
