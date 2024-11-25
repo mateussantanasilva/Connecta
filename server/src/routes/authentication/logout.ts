@@ -3,7 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod"
 import dotenv from 'dotenv'
 
 dotenv.config()
-const redirectURL = process.env.DEV ? 'https://connecta-test.vercel.app' : 'http://localhost:3000'
+const redirectURL = process.env.PRODUCTION ? 'https://connecta-test.vercel.app' : 'http://localhost:3000'
 
 export async function logout(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(

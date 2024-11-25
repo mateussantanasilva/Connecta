@@ -7,7 +7,7 @@ import { ClientError } from "../../errors/client-error"
 
 dotenv.config()
 const JWT_SECRET = process.env.SESSION_SECRET!
-const redirectURL = process.env.DEV ? 'https://connecta-test.vercel.app' : 'http://localhost:3000'
+const redirectURL = process.env.PRODUCTION ? 'https://connecta-test.vercel.app' : 'http://localhost:3000'
 
 export async function login(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
