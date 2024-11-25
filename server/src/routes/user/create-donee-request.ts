@@ -4,6 +4,11 @@ import { z } from 'zod'
 import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from "../../errors/client-error"
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
+const JWT_SECRET = process.env.SESSION_SECRET!
 
 const doneeBodySchema = z.object({
     telephone: z.string(),
@@ -17,21 +22,19 @@ const ParamsSchema = z.object({
 
 export async function createDoneeRequest(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().post(
-        '/users/:userID/donee-request',
+        '/users/donee-request',
         {
             schema: {
                 body: fromZodSchema(doneeBodySchema),
-                params: {
-                    type: 'object',
-                    properties: {
-                        userID: {type:'string'}
-                    },
-                    required: ['userID']
-                }
             }
         },
         async (req, res) => {
-            const { userID } = req.params as z.infer<typeof ParamsSchema>
+            const user = req.headers['user']
+            if (!user) {
+                return res.status(401).send(new ClientError('Erro de autenticação'))
+            }
+            const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
+            const userID = userDecoded.userId
             const {
                 telephone,
                 address,
