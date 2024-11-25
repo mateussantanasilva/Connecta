@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Checkbox } from '../checkbox'
 import { twMerge } from 'tailwind-merge'
-import { CampaignItem } from '@/@types/CampaignItem'
+import { CampaignItem } from '@/@types/Campaign'
 
 interface DonationItemProps {
   item: CampaignItem

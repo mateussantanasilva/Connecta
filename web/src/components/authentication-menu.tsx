@@ -12,8 +12,6 @@ export function AuthenticationMenu() {
     return context.user
   })
 
-  console.log(user)
-
   return (
     <div className="flex flex-row-reverse items-center gap-6 md:flex-row">
       <SettingsMenu isAuthenticated={!!user} />

@@ -57,7 +57,7 @@ export function CampaignDetails({ campaign }: CampaignDetailsProps) {
       <div className="space-y-2">
         <h3 className="text-lg font-bold text-zinc-800">Pontos de Coleta</h3>
 
-        {campaign.collection_points.map((address) => (
+        {campaign.collection_point.map((address) => (
           <Link
             href={`https://www.google.com/maps/search/?api=1&query=${address}`}
             key={address}

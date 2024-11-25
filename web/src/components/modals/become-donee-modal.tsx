@@ -29,11 +29,8 @@ const becomeDoneeSchema = z.object({
 type BecomeDoneeSchema = z.infer<typeof becomeDoneeSchema>
 
 export function BecomeDoneeModal() {
-  const { user, userCookie } = useContextSelector(UserContext, (context) => {
-    return {
-      user: context.user,
-      userCookie: context.userCookie,
-    }
+  const userCookie = useContextSelector(UserContext, (context) => {
+    return context.userCookie
   })
 
   const [isOpenModal, setIsOpenModal] = useState(false)
@@ -50,7 +47,7 @@ export function BecomeDoneeModal() {
     // testar o toast.promise quando usar request
     toast.promise(
       async () =>
-        await fetch(`${api}/users/${user?.userId}/donee-request`, {
+        await fetch(`${api}/users/donee-request`, {
           method: 'POST',
           headers: {
             User: userCookie,

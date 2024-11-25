@@ -1,6 +1,5 @@
 import { Campaign } from '@/@types/Campaign'
 import { CampaignCard } from '@/components/campaign-card'
-import { Pagination } from '@/components/pagination'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
 import { api } from '@/utils/api'

@@ -37,7 +37,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
 
       <span className="text-sm">{participants}</span>
 
-      <div className="space-x-1">
+      <div className="flex flex-wrap gap-1">
         {campaign.categories.map((category) => (
           <span
             key={category}
