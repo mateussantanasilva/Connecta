@@ -3,8 +3,11 @@ import LogoImg from '@/assets/logo.svg'
 import Link from 'next/link'
 import { Avatar } from '../avatar'
 import { SettingsMenuAdmin } from '../admin/settings-menu-admin'
+import { getAuthentication } from '@/utils/get-authentication'
 
 export function HeaderAdmin() {
+  const { user } = getAuthentication()
+
   return (
     <header className="border-b border-zinc-400">
       <div className="mx-auto flex max-w-7xl items-center justify-between bg-transparent p-4 2xl:px-0">
@@ -31,14 +34,14 @@ export function HeaderAdmin() {
         <div className="flex items-center gap-6">
           <SettingsMenuAdmin />
 
-          <Link href="/perfil" className="group flex items-center gap-3">
+          <Link href="/administrador" className="group flex items-center gap-3">
             <Avatar
-              src="https://images.unsplash.com/photo-1502323777036-f29e3972d82f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="Foto de perfil da Molly Jensen"
+              src={user?.avatar}
+              alt={`Foto de perfil de ${user?.name}`}
             />
 
             <span className="hidden font-medium text-zinc-800 group-hover:text-orange-600 md:block">
-              Molly Jensen
+              {user?.name}
             </span>
           </Link>
         </div>

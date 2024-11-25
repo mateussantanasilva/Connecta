@@ -1,10 +1,8 @@
-import { Campaign } from './Campaign'
-
 export interface DonationItem {
   id: string
   name: string
-  quantity: number
   measure: string
+  goal: number
+  amount_donated: number
   status: 'pendente' | 'confirmada'
-  campaign: Campaign
 }

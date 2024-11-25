@@ -3,11 +3,14 @@ import { jwtDecode } from 'jwt-decode'
 import { cookies } from 'next/headers'
 
 export function getAuthentication() {
-  const token = cookies().get('token')?.value
+  const userCookie = cookies().get('user')?.value
 
-  if (!token) return { user: null }
+  if (!userCookie) return { user: null, userCookie: '' }
 
-  const user: Authentication = jwtDecode(token)
+  const user: Authentication = jwtDecode(userCookie)
 
-  return { user }
+  return {
+    user,
+    userCookie: userCookie.toString(),
+  }
 }
