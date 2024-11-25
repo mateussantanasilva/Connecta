@@ -32,7 +32,7 @@ export async function getDonations(app: FastifyInstance) {
       try {
         const donationsSnapshot = await db.collection('donations').get()
 
-        let donations = donationsSnapshot.docs.map((doc) => {
+        let donationsData = donationsSnapshot.docs.map((doc) => {
           const data = doc.data()
           return {
             id: doc.id,
@@ -46,21 +46,29 @@ export async function getDonations(app: FastifyInstance) {
           }
         })
 
-        const filterIsValid = (key: string): key is keyof typeof donations[0] => {
-          return key in donations[0]
+        const filterIsValid = (key: string): key is keyof typeof donationsData[0] => {
+          return key in donationsData[0]
         }
 
           if (filterBy && filterValue && filterIsValid(filterBy)) {
-            donations = donations.filter(donee =>
+            donationsData = donationsData.filter(donee =>
               donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
             )
           }
         
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
-        const paginatedCampaigns = donations.slice(startIndex, endIndex)
+        const donations = donationsData.slice(startIndex, endIndex)
 
-        return reply.status(200).send(paginatedCampaigns)
+        const totalResponses = donationsSnapshot.size
+        const responseSchema = {
+          page,
+          limit,
+          totalResponses,
+          donations
+        }
+
+        return reply.status(200).send(responseSchema)
       } catch (error) {
         console.error(error)
         return reply.status(500).send(new ClientError('Erro ao buscar doações'))

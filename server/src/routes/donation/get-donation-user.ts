@@ -49,25 +49,33 @@ export async function getDonationByUser(app: FastifyInstance) {
           .where('user_id', '==', user_id)
           .get()
 
-        let donations = donationsSnapshot.docs.map((doc) => ({
+        let donationsData = donationsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }))
 
-        const filterIsValid = (key: string): key is keyof typeof donations[0] => {
-          return key in donations[0]
+        const filterIsValid = (key: string): key is keyof typeof donationsData[0] => {
+          return key in donationsData[0]
         }
                 if (filterBy && filterValue && filterIsValid(filterBy)) {
-                    donations = donations.filter(donee =>
+                  donationsData = donationsData.filter(donee =>
                         donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
                     )
                 }
 
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
-        const paginatedDonationsByUser = donations.slice(startIndex, endIndex)
+        const donations = donationsData.slice(startIndex, endIndex)
+
+        const totalResponses = donationsSnapshot.size
+        const responseSchema = {
+          page,
+          limit,
+          totalResponses,
+          donations
+        }
         
-        return reply.status(200).send(paginatedDonationsByUser)
+        return reply.status(200).send(responseSchema)
       } catch (error) {
         console.error(error)
         return reply.status(500).send(new ClientError('Erro ao buscar doações por usuário'))

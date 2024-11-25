@@ -54,9 +54,17 @@ export async function getDoneeRequests(app: FastifyInstance) {
 
                 const startIndex = (page - 1) * limit
                 const endIndex = startIndex + limit
-                const paginatedRequests = requests.slice(startIndex, endIndex)
+                const doneeRequests = requests.slice(startIndex, endIndex)
 
-                return res.status(200).send(paginatedRequests)
+                const totalResponses = doneeRequestsSnapshot.size
+                const responseSchema = {
+                    page,
+                    limit,
+                    totalResponses,
+                    doneeRequests
+                }
+
+                return res.status(200).send(responseSchema)
             } catch(e) {
                 console.error(e)
                 return res.status(500).send(new ClientError('Erro ao buscar todas as solicitações'))
