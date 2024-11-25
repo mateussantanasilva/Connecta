@@ -1,11 +1,23 @@
-import { Pagination } from '@/components/pagination'
 import { DoneeRequestsModal } from '@/components/modals/donee-requests-modal'
 import { StatusIndicator } from '@/components/status-indicator'
 import { DoneeDetailsModal } from '@/components/modals/donee-details-modal'
 import { DoneeFilter } from '@/components/admin/donee-filter'
 import { HeaderAdmin } from '@/components/admin/header-admin'
+import { api } from '@/utils/api'
+import { getAuthentication } from '@/utils/get-authentication'
 
-export default function Donatario() {
+export default async function Donatario() {
+  const { userCookie } = getAuthentication()
+
+  const data = await fetch(`${api}/admin/donees`, {
+    headers: {
+      User: userCookie,
+    },
+  })
+  const donees = await data.json()
+
+  console.log(donees)
+
   return (
     <>
       <HeaderAdmin />
@@ -71,7 +83,7 @@ export default function Donatario() {
           </section>
         </div>
 
-        <Pagination />
+        {/* <Pagination /> */}
       </main>
     </>
   )

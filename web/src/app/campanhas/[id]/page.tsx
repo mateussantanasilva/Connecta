@@ -6,6 +6,7 @@ import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
 import { CAMPAIGN_ITEMS } from '@/constants/campaign-items'
 import { CAMPAIGNS } from '@/constants/campaigns'
+import { api } from '@/utils/api'
 
 interface CampanhaParams {
   params: {
@@ -13,12 +14,11 @@ interface CampanhaParams {
   }
 }
 
-export default function Campanha({ params }: CampanhaParams) {
-  const campaign = CAMPAIGNS.find((campaign) => campaign.id === params.id)
+export default async function Campanha({ params }: CampanhaParams) {
+  const data = await fetch(`${api}/public/campaigns/${params.id}`)
+  const campaign = await data.json()
 
-  if (!campaign) return
-
-  const campaignItems = CAMPAIGN_ITEMS
+  console.log(campaign)
 
   return (
     <>

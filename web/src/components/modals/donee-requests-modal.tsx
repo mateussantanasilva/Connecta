@@ -12,12 +12,30 @@ import {
 } from 'lucide-react'
 import { Button } from '../button'
 import { Avatar } from '../avatar'
+import { useContextSelector } from 'use-context-selector'
+import { UserContext } from '@/contexts/UserProvider'
+import { api } from '@/utils/api'
 
 export function DoneeRequestsModal() {
+  const userCookie = useContextSelector(UserContext, (context) => {
+    return context.userCookie
+  })
+
+  async function fecthRequests() {
+    const data = await fetch(`${api}/admin/donee-requests`, {
+      headers: {
+        User: userCookie,
+      },
+    })
+    const requests = await data.json()
+
+    console.log(requests)
+  }
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button>
+        <Button onClick={fecthRequests}>
           <span>Ver solicitações</span>
           <TextSearch className="size-5 shrink-0" />
         </Button>

@@ -8,16 +8,32 @@ import {
   UserRoundCheck,
 } from 'lucide-react'
 import { Button } from '@/components/button'
-import { Pagination } from '@/components/pagination'
 import { AdminFilter } from '@/components/admin/admin-filter'
 import { HeaderAdmin } from '@/components/admin/header-admin'
 import { StatusCard } from '@/components/admin/status-card'
+import { getAuthentication } from '@/utils/get-authentication'
+import { api } from '@/utils/api'
+import { ConfigUser } from '@/components/config-user'
+import { AdminMetrics } from '@/@types/Metrics'
 
-export default function Administrador() {
+export default async function Administrador() {
+  const { user, userCookie } = getAuthentication()
+
+  if (!user) return
+
+  const data = await fetch(`${api}/admin/metrics`, {
+    headers: {
+      User: userCookie,
+    },
+  })
+  const metrics: AdminMetrics = await data.json()
+
   return (
     <>
       <HeaderAdmin />
       <main className="mx-auto mb-20 mt-16 max-w-7xl space-y-5 px-4 2xl:px-0">
+        <ConfigUser user={user} userCookie={userCookie} />
+
         <header className="flex w-full flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <h1 className="text-3xl font-bold text-zinc-800 lg:text-4xl">
             Início
@@ -27,25 +43,25 @@ export default function Administrador() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatusCard
             title="Campanhas Abertas"
-            count={4}
+            count={metrics.openCampaigns}
             description="2 nova(s) para analisar"
             icon={<SquareCheck className="h-5 w-5 text-orange-500" />}
           />
           <StatusCard
             title="Donatários Ativos"
-            count={17}
+            count={metrics.activeDonors}
             description="1 solicitação(ões) para revisar"
             icon={<UserRoundCheck className="h-5 w-5 text-orange-500" />}
           />
           <StatusCard
             title="Doações Anuais"
-            count={140}
+            count={metrics.annualDonations}
             description="1 pendente(s) de confirmação"
             icon={<HandHeart className="h-5 w-5 text-orange-500" />}
           />
           <StatusCard
             title="Campanhas 100%"
-            count={5}
+            count={metrics.totalCompletedCampaigns}
             description="7 finalizadas(s) ao total"
             icon={<Trophy className="h-5 w-5 text-orange-500" />}
           />
@@ -145,7 +161,7 @@ export default function Administrador() {
             </div>
           </section>
         </div>
-        <Pagination />
+        {/* <Pagination /> */}
       </main>
     </>
   )

@@ -10,6 +10,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { api } from '@/utils/api'
+import { UserContext } from '@/contexts/UserProvider'
+import { useContextSelector } from 'use-context-selector'
 
 const becomeDoneeSchema = z.object({
   telephone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, {
@@ -18,7 +21,7 @@ const becomeDoneeSchema = z.object({
   address: z
     .string()
     .min(10, { message: 'O endereço deve ter pelo menos 10 caracteres.' }),
-  request_description: z.string().min(180, {
+  request: z.string().min(180, {
     message:
       'O motivo deve ter pelo menos 180 caracteres. Explique sua situação.',
   }),
@@ -26,6 +29,13 @@ const becomeDoneeSchema = z.object({
 type BecomeDoneeSchema = z.infer<typeof becomeDoneeSchema>
 
 export function BecomeDoneeModal() {
+  const { user, userCookie } = useContextSelector(UserContext, (context) => {
+    return {
+      user: context.user,
+      userCookie: context.userCookie,
+    }
+  })
+
   const [isOpenModal, setIsOpenModal] = useState(false)
 
   const {
@@ -36,14 +46,28 @@ export function BecomeDoneeModal() {
     resolver: zodResolver(becomeDoneeSchema),
   })
 
-  function handleRequestDoneeRole(data: BecomeDoneeSchema) {
-    console.log(data)
-
-    setIsOpenModal(false)
-
+  async function handleRequestDoneeRole(data: BecomeDoneeSchema) {
     // testar o toast.promise quando usar request
-    toast.success(
-      'Sua solicitação foi enviada com sucesso para ser analisada. Aguarde a resposta.',
+    toast.promise(
+      async () =>
+        await fetch(`${api}/users/${user?.userId}/donee-request`, {
+          method: 'POST',
+          headers: {
+            User: userCookie,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }),
+      {
+        success: () => {
+          setIsOpenModal(false)
+
+          return 'Sua solicitação foi enviada com sucesso para ser analisada. Aguarde a resposta.'
+        },
+        error: () => {
+          return 'Erro ao solicitar função de donatário. Tente novamente.'
+        },
+      },
     )
   }
 
@@ -103,8 +127,8 @@ export function BecomeDoneeModal() {
             />
             <TextArea
               title="Motivo da solicitação"
-              {...register('request_description')}
-              errorMessage={errors.request_description?.message}
+              {...register('request')}
+              errorMessage={errors.request?.message}
             />
 
             <div className="mt-auto h-px w-full bg-zinc-400" />

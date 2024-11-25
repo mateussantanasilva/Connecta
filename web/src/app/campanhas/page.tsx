@@ -1,11 +1,13 @@
+import { Campaign } from '@/@types/Campaign'
 import { CampaignCard } from '@/components/campaign-card'
 import { Pagination } from '@/components/pagination'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
-import { CAMPAIGNS } from '@/constants/campaigns'
+import { api } from '@/utils/api'
 
-export default function Campanhas() {
-  const campaigns = CAMPAIGNS
+export default async function Campanhas() {
+  const data = await fetch(`${api}/public/campaigns`)
+  const campaigns: Campaign[] = await data.json()
 
   return (
     <>
@@ -37,7 +39,13 @@ export default function Campanhas() {
               ))}
             </section>
 
-            <Pagination />
+            {/* <Pagination
+              total={campaigns.length}
+              currentPage={page}
+              totalPages={2}
+              handlePreviousPage={() => setPage((state) => state - 1)}
+              handleNextPage={() => setPage((state) => state + 1)}
+            /> */}
           </>
         )}
       </main>
