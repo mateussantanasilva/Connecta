@@ -8,7 +8,6 @@ const redirectURL = process.env.PRODUCTION ? 'https://connecta-test.vercel.app' 
 export async function logout(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().get(
         '/logout', async (req, res) => {
-            res.clearCookie('token', { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
             res.clearCookie('user', { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
             return res.redirect(`${redirectURL}/`)
         }
