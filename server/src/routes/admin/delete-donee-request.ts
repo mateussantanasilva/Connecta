@@ -16,7 +16,7 @@ export async function deleteDoneeRequest(app: FastifyInstance) {
                 params: {
                     type: 'object',
                     properties: {
-                        idid: {type:'string'}
+                        id: {type:'string'}
                     },
                     required: ['id']
                 }
