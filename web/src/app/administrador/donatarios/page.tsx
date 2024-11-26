@@ -5,6 +5,7 @@ import { DoneeFilter } from '@/components/admin/donee-filter'
 import { HeaderAdmin } from '@/components/admin/header-admin'
 import { api } from '@/utils/api'
 import { cookies } from 'next/headers'
+import { User } from '@/@types/User'
 
 export default async function Donatario() {
   const userCookie = cookies().get('user')?.value
@@ -16,9 +17,7 @@ export default async function Donatario() {
       User: userCookie,
     },
   })
-  const donees = await data.json()
-
-  console.log(donees)
+  const donees: User[] = await data.json()
 
   return (
     <>
@@ -51,30 +50,26 @@ export default async function Donatario() {
               <strong className="w-48 min-w-28 truncate">Cadastrado há</strong>
             </header>
 
-            {Array.from({ length: 3 }).map((_, index) => (
+            {donees.map((donee) => (
               <div
-                key={index}
+                key={donee.id}
                 role="row"
                 className="flex h-16 items-center gap-5 px-5 text-sm"
               >
                 <div className="flex items-center gap-5">
-                  <DoneeDetailsModal />
-                  <span className="w-48 min-w-28 truncate">
-                    4f3846b5-9def-48db-587398
-                  </span>
+                  <DoneeDetailsModal donee={donee} />
+                  <span className="w-48 min-w-28 truncate">{donee.id}</span>
                 </div>
 
                 <div className="w-32">
                   <StatusIndicator status="apto" />
                 </div>
 
-                <span className="min-w-48 flex-1">Maria Oliveira Rocha</span>
+                <span className="min-w-48 flex-1">{donee.name}</span>
 
                 <div className="w-56 truncate">
                   <span className="block truncate">(11) 98765-4321</span>
-                  <span className="truncate">
-                    mariaoliveirarochar@gmail.com
-                  </span>
+                  <span className="truncate">{donee.email}</span>
                 </div>
 
                 <span className="w-48 min-w-28 truncate">

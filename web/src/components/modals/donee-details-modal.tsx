@@ -14,12 +14,15 @@ import {
 import { Button } from '../button'
 import { Avatar } from '../avatar'
 import { StatusIndicator } from '../status-indicator'
+import { User } from '@/@types/User'
 
 interface DoneeDetailsModalProps {
+  donee: User
   status?: 'active' | 'inactive'
 }
 
 export function DoneeDetailsModal({
+  donee,
   status = 'active',
 }: DoneeDetailsModalProps) {
   return (
@@ -55,13 +58,16 @@ export function DoneeDetailsModal({
             <div className="space-y-2">
               <div className="mb-5 flex flex-col justify-between gap-5 sm:mb-0 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-3">
-                  <Avatar />
+                  <Avatar
+                    src={donee.avatar}
+                    alt={`Foto de perfil de ${donee.name}`}
+                  />
 
                   <div className="flex flex-col gap-0.5">
                     <span className="font-medium text-zinc-800">
-                      Antônio Carlos Braga
+                      {donee.name}
                     </span>
-                    <span className="text-sm">antoniocarlos@gmail.com</span>
+                    <span className="text-sm">{donee.email}</span>
                   </div>
                 </div>
 

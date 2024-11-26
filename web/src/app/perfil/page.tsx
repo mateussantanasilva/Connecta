@@ -1,6 +1,5 @@
 import { Avatar } from '@/components/avatar'
 import { Header } from '@/components/sections/header'
-import { BecomeDoneeModal } from '@/components/modals/become-donee-modal'
 import { MyCampaigns } from '@/components/sections/my-campaigns'
 import { MyDonations } from '@/components/sections/my-donations'
 import { Mail, MapPin, Phone } from 'lucide-react'
@@ -9,6 +8,8 @@ import { getAuthentication } from '@/utils/get-authentication'
 import { api } from '@/utils/api'
 import { User } from '@/@types/User'
 import { cookies } from 'next/headers'
+
+import { ProfileRole } from '@/components/sections/profile-role'
 
 export default async function Perfil() {
   const userCookie = cookies().get('user')?.value
@@ -33,6 +34,16 @@ export default async function Perfil() {
   )
   const campaigns = await campaignsResponse.json()
 
+  const donationsResponse = await fetch(
+    `${api}/donations/user/${user.userId}`,
+    {
+      headers: {
+        User: userCookie,
+      },
+    },
+  )
+  const donations = await donationsResponse.json()
+
   return (
     <>
       <Header />
@@ -49,7 +60,9 @@ export default async function Perfil() {
             <strong className="mb-1 mt-6 text-2xl font-bold text-zinc-800">
               {user.name}
             </strong>
-            <span>{user.role === 'doador' ? 'Doador(a)' : 'Donatário(a)'}</span>
+            <span>
+              {profile.role === 'doador' ? 'Doador(a)' : 'Donatário(a)'}
+            </span>
           </header>
 
           <div className="space-y-2">
@@ -85,16 +98,7 @@ export default async function Perfil() {
             </>
           )}
 
-          <div className="space-y-2">
-            <h3 className="text-lg font-bold text-zinc-800">Função atual</h3>
-            <p>
-              {user.role === 'doador'
-                ? 'Você está registrado como doador e pode contribuir com doações. Para receber itens, encerre sua função como doador e torne-se donatário.'
-                : 'Você está registrado como donatário e pode receber doações conforme sua necessidade. Para doar itens, encerre sua participação como donatário e torne-se doador.'}
-            </p>
-          </div>
-
-          <BecomeDoneeModal />
+          <ProfileRole profile={profile} />
         </aside>
 
         <div className="flex-1 space-y-5">
@@ -102,7 +106,7 @@ export default async function Perfil() {
 
           <div className="h-px w-full bg-zinc-400" />
 
-          <MyDonations />
+          <MyDonations donations={donations} />
         </div>
       </main>
 

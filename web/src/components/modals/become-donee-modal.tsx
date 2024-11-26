@@ -41,7 +41,6 @@ export function BecomeDoneeModal() {
   })
 
   async function handleRequestDoneeRole(data: BecomeDoneeSchema) {
-    // testar o toast.promise quando usar request
     toast.promise(
       async () =>
         await fetch(`${api}/users/donee-request`, {
