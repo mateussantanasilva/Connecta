@@ -49,7 +49,7 @@ export async function login(app: FastifyInstance) {
                 }
                 const userData = (await db.collection('users').doc(userId).get()).data()
                 const jwtUser = await jwt.sign({ userId, ...userData }, JWT_SECRET, { expiresIn: '1h' })
-                res.setCookie('user', jwtUser, { path: '/', httpOnly: true, secure: true, sameSite: 'none' })
+                res.setCookie('user', jwtUser, { path: '/', httpOnly: true, secure: true, sameSite: 'none', expires: new Date(Date.now() + 3600000) })
                 if(userRole == 'administrador') {
                     return res.redirect(`${redirectURL}/administrador`)
                 }
