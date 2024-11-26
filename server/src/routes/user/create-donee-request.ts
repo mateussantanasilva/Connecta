@@ -45,11 +45,13 @@ export async function createDoneeRequest(app: FastifyInstance) {
                 if(!userDoc.exists) {
                     res.status(404).send(new ClientError("Usuário não encontrado"))
                 }
+                const createdAt = new Date().toISOString()
                 const doneeData = {
                     userID,
                     telephone,
                     address,
-                    request
+                    request,
+                    createdAt
                 }
                 const doneeRef = await db.collection('donee-request').add(doneeData)
                 if(!doneeRef) {

@@ -39,7 +39,8 @@ export async function getDoneeRequests(app: FastifyInstance) {
                         avatar: userData?.avatar,
                         telephone: data.telephone,
                         address: data.address,
-                        request: data.request
+                        request: data.request,
+                        createdAt: data.createdAt,
                     }
                 }))
 
