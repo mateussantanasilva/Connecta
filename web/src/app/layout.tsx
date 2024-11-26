@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { VLibrasPlugin } from '@/components/vlibras-plugin'
 import { Toaster } from 'sonner'
 import './globals.css'
-import { UserProvider } from '@/contexts/UserProvider'
 
 const beVieatnamPro = Be_Vietnam_Pro({
   subsets: ['latin'],
@@ -45,7 +44,7 @@ export default function RootLayout({
       >
         <Toaster richColors />
         <VLibrasPlugin />
-        <UserProvider>{children}</UserProvider>
+        {children}
       </body>
     </html>
   )

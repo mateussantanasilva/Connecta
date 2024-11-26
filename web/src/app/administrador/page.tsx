@@ -13,13 +13,14 @@ import { HeaderAdmin } from '@/components/admin/header-admin'
 import { StatusCard } from '@/components/admin/status-card'
 import { getAuthentication } from '@/utils/get-authentication'
 import { api } from '@/utils/api'
-import { ConfigUser } from '@/components/config-user'
 import { AdminMetrics } from '@/@types/Metrics'
+import { cookies } from 'next/headers'
 
 export default async function Administrador() {
-  const { user, userCookie } = getAuthentication()
+  const userCookie = cookies().get('user')?.value
+  const { user } = getAuthentication(userCookie)
 
-  if (!user) return
+  if (!user || !userCookie) return
 
   const data = await fetch(`${api}/admin/metrics`, {
     headers: {
@@ -32,8 +33,6 @@ export default async function Administrador() {
     <>
       <HeaderAdmin />
       <main className="mx-auto mb-20 mt-16 max-w-7xl space-y-5 px-4 2xl:px-0">
-        <ConfigUser user={user} userCookie={userCookie} />
-
         <header className="flex w-full flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <h1 className="text-3xl font-bold text-zinc-800 lg:text-4xl">
             Início

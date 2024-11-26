@@ -1,3 +1,5 @@
+'use client'
+
 import { Trash } from 'lucide-react'
 import { Button } from './button'
 import { ComponentProps } from 'react'

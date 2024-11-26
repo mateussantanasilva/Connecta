@@ -4,10 +4,12 @@ import { DoneeDetailsModal } from '@/components/modals/donee-details-modal'
 import { DoneeFilter } from '@/components/admin/donee-filter'
 import { HeaderAdmin } from '@/components/admin/header-admin'
 import { api } from '@/utils/api'
-import { getAuthentication } from '@/utils/get-authentication'
+import { cookies } from 'next/headers'
 
 export default async function Donatario() {
-  const { userCookie } = getAuthentication()
+  const userCookie = cookies().get('user')?.value
+
+  if (!userCookie) return
 
   const data = await fetch(`${api}/admin/donees`, {
     headers: {

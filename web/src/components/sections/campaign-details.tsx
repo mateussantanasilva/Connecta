@@ -3,20 +3,27 @@ import { ProgressBar } from '../progress-bar'
 import Link from 'next/link'
 import { StatusIndicator } from '../status-indicator'
 import { formatCampaignStartedAt } from '@/utils/format-campaign-started-at'
+import { getAuthentication } from '@/utils/get-authentication'
+import { cookies } from 'next/headers'
 
 interface CampaignDetailsProps {
   campaign: Campaign
 }
 
 export function CampaignDetails({ campaign }: CampaignDetailsProps) {
+  const userCookie = cookies().get('user')?.value
+  const { user } = getAuthentication(userCookie)
+
   const formattedDate = formatCampaignStartedAt(
     campaign.status,
     campaign.started_at,
   )
 
+  const isParticipant = user && campaign.participants_ids.includes(user?.userId)
+
   const participants =
     campaign.participants > 0
-      ? `${campaign.participants} Participantes`
+      ? `${campaign.participants} Participantes ${isParticipant ? '(incluído)' : ''}`
       : `Sem participantes`
 
   return (
@@ -30,7 +37,9 @@ export function CampaignDetails({ campaign }: CampaignDetailsProps) {
 
         <span className="block">{formattedDate}</span>
 
-        <span>{participants}</span>
+        <span className={isParticipant ? 'font-medium text-green-600' : ''}>
+          {participants}
+        </span>
 
         <ProgressBar progression={campaign.progress} />
       </div>

@@ -4,13 +4,21 @@ import Link from 'next/link'
 import { SettingsMenu } from './settings-menu'
 import { Button } from './button'
 import { Avatar } from './avatar'
-import { useContextSelector } from 'use-context-selector'
-import { UserContext } from '@/contexts/UserProvider'
+import { api } from '@/utils/api'
+import Cookies from 'js-cookie'
+import { getAuthentication } from '@/utils/get-authentication'
+import { useEffect, useState } from 'react'
+import { Authentication } from '@/@types/Authentication'
 
 export function AuthenticationMenu() {
-  const user = useContextSelector(UserContext, (context) => {
-    return context.user
-  })
+  const [user, setUser] = useState<Authentication | null>()
+
+  useEffect(() => {
+    const userCookie = Cookies.get('user')
+    const { user } = getAuthentication(userCookie)
+
+    setUser(user)
+  }, [])
 
   return (
     <div className="flex flex-row-reverse items-center gap-6 md:flex-row">
@@ -28,7 +36,7 @@ export function AuthenticationMenu() {
           </span>
         </Link>
       ) : (
-        <Link href="http://localhost:3333/login/google">
+        <Link href={`${api}/login/google`}>
           <Button variant="secondary" className="hidden md:flex">
             <span>Faça sua doação</span>
           </Button>

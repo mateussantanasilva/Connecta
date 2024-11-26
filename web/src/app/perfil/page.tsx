@@ -8,27 +8,36 @@ import { Footer } from '@/components/sections/footer'
 import { getAuthentication } from '@/utils/get-authentication'
 import { api } from '@/utils/api'
 import { User } from '@/@types/User'
-import { ConfigUser } from '@/components/config-user'
+import { cookies } from 'next/headers'
 
 export default async function Perfil() {
-  const { user, userCookie } = getAuthentication()
+  const userCookie = cookies().get('user')?.value
+  const { user } = getAuthentication(userCookie)
 
-  if (!user) return
+  if (!user || !userCookie) return
 
-  const data = await fetch(`${api}/users/${user.userId}`, {
+  const profileResponse = await fetch(`${api}/users/${user.userId}`, {
     headers: {
       User: userCookie,
     },
   })
-  const profile: User = await data.json()
+  const profile: User = await profileResponse.json()
+
+  const campaignsResponse = await fetch(
+    `${api}/users/${user.userId}/campaigns?limit=3`,
+    {
+      headers: {
+        User: userCookie,
+      },
+    },
+  )
+  const campaigns = await campaignsResponse.json()
 
   return (
     <>
       <Header />
 
       <main className="mx-auto mb-20 mt-16 flex max-w-7xl flex-col gap-14 px-4 lg:flex-row 2xl:px-0">
-        <ConfigUser user={user} userCookie={userCookie} />
-
         <aside className="mx-auto space-y-5 lg:max-w-80">
           <header className="flex flex-col items-center">
             <Avatar
@@ -89,7 +98,7 @@ export default async function Perfil() {
         </aside>
 
         <div className="flex-1 space-y-5">
-          <MyCampaigns />
+          <MyCampaigns campaigns={campaigns} />
 
           <div className="h-px w-full bg-zinc-400" />
 

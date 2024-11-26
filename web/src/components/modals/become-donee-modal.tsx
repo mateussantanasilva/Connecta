@@ -11,8 +11,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { api } from '@/utils/api'
-import { UserContext } from '@/contexts/UserProvider'
-import { useContextSelector } from 'use-context-selector'
+import Cookies from 'js-cookie'
 
 const becomeDoneeSchema = z.object({
   telephone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, {
@@ -29,9 +28,7 @@ const becomeDoneeSchema = z.object({
 type BecomeDoneeSchema = z.infer<typeof becomeDoneeSchema>
 
 export function BecomeDoneeModal() {
-  const userCookie = useContextSelector(UserContext, (context) => {
-    return context.userCookie
-  })
+  const userCookie = Cookies.get('user')
 
   const [isOpenModal, setIsOpenModal] = useState(false)
 
@@ -50,7 +47,7 @@ export function BecomeDoneeModal() {
         await fetch(`${api}/users/donee-request`, {
           method: 'POST',
           headers: {
-            User: userCookie,
+            User: String(userCookie),
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
@@ -61,9 +58,7 @@ export function BecomeDoneeModal() {
 
           return 'Sua solicitação foi enviada com sucesso para ser analisada. Aguarde a resposta.'
         },
-        error: () => {
-          return 'Erro ao solicitar função de donatário. Tente novamente.'
-        },
+        error: 'Erro ao solicitar função de donatário. Tente novamente.',
       },
     )
   }

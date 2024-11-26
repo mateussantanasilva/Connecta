@@ -4,9 +4,11 @@ import Link from 'next/link'
 import { Avatar } from '../avatar'
 import { SettingsMenuAdmin } from '../admin/settings-menu-admin'
 import { getAuthentication } from '@/utils/get-authentication'
+import { cookies } from 'next/headers'
 
 export function HeaderAdmin() {
-  const { user } = getAuthentication()
+  const userCookie = cookies().get('user')?.value
+  const { user } = getAuthentication(userCookie)
 
   return (
     <header className="border-b border-zinc-400">

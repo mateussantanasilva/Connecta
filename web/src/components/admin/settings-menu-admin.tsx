@@ -1,7 +1,9 @@
 'use client'
 
+import { api } from '@/utils/api'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import { LogOut, Menu, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 export function SettingsMenuAdmin() {
   return (
@@ -36,10 +38,13 @@ export function SettingsMenuAdmin() {
               Donatários
             </NavigationMenu.Link>
 
-            <button className="flex items-center gap-1.5 text-red-600 hover:text-red-700">
+            <Link
+              href={`${api}/logout`}
+              className="flex items-center gap-1.5 text-red-600 hover:text-red-700"
+            >
               Encerrar sessão
               <LogOut className="size-5 shrink-0" />
-            </button>
+            </Link>
           </NavigationMenu.Content>
         </NavigationMenu.Item>
       </NavigationMenu.List>
