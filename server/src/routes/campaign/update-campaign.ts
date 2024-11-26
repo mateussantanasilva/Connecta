@@ -9,12 +9,6 @@ import { campaignSection } from './create-campaign'
 
 const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
 
-const itemCampaignSchema = z.object({
-  name: z.string().min(1),
-  measure: z.string().min(1),
-  status: z.enum(['disponível', 'reservado', 'concluído']),
-})
-
 const campaignSchema = z.object({
   name: z.string().min(1),
   collection_point: z.array(z.string()).min(1),

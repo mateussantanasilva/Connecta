@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { ClientError } from '../../errors/client-error'
 import { db } from '../../lib/firebase'
 
-
 export async function getCampaigns(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
     '/public/campaigns',
@@ -36,6 +35,8 @@ export async function getCampaigns(app: FastifyInstance) {
           campaignsSnapshot.docs.map(async (doc) => {
             const data = doc.data()
 
+            const numberDonations = (data.donations?.length || 0)
+
             return {
               id: doc.id,
               name: data.name,
@@ -47,7 +48,9 @@ export async function getCampaigns(app: FastifyInstance) {
               status: data.status,
               participants: data.participants,
               started_at: data.started_at,
+              section: data.section,
               goal: data.goal,
+              NumberDonations: numberDonations,
             }
           }),
         )
