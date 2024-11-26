@@ -42,7 +42,7 @@ export async function updateDonation(app: FastifyInstance) {
         }
 
         const item_name = donationData.item_name
-        const section_id = donationData.section_id // Agora estamos lidando com section_id
+        const section_id = donationData.section_id
         const campaign_id = donationData.campaign_id
 
         await donationRef.update({ status })
