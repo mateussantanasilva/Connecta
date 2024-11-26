@@ -1,41 +1,85 @@
 'use client'
 
-import { Campaign } from '@/@types/Campaign'
+import { Campaign, CampaignItem } from '@/@types/Campaign'
 import { api } from '@/utils/api'
 import { Button } from '@/components/button'
 import { Checkbox } from '@/components/checkbox'
 import { ReserveDonationModal } from '@/components/modals/reserve-donation-modal'
 import { SquareCheck, Hourglass } from 'lucide-react'
 import { DonationItem } from '@/components/sections/donation-item'
-import { useContextSelector } from 'use-context-selector'
-import { UserContext } from '@/contexts/UserProvider'
+import { useCallback, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
+import { getAuthentication } from '@/utils/get-authentication'
+import { User } from '@/@types/User'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface CampaignPresentationProps {
   campaign: Campaign
 }
 
 export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
-  const { user, userCookie } = useContextSelector(UserContext, (context) => {
-    return {
-      user: context.user,
-      userCookie: context.userCookie,
-    }
-  })
+  const [markedItems, setMarkedItems] = useState<CampaignItem[]>([])
+  const [currentRole, setCurrentRole] = useState('')
 
+  const router = useRouter()
+
+  const userCookie = Cookies.get('user')
+  const { user } = getAuthentication(userCookie)
+
+  const isDonor = currentRole === 'doador'
   const isParticipant = user && campaign.participants_ids.includes(user?.userId)
 
   async function participateInCampaign() {
-    const data = await fetch(`${api}/campaigns/${campaign.id}/participate`, {
-      method: 'POST',
+    toast.promise(
+      async () =>
+        await fetch(`${api}/campaigns/${campaign.id}/participate`, {
+          method: 'POST',
+          headers: {
+            User: String(userCookie),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: user?.userId }),
+        }),
+      {
+        success: () => {
+          router.refresh()
+
+          return 'Você agora é um participante da campanha! Comece a doar e fazer a diferença.'
+        },
+        error: 'Erro ao participar da campanha. Tente novamente mais tarde.',
+      },
+    )
+  }
+
+  function onItemToList(item: CampaignItem) {
+    if (markedItems.includes(item)) {
+      const updatedList = markedItems.filter(
+        (markedItem) => markedItem !== item,
+      )
+
+      return setMarkedItems(updatedList)
+    }
+
+    setMarkedItems([...markedItems, item])
+  }
+
+  const fetchUpdatedRole = useCallback(async () => {
+    if (!user || !userCookie) return
+
+    const profileResponse = await fetch(`${api}/users/${user.userId}`, {
       headers: {
         User: userCookie,
-        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userId: user?.userId }),
     })
-    const response = await data.json()
-    console.log(response)
-  }
+    const { role }: User = await profileResponse.json()
+
+    setCurrentRole(role)
+  }, [user, userCookie])
+
+  useEffect(() => {
+    fetchUpdatedRole()
+  }, [fetchUpdatedRole])
 
   return (
     <section className="flex-1 space-y-5">
@@ -44,7 +88,11 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
           {campaign.name}
         </h1>
 
-        {!isParticipant && campaign.status !== 'fechada' && (
+        {isParticipant && isDonor && campaign.status === 'aberta' && (
+          <ReserveDonationModal items={markedItems} campaignId={campaign.id} />
+        )}
+
+        {!isParticipant && isDonor && campaign.status !== 'fechada' && (
           <Button disabled={!user} onClick={participateInCampaign}>
             {campaign.status === 'aberta' && (
               <>
@@ -61,8 +109,6 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
             )}
           </Button>
         )}
-
-        {/* {campaign.status !== 'fechada' && <ReserveDonationModal />} */}
       </header>
 
       {campaign.section.map((section) => (
@@ -94,7 +140,11 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
 
           <div className="space-y-2">
             {section.items.map((item) => (
-              <DonationItem key={item.name} item={item} />
+              <DonationItem
+                key={item.name}
+                item={item}
+                onItemToList={onItemToList}
+              />
             ))}
           </div>
         </div>

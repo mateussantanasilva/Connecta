@@ -1,13 +1,16 @@
+'use client'
+
 import { ArrowRight } from 'lucide-react'
 import { Button } from '../button'
 import { CampaignCard } from '../campaign-card'
-import { Pagination } from '../pagination'
-import { CAMPAIGNS } from '@/constants/campaigns'
 import Link from 'next/link'
+import { Campaign } from '@/@types/Campaign'
 
-export function MyCampaigns() {
-  const campaigns = CAMPAIGNS.slice(0, 3)
+interface MyCampaignsProps {
+  campaigns: Campaign[]
+}
 
+export function MyCampaigns({ campaigns }: MyCampaignsProps) {
   return (
     <section className="space-y-5">
       <header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
@@ -36,7 +39,7 @@ export function MyCampaigns() {
             ))}
           </div>
 
-          <Pagination />
+          {/* <Pagination /> */}
         </>
       )}
     </section>

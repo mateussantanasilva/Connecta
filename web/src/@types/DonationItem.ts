@@ -1,8 +1,9 @@
 export interface DonationItem {
   id: string
-  name: string
+  item_name: string
+  quantity: number
   measure: string
-  goal: number
-  amount_donated: number
+  campaign_id: string
   status: 'pendente' | 'confirmada'
+  date: string
 }

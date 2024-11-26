@@ -13,8 +13,6 @@ export async function About() {
   const data = await fetch(`${api}/public/metrics`)
   const metrics: Metrics = await data.json()
 
-  console.log(metrics)
-
   return (
     <section className="mx-auto mb-20 mt-20 max-w-7xl space-y-10 px-4 md:mb-0 md:space-y-16 2xl:px-0">
       <div className="flex flex-col justify-between gap-5 lg:flex-row lg:gap-16">

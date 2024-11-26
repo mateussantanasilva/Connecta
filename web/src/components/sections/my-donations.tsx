@@ -2,20 +2,24 @@
 
 import { SquareCheck, X } from 'lucide-react'
 import { Button } from '../button'
-import { DONATION_ITEMS } from '@/constants/donation-items'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ConfirmationModal } from '../modals/confirmation-modal'
+import { DonationItem } from '@/@types/DonationItem'
 
-export function MyDonations() {
-  const [donations, setDonations] = useState(DONATION_ITEMS)
+interface MyDonationsProps {
+  donations: DonationItem[]
+}
+
+export function MyDonations({ donations }: MyDonationsProps) {
+  const [donationList, setDonationList] = useState(donations)
 
   function handleCancelDonation(donationId: string) {
     const updatedDonations = donations.filter(
       (donation) => donation.id !== donationId,
     )
 
-    setDonations(updatedDonations)
+    setDonationList(updatedDonations)
 
     toast.success(
       'Sua doação foi cancelada. Esperamos contar com você em outras oportunidades!',
@@ -49,19 +53,17 @@ export function MyDonations() {
           </header>
 
           <div className={`max-h-96 space-y-2 pb-1`}>
-            {donations.map((donation) => (
+            {donationList.map((donation) => (
               <div
                 key={donation.id}
                 className="flex min-w-fit items-center gap-5 rounded-2xl p-5 text-center text-sm shadow"
               >
                 <div className="flex min-w-44 max-w-56 flex-1 flex-col text-start">
-                  <span>{donation.name}</span>
+                  <span>{donation.item_name}</span>
                   <span>{`${donation.quantity} ${donation.measure}`}</span>
                 </div>
 
-                <span className="min-w-44 flex-1">
-                  {donation.campaign.name}
-                </span>
+                <span className="min-w-44 flex-1">{donation.campaign_id}</span>
 
                 <div className="flex min-w-44 flex-1 justify-center">
                   <span
