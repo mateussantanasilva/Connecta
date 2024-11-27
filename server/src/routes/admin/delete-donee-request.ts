@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { db } from '../../lib/firebase'
 import { ClientError } from '../../errors/client-error'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { FieldValue } from 'firebase-admin/firestore'
 
 const ParamsSchema = z.object({
     id: z.string(),
@@ -30,6 +31,11 @@ export async function deleteDoneeRequest(app: FastifyInstance) {
                 if(!doneeRequestDoc.exists) {
                     return res.status(404).send(new ClientError('Solicitação não encontrada'))
                 }
+                const userRef = db.collection('users').doc(doneeRequestDoc.data()?.userID)
+                if(!(await userRef.get()).exists) {
+                    return res.status(404).send(new ClientError(`Solicitação ${doneeRequestDoc.id} com usuário inexistente`))
+                }
+                await userRef.update({doneeRequested: FieldValue.delete()})
                 await doneeRequestRef.delete()
                 return res.status(200).send()
             } catch(e) {

@@ -41,9 +41,13 @@ export async function createDoneeRequest(app: FastifyInstance) {
                 request
             } = req.body as z.infer<typeof doneeBodySchema>
             try {
-                const userDoc = await db.collection('users').doc(userID).get()
-                if(!userDoc.exists) {
-                    res.status(404).send(new ClientError("Usuário não encontrado"))
+                const userRef = await db.collection('users').doc(userID)
+                const userDoc = userRef.get()
+                if(!(await userDoc).exists) {
+                    return res.status(404).send(new ClientError("Usuário não encontrado"))
+                }
+                if(!(await db.collection('donee-request').where('userID', '==', userID).get()).empty) {
+                    return res.status(400).send(new ClientError("Usuário já solicitou a função donatário"))
                 }
                 const createdAt = new Date().toISOString()
                 const doneeData = {
@@ -53,9 +57,10 @@ export async function createDoneeRequest(app: FastifyInstance) {
                     request,
                     createdAt
                 }
+                await userRef.update({doneeRequested: "True"})
                 const doneeRef = await db.collection('donee-request').add(doneeData)
                 if(!doneeRef) {
-                    res.status(400).send(new ClientError("Erro ao solicitar função donatário"))
+                    return res.status(400).send(new ClientError("Erro ao solicitar função donatário"))
                 }
                 return res.status(201).send()
             } catch(e) {
