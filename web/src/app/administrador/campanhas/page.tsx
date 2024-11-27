@@ -7,11 +7,11 @@ import { StatusIndicator } from '@/components/status-indicator'
 import { CampaignFilter } from '@/components/admin/campaign-filter'
 import { HeaderAdmin } from '@/components/admin/header-admin'
 import { api } from '@/utils/api'
-import { Campaign } from '@/@types/Campaign'
+import { CampaignsDTO } from '@/@types/Campaign'
 
 export default async function Campanha() {
   const data = await fetch(`${api}/public/campaigns`)
-  const campaigns: Campaign[] = await data.json()
+  const { campaigns }: CampaignsDTO = await data.json()
 
   return (
     <>

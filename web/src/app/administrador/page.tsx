@@ -6,7 +6,7 @@ import { getAuthentication } from '@/utils/get-authentication'
 import { api } from '@/utils/api'
 import { AdminMetrics } from '@/@types/Metrics'
 import { cookies } from 'next/headers'
-import { DonationItem } from '@/@types/DonationItem'
+import { DonationsDTO } from '@/@types/DonationItem'
 import { DonationsTable } from '@/components/admin/donations-table'
 
 export default async function Administrador() {
@@ -27,7 +27,7 @@ export default async function Administrador() {
       User: userCookie,
     },
   })
-  const donations: DonationItem[] = await donationsResponse.json()
+  const { donations }: DonationsDTO = await donationsResponse.json()
 
   return (
     <>

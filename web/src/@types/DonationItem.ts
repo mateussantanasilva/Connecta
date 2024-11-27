@@ -7,3 +7,10 @@ export interface DonationItem {
   status: 'pendente' | 'confirmada'
   date: string
 }
+
+export interface DonationsDTO {
+  page: number
+  limit: number
+  totalResponses: number
+  donations: DonationItem[]
+}

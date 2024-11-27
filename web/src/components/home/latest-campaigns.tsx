@@ -1,4 +1,4 @@
-import { Campaign } from '@/@types/Campaign'
+import { CampaignsDTO } from '@/@types/Campaign'
 import { Button } from '@/components/button'
 import { CampaignCard } from '@/components/campaign-card'
 import { api } from '@/utils/api'
@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 export async function LatestCampaigns() {
   const data = await fetch(`${api}/public/campaigns?limit=4`)
-  const campaigns: Campaign[] = await data.json()
+  const { campaigns }: CampaignsDTO = await data.json()
 
   if (campaigns.length === 0) return
 

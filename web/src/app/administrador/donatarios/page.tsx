@@ -5,7 +5,7 @@ import { DoneeFilter } from '@/components/admin/donee-filter'
 import { HeaderAdmin } from '@/components/admin/header-admin'
 import { api } from '@/utils/api'
 import { cookies } from 'next/headers'
-import { User } from '@/@types/User'
+import { DoneesDTO } from '@/@types/User'
 
 export default async function Donatario() {
   const userCookie = cookies().get('user')?.value
@@ -17,7 +17,7 @@ export default async function Donatario() {
       User: userCookie,
     },
   })
-  const donees: User[] = await data.json()
+  const { donees }: DoneesDTO = await data.json()
 
   return (
     <>

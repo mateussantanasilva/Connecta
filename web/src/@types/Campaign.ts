@@ -26,3 +26,10 @@ export interface Campaign {
   participants_ids: string[]
   started_at?: string
 }
+
+export interface CampaignsDTO {
+  page: number
+  limit: number
+  totalResponses: number
+  campaigns: Campaign[]
+}

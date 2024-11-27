@@ -14,7 +14,7 @@ import { Button } from '../button'
 import { Avatar } from '../avatar'
 import { api } from '@/utils/api'
 import { useState } from 'react'
-import { DoneeRequest } from '@/@types/User'
+import { DoneeRequest, DoneeRequestsDTO } from '@/@types/User'
 import Cookies from 'js-cookie'
 import { toast } from 'sonner'
 
@@ -29,9 +29,9 @@ export function DoneeRequestsModal() {
         User: String(userCookie),
       },
     })
-    const requests = await data.json()
+    const { doneeRequests }: DoneeRequestsDTO = await data.json()
 
-    setRequests(requests)
+    setRequests(doneeRequests)
   }
 
   async function deleteRequest(requestId: string) {

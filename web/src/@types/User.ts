@@ -10,3 +10,17 @@ export interface User extends Authentication {
 export interface DoneeRequest extends User {
   id: string
 }
+
+export interface DoneeRequestsDTO {
+  page: number
+  limit: number
+  totalResponses: number
+  doneeRequests: DoneeRequest[]
+}
+
+export interface DoneesDTO {
+  page: number
+  limit: number
+  totalResponses: number
+  donees: User[]
+}

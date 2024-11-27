@@ -51,7 +51,7 @@ export function ReserveDonationModal({
             User: String(userCookie),
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(donation),
+          body: JSON.stringify([donation]),
         }),
       {
         success: () => {
@@ -142,7 +142,11 @@ export function ReserveDonationModal({
 
           <div className="mt-auto h-px w-full bg-zinc-400" />
 
-          <Button onClick={handleReserve} className="ml-auto">
+          <Button
+            onClick={handleReserve}
+            disabled={items.length === 0}
+            className="ml-auto"
+          >
             <span>Confirmar reserva</span>
             <HandHeart className="size-5 shrink-0" />
           </Button>
