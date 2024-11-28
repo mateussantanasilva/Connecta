@@ -30,12 +30,7 @@ export async function getDonees(app: FastifyInstance) {
                     const data = doc.data()
                     return {
                         id: doc.id,
-                        name: data.name,
-                        email: data.email,
-                        avatar: data.avatar,
-                        role: data.role,
-                        telephone: data.telephone,
-                        address: data.address
+                        ...data
                     }
                 })
 

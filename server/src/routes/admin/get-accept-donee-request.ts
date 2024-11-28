@@ -42,6 +42,8 @@ export async function getAcceptDoneeRequest(app: FastifyInstance) {
                     telephone: data?.telephone,
                     address: data?.address,
                     doneeRequested: FieldValue.delete(),
+                    doneeAccepted: new Date().toISOString(),
+                    doneeStatus: 'ativo'
                 }
                 await userRef.update(updatedDoneeUser)
                 await doneeRequestRef.delete()
