@@ -7,7 +7,7 @@ import { donationStatus } from '../donation/create-donation'
 
 export async function getDonations(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    '/donations',
+    '/admin/donations',
     {
       schema: {
         querystring: {

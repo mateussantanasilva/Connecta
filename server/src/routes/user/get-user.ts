@@ -29,7 +29,7 @@ export async function getUserById(app: FastifyInstance) {
                 if(!userDoc.exists) {
                     return res.status(404).send(new ClientError("Usuário não encontrado"))
                 }
-                const user = {id: userDoc.id, ...userDoc.data()}
+                const user = {userID: userDoc.id, ...userDoc.data()}
                 return res.status(200).send(user)
             } catch(e) {
                 console.error(e)
