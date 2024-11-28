@@ -19,6 +19,17 @@ export async function authenticationMiddleware(app: FastifyInstance) {
         if (!user) {
           return res.status(401).send(new ClientError('Usuário não autenticado'))
         }
+
+        const decoded = jwt.decode(user.toString())
+        if (!decoded || typeof decoded === 'string' || !decoded.exp) {
+          return res.status(401).send(new ClientError('Token inválido'))
+        }
+        const now = Math.floor(Date.now() / 1000)
+        if (decoded.exp < now) {
+          res.clearCookie('user', { path: '/', secure: true, sameSite: 'none' })
+          return res.status(401).send(new ClientError('Token expirado'))
+        }
+
         const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
         const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
         if (!userSnapshot.exists) {
