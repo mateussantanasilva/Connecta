@@ -46,8 +46,6 @@ export default async function Perfil() {
   )
   const { donations }: DonationsDTO = await donationsResponse.json()
 
-  console.log(campaigns)
-
   return (
     <>
       <Header />

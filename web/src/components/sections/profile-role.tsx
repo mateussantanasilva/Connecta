@@ -49,7 +49,7 @@ export function ProfileRole({ profile }: ProfileRoleProps) {
       </div>
 
       {profile.role === 'doador' ? (
-        <BecomeDoneeModal />
+        <BecomeDoneeModal doneeRequested={profile.doneeRequested} />
       ) : (
         <Button
           size="full"

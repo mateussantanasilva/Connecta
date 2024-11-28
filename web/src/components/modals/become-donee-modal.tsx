@@ -27,7 +27,11 @@ const becomeDoneeSchema = z.object({
 })
 type BecomeDoneeSchema = z.infer<typeof becomeDoneeSchema>
 
-export function BecomeDoneeModal() {
+interface BecomeDoneeModalProps {
+  doneeRequested?: boolean
+}
+
+export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
   const userCookie = Cookies.get('user')
 
   const [isOpenModal, setIsOpenModal] = useState(false)
@@ -67,6 +71,7 @@ export function BecomeDoneeModal() {
       <Dialog.Trigger asChild>
         <Button
           size="full"
+          disabled={doneeRequested}
           onClick={() => setIsOpenModal(!isOpenModal)}
           className="md:w-fit lg:w-full"
         >

@@ -43,25 +43,41 @@ export default async function Administrador() {
           <StatusCard
             title="Campanhas Abertas"
             count={metrics.openCampaigns}
-            description="2 nova(s) para analisar"
+            description={
+              metrics.soonCampaigns > 0
+                ? `${metrics.soonCampaigns} nova(s) para anunciar`
+                : 'Nenhuma nova para anunciar'
+            }
             icon={<SquareCheck className="h-5 w-5 text-orange-500" />}
           />
           <StatusCard
             title="Donatários Ativos"
             count={metrics.activeDonors}
-            description="1 solicitação(ões) para revisar"
+            description={
+              metrics.doneeRequests > 0
+                ? `${metrics.doneeRequests} solicitação(ões) para revisar`
+                : 'Nenhuma solicitação para revisar'
+            }
             icon={<UserRoundCheck className="h-5 w-5 text-orange-500" />}
           />
           <StatusCard
             title="Doações Anuais"
             count={metrics.annualDonations}
-            description="1 pendente(s) de confirmação"
+            description={
+              metrics.unconfirmedDonations > 0
+                ? `${metrics.unconfirmedDonations} pendente(s) de confirmação`
+                : 'Nenhuma pendente de confirmação'
+            }
             icon={<HandHeart className="h-5 w-5 text-orange-500" />}
           />
           <StatusCard
             title="Campanhas 100%"
             count={metrics.totalCompletedCampaigns}
-            description="7 finalizadas(s) ao total"
+            description={
+              metrics.totalEndedCampaigns > 0
+                ? `${metrics.totalEndedCampaigns} finalizadas(s) ao total`
+                : 'Nenhuma finalizada'
+            }
             icon={<Trophy className="h-5 w-5 text-orange-500" />}
           />
         </div>

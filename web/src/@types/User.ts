@@ -5,6 +5,7 @@ export interface User extends Authentication {
   telephone?: string
   request?: string
   id?: string // mudar depois
+  doneeRequested?: boolean
 }
 
 export interface DoneeRequest extends User {
