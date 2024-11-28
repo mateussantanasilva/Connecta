@@ -32,7 +32,13 @@ export async function getDonation(app: FastifyInstance) {
           return response.status(404).send(new ClientError('Doação não encontrada'))
         }
 
-        const donation = { id: donationDoc.id, ...donationDoc.data() }
+        const donationData = donationDoc.data()
+        const userDoc = await db.collection('users').doc(donationData?.userID).get()
+        if(!userDoc.exists) {
+          return response.status(404).send(new ClientError(`Doação ${donationId} com usuário inexistente`))
+        }
+
+        const donation = { id: donationDoc.id, ...donationDoc.data(),  ...userDoc.data()}
 
         return response.status(200).send(donation)
       } catch (error) {

@@ -122,6 +122,7 @@ export async function createDonation(app: FastifyInstance) {
             campaign_id,
             status: 'pendente',
             measure,
+            userID: userId,
             donation_date: new Date().toISOString(),
           };
 

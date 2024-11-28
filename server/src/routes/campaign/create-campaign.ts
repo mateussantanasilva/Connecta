@@ -35,7 +35,7 @@ export const donationSchema = z.object({
   quantity: z.number().min(1),
   measure: z.string().min(1),
   status: donationStatus,
-  user_id: z.string().min(1),
+  userID: z.string().min(1),
 })
 
 export const campaignSchema = z.object({

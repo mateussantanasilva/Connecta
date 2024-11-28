@@ -32,8 +32,12 @@ export async function getDonations(app: FastifyInstance) {
       try {
         const donationsSnapshot = await db.collection('donations').get()
 
-        let donationsData = donationsSnapshot.docs.map((doc) => {
+        let donationsData = await Promise.all(donationsSnapshot.docs.map(async (doc) => {
           const data = doc.data()
+          const userDoc = await db.collection('users').doc(data?.userID).get()
+          if(!userDoc.exists) {
+            return reply.status(404).send(new ClientError(`Doação ${data.id} com usuário inexistente`))
+          }
           return {
             id: doc.id,
             item_name: data.item_name,
@@ -41,10 +45,11 @@ export async function getDonations(app: FastifyInstance) {
             measure: data.measure,
             campaign_id: data.campaign_id,
             status: data.status,
-            user_id: data.user_id,
+            userID: data.userID,
+            ...userDoc.data(),
             date: data.donation_date,
           }
-        })
+        }))
 
         const filterIsValid = (key: string): key is keyof typeof donationsData[0] => {
           return key in donationsData[0]
