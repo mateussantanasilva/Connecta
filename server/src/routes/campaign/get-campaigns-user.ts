@@ -16,10 +16,25 @@ export async function getUserCampaigns(app: FastifyInstance) {
     {
       schema: {
         params: fromZodSchema(ParamsSchema),
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { type: 'number', minimum: 1, default: 1 },
+            limit: { type: 'number', minimum: 1, default: 8 },
+            filterBy: { type: 'string', default: '' },
+            filterValue: { type: 'string', default: '' }
+          },
+        },
       },
     },
     async (request, reply) => {
       const { userId } = request.params as z.infer<typeof ParamsSchema>
+      const { page, limit, filterBy, filterValue } = request.query as {
+        page: number;
+        limit: number;
+        filterBy: string;
+        filterValue: string
+      }
 
       try {
         const campaignsSnapshot = await db.collection('campaigns').get()
@@ -30,7 +45,7 @@ export async function getUserCampaigns(app: FastifyInstance) {
             .send(new ClientError('Nenhuma campanha encontrada'))
         }
 
-        const userCampaigns = campaignsSnapshot.docs
+        let userCampaigns = campaignsSnapshot.docs
           .map(doc => ({ id: doc.id, ...(doc.data() as { participants_ids?: string[] }) }))
           .filter(campaign => campaign.participants_ids?.includes(userId))
 
@@ -40,7 +55,29 @@ export async function getUserCampaigns(app: FastifyInstance) {
             .send(new ClientError('Usuário não está participando de nenhuma campanha'))
         }
 
-        return reply.status(200).send(userCampaigns)
+        const filterIsValid = (key: string | number | symbol ): key is keyof typeof userCampaigns[0] => {
+          return key in userCampaigns[0]
+        }
+
+          if (filterBy && filterValue && filterIsValid(filterBy)) {
+            userCampaigns = userCampaigns.filter(donee =>
+              String(donee[filterBy])?.toLowerCase().includes(filterValue.toLowerCase())
+            )
+          }
+        
+        const startIndex = (page - 1) * limit
+        const endIndex = startIndex + limit
+        const campaigns = userCampaigns.slice(startIndex, endIndex)
+
+        const totalResponses = userCampaigns.length
+        const responseSchema = {
+          page,
+          limit,
+          totalResponses,
+          campaigns
+        }
+
+        return reply.status(200).send(responseSchema)
       } catch (error) {
         console.error(error)
         return reply

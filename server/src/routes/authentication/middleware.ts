@@ -7,6 +7,7 @@ import { ClientError } from "../../errors/client-error"
 
 dotenv.config()
 const JWT_SECRET = process.env.SESSION_SECRET!
+const redirectURL = process.env.PRODUCTION ? 'https://connecta-1azy.onrender.com' : 'http://localhost:3000'
 
 export async function authenticationMiddleware(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().addHook('onRequest', async (req, res) => {
@@ -27,7 +28,7 @@ export async function authenticationMiddleware(app: FastifyInstance) {
         const now = Math.floor(Date.now() / 1000)
         if (decoded.exp < now) {
           res.clearCookie('user', { path: '/', secure: true, sameSite: 'none' })
-          return res.status(401).send(new ClientError('Token expirado'))
+          return res.redirect(`${redirectURL}/login/google`)
         }
 
         const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
