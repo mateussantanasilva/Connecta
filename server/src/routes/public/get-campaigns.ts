@@ -52,8 +52,14 @@ export async function getCampaigns(app: FastifyInstance) {
               goal: data.goal,
               NumberDonations: numberDonations,
             }
-          }),
+          })
         )
+
+        campaignsData.sort((a, b) => {
+          const dateA = a.started_at ? new Date(a.started_at) : new Date(0) 
+          const dateB = b.started_at ? new Date(b.started_at) : new Date(0)
+          return dateB.getTime() - dateA.getTime()
+        })
 
         const filterIsValid = (key: string): key is keyof typeof campaignsData[0] => {
           return key in campaignsData[0]

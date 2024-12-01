@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -46,7 +45,10 @@ export async function getUserCampaigns(app: FastifyInstance) {
         }
 
         let userCampaigns = campaignsSnapshot.docs
-          .map(doc => ({ id: doc.id, ...(doc.data() as { participants_ids?: string[] }) }))
+          .map(doc => ({
+            id: doc.id,
+            ...(doc.data() as { participants_ids?: string[]; created_at?: any })
+          }))
           .filter(campaign => campaign.participants_ids?.includes(userId))
 
         if (userCampaigns.length === 0) {
@@ -55,16 +57,23 @@ export async function getUserCampaigns(app: FastifyInstance) {
             .send(new ClientError('Usuário não está participando de nenhuma campanha'))
         }
 
+        userCampaigns = userCampaigns.sort((a, b) => {
+          if (a.created_at && b.created_at) {
+            return b.created_at.seconds - a.created_at.seconds 
+          }
+          return 0
+        })
+
         const filterIsValid = (key: string | number | symbol ): key is keyof typeof userCampaigns[0] => {
           return key in userCampaigns[0]
         }
 
-          if (filterBy && filterValue && filterIsValid(filterBy)) {
-            userCampaigns = userCampaigns.filter(donee =>
-              String(donee[filterBy])?.toLowerCase().includes(filterValue.toLowerCase())
-            )
-          }
-        
+        if (filterBy && filterValue && filterIsValid(filterBy)) {
+          userCampaigns = userCampaigns.filter(donee =>
+            String(donee[filterBy])?.toLowerCase().includes(filterValue.toLowerCase())
+          )
+        }
+
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
         const campaigns = userCampaigns.slice(startIndex, endIndex)
