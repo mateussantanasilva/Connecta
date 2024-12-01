@@ -13,15 +13,15 @@ export async function getDonationByCampaign(app: FastifyInstance) {
     '/donations/campaign/:campaignId',
     {
       schema: {
-          querystring: {
-                    type: 'object',
-                    properties: {
-                        page: { type: 'number', minimum: 1, default: 1 },
-                        limit: { type: 'number', minimum: 1, default: 8 },
-                        filterBy: { type: 'string', default: '' },
-                        filterValue: { type: 'string', default: '' }
-                    },
-                },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { type: 'number', minimum: 1, default: 1 },
+            limit: { type: 'number', minimum: 1, default: 8 },
+            filterBy: { type: 'string', default: '' },
+            filterValue: { type: 'string', default: '' },
+          },
+        },
         params: {
           type: 'object',
           properties: {
@@ -32,7 +32,12 @@ export async function getDonationByCampaign(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { page, limit, filterBy, filterValue } = request.query as { page: number; limit: number; filterBy: string; filterValue: string }
+      const { page, limit, filterBy, filterValue } = request.query as {
+        page: number
+        limit: number
+        filterBy: string
+        filterValue: string
+      }
 
       try {
         const { campaignId } = request.params as z.infer<typeof ParamsSchema>
@@ -51,11 +56,14 @@ export async function getDonationByCampaign(app: FastifyInstance) {
           .where('campaign_id', '==', campaignId)
           .get()
 
-          let donationsData = await Promise.all(donationsSnapshot.docs.map(async (doc) => {
+        let donationsData = await Promise.all(
+          donationsSnapshot.docs.map(async (doc) => {
             const data = doc.data()
             const userDoc = await db.collection('users').doc(data?.userID).get()
-            if(!userDoc.exists) {
-              return reply.status(404).send(new ClientError(`Doação ${data.id} com usuário inexistente`))
+            if (!userDoc.exists) {
+              return reply
+                .status(404)
+                .send(new ClientError(`Doação ${data.id} com usuário inexistente`))
             }
             return {
               id: doc.id,
@@ -66,18 +74,27 @@ export async function getDonationByCampaign(app: FastifyInstance) {
               status: data.status,
               userID: data.userID,
               ...userDoc.data(),
-              date: data.donation_date,
+              date: data.donation_date, 
             }
-          }))
+          })
+        )
 
-         const filterIsValid = (key: string): key is keyof typeof donationsData[0] => {
+        donationsData = donationsData.sort((a, b) => {
+          if (a.date && b.date) {
+            return b.date.seconds - a.date.seconds 
+          }
+          return 0
+        })
+
+        const filterIsValid = (key: string): key is keyof typeof donationsData[0] => {
           return key in donationsData[0]
         }
-                if (filterBy && filterValue && filterIsValid(filterBy)) {
-                  donationsData = donationsData.filter(donee =>
-                        donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
-                    )
-                }
+
+        if (filterBy && filterValue && filterIsValid(filterBy)) {
+          donationsData = donationsData.filter((donation) =>
+            donation[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+          )
+        }
 
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
@@ -88,14 +105,14 @@ export async function getDonationByCampaign(app: FastifyInstance) {
           page,
           limit,
           totalResponses,
-          donations
+          donations,
         }
-        
+
         return reply.status(200).send(responseSchema)
       } catch (error) {
         console.error(error)
         return reply.status(500).send(new ClientError('Erro ao buscar doações por campanha'))
       }
-    },
+    }
   )
 }

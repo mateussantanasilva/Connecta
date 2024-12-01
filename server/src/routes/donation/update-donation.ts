@@ -8,7 +8,7 @@ import { ClientError } from '../../errors/client-error'
 import { donationStatus } from './create-donation'
 
 const donationSchema = z.object({
-  status: donationStatus,
+  status: donationStatus, 
 })
 
 const ParamsSchema = z.object({
@@ -26,7 +26,6 @@ export async function updateDonation(app: FastifyInstance) {
     },
     async (request, reply) => {
       const { donation_id } = request.params as z.infer<typeof ParamsSchema>
-      const { status } = request.body as z.infer<typeof donationSchema>
 
       try {
         const donationRef = db.collection('donations').doc(donation_id)
@@ -45,6 +44,7 @@ export async function updateDonation(app: FastifyInstance) {
         const section_id = donationData.section_id
         const campaign_id = donationData.campaign_id
 
+        const status = 'confirmada'
         await donationRef.update({ status })
 
         const campaignRef = await db
@@ -63,7 +63,7 @@ export async function updateDonation(app: FastifyInstance) {
         }
 
         const section = campaignData.sections.find((section: { id: string }) => section.id === section_id)
-        
+
         if (!section) {
           return reply.status(404).send(new ClientError('Seção não encontrada'))
         }
@@ -78,7 +78,7 @@ export async function updateDonation(app: FastifyInstance) {
         section.donations = updatedDonations
 
         await db.collection('campaigns').doc(campaign_id).update({
-          sections: campaignData.sections, 
+          sections: campaignData.sections,
         })
 
         const pendingDonations = updatedDonations.filter(

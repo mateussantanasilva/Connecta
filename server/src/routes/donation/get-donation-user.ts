@@ -14,15 +14,15 @@ export async function getDonationByUser(app: FastifyInstance) {
     '/donations/user/:userID',
     {
       schema: {
-          querystring: {
-                    type: 'object',
-                    properties: {
-                        page: { type: 'number', minimum: 1, default: 1 },
-                        limit: { type: 'number', minimum: 1, default: 8 },
-                        filterBy: { type: 'string', default: '' },
-                        filterValue: { type: 'string', default: '' }
-                    },
-                },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { type: 'number', minimum: 1, default: 1 },
+            limit: { type: 'number', minimum: 1, default: 8 },
+            filterBy: { type: 'string', default: '' },
+            filterValue: { type: 'string', default: '' },
+          },
+        },
         params: {
           type: 'object',
           properties: {
@@ -38,9 +38,8 @@ export async function getDonationByUser(app: FastifyInstance) {
       try {
         const { userID } = request.params as z.infer<typeof ParamsSchema>
 
-        const user_doc = await db.collection('users').doc(userID).get()
-
-        if (!user_doc.exists) {
+        const userDoc = await db.collection('users').doc(userID).get()
+        if (!userDoc.exists) {
           return reply.status(404).send(new ClientError('Usuário não encontrado'))
         }
 
@@ -49,33 +48,42 @@ export async function getDonationByUser(app: FastifyInstance) {
           .where('userID', '==', userID)
           .get()
 
-        let donationsData = await Promise.all(donationsSnapshot.docs.map(async (doc) => {
-          const data = doc.data()
-          const userDoc = await db.collection('users').doc(data?.userID).get()
-          if(!userDoc.exists) {
-            return reply.status(404).send(new ClientError(`Doação ${data.id} com usuário inexistente`))
+        let donationsData = await Promise.all(
+          donationsSnapshot.docs.map(async (doc) => {
+            const data = doc.data()
+
+            const campaignDoc = await db.collection('campaigns').doc(data.campaign_id).get()
+            const campaignName = campaignDoc.exists ? campaignDoc.data()?.name : 'Campanha não encontrada'
+
+            return {
+              id: doc.id,
+              item_name: data.item_name,
+              quantity: data.quantity,
+              measure: data.measure,
+              campaign_id: data.campaign_id,
+              campaign_name: campaignName,
+              status: data.status,
+              userID: data.userID,
+              date: data.donation_date, 
+            }
+          })
+        )
+
+        donationsData = donationsData.sort((a, b) => {
+          if (a.date && b.date) {
+            return b.date.seconds - a.date.seconds 
           }
-          return {
-            id: doc.id,
-            item_name: data.item_name,
-            quantity: data.quantity,
-            measure: data.measure,
-            campaign_id: data.campaign_id,
-            status: data.status,
-            userID: data.userID,
-            ...userDoc.data(),
-            date: data.donation_date,
-          }
-        }))
+          return 0
+        })
 
         const filterIsValid = (key: string): key is keyof typeof donationsData[0] => {
           return key in donationsData[0]
         }
-                if (filterBy && filterValue && filterIsValid(filterBy)) {
-                  donationsData = donationsData.filter(donee =>
-                        donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
-                    )
-                }
+        if (filterBy && filterValue && filterIsValid(filterBy)) {
+          donationsData = donationsData.filter(donee =>
+            donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+          )
+        }
 
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
@@ -86,14 +94,14 @@ export async function getDonationByUser(app: FastifyInstance) {
           page,
           limit,
           totalResponses,
-          donations
+          donations,
         }
-        
+
         return reply.status(200).send(responseSchema)
       } catch (error) {
         console.error(error)
         return reply.status(500).send(new ClientError('Erro ao buscar doações por usuário'))
       }
-    },
+    }
   )
 }

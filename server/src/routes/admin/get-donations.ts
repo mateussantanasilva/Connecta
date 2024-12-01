@@ -30,7 +30,9 @@ export async function getDonations(app: FastifyInstance) {
       }
    
       try {
-        const donationsSnapshot = await db.collection('donations').get()
+        const donationsSnapshot = await db.collection('donations')
+          .orderBy('donation_date', 'desc')  
+          .get()
 
         let donationsData = await Promise.all(donationsSnapshot.docs.map(async (doc) => {
           const data = doc.data()
@@ -55,12 +57,12 @@ export async function getDonations(app: FastifyInstance) {
           return key in donationsData[0]
         }
 
-          if (filterBy && filterValue && filterIsValid(filterBy)) {
-            donationsData = donationsData.filter(donee =>
-              donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
-            )
-          }
-        
+        if (filterBy && filterValue && filterIsValid(filterBy)) {
+          donationsData = donationsData.filter(donee =>
+            donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+          )
+        }
+
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
         const donations = donationsData.slice(startIndex, endIndex)
