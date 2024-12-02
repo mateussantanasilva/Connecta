@@ -99,9 +99,9 @@ export async function createCampaign(app: FastifyInstance) {
           participants_ids,
         }
 
-       if (userData?.role == 'doador') {
-         return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'))
-        }
+     //  if (userData?.role == 'doador') {
+       //  return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'))
+       // }
         
         const campaignRef = await db.collection('campaigns').add(campaignData)
 

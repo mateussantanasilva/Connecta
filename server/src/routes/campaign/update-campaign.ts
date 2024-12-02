@@ -20,7 +20,6 @@ const campaignSchema = z.object({
   participants: z.number().nonnegative(),
   started_at: z.string().min(1),
   section: z.array(campaignSection).min(1),
-  closed_at: z.string().optional(),
 })
 
 const ParamsSchema = z.object({
@@ -57,6 +56,11 @@ export async function updateCampaign(app: FastifyInstance) {
 
         if (!campaignDoc.exists) {
           return reply.status(404).send(new ClientError('Campanha não encontrada'))
+        }
+
+        const campaignData = campaignDoc.data();
+        if (campaignData && campaignData.status === 'fechada') {
+          return reply.status(400).send(new ClientError('Não é possível editar campanha fechada'))
         }
 
         const updatedCampaignData = {

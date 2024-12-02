@@ -50,7 +50,7 @@ export async function getCampaigns(app: FastifyInstance) {
               started_at: data.started_at,
               section: data.section,
               goal: data.goal,
-              NumberDonations: numberDonations,
+              numberDonations: numberDonations,
             }
           })
         )
