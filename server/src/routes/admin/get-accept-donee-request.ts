@@ -41,6 +41,7 @@ export async function getAcceptDoneeRequest(app: FastifyInstance) {
                     role: 'donatário',
                     telephone: data?.telephone,
                     address: data?.address,
+                    request: data?.request,
                     doneeRequested: FieldValue.delete(),
                     doneeAccepted: new Date().toISOString(),
                     doneeStatus: 'ativo'

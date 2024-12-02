@@ -35,6 +35,7 @@ export async function getDonorRole(app: FastifyInstance) {
                     address: FieldValue.delete(),
                     telephone: FieldValue.delete(),
                     doneeAccepted: FieldValue.delete(),
+                    request: FieldValue.delete(),
                     doneeStatus: 'inativo',
                     role: 'doador'
                 }
