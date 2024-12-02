@@ -24,7 +24,7 @@ export async function login(app: FastifyInstance) {
                 const { name, email } = userInfo
                 const avatar = userInfo.picture
                 const userRef = await db.collection('users').where('email', '==', email).get()
-                var userId = ""
+                var userID = ""
                 var userRole = "doador"
                 if (userRef.empty) {
                     const newUser = {
@@ -34,21 +34,21 @@ export async function login(app: FastifyInstance) {
                     role: 'doador'
                     }
                     const newUserRef = await db.collection('users').add(newUser);
-                    userId = newUserRef.id
+                    userID = newUserRef.id
                 } else {
                     const userDoc = userRef.docs[0]
                     const userData = userDoc.data()
-                    userId = userDoc.id
+                    userID = userDoc.id
                     userRole = userData.role
                     if (userData.avatar !== avatar) {
                     // Atualiza a foto de perfil se for diferente
-                    await db.collection('users').doc(userId).update({
+                    await db.collection('users').doc(userID).update({
                         avatar
                     });
                     }
                 }
-                const userData = (await db.collection('users').doc(userId).get()).data()
-                const jwtUser = await jwt.sign({ userId, ...userData }, JWT_SECRET, { expiresIn: '48h' })
+                const userData = (await db.collection('users').doc(userID).get()).data()
+                const jwtUser = await jwt.sign({ userID, ...userData }, JWT_SECRET, { expiresIn: '48h' })
                 res.setCookie('user', jwtUser, { path: '/', secure: true, sameSite: 'none', expires: new Date(Date.now() + 48 * 60 * 60 * 1000) })
                 if(userRole == 'administrador') {
                     return res.redirect(`${redirectURL}/administrador`)
