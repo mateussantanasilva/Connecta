@@ -157,7 +157,7 @@ export async function createDonation(app: FastifyInstance) {
                     ? {
                         ...item,
                         amount_donated: updatedAmountDonated,
-                        status: updatedAmountDonated === item.goal ? 'concluida' : item.status,
+                        status: updatedAmountDonated === item.goal ? 'reservado' : item.status,
                       }
                     : item,
               ),

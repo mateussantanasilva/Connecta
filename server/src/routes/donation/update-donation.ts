@@ -90,7 +90,7 @@ export async function updateDonation(app: FastifyInstance) {
           const updatedItems = campaignData.items.map(
             (item: { name: string; status: string }) => {
               return item.name === item_name
-                ? { ...item, status: 'concluida' }
+                ? { ...item, status: 'concluido' }
                 : item
             },
           )
@@ -100,7 +100,7 @@ export async function updateDonation(app: FastifyInstance) {
           })
 
           const allItemsCompleted = updatedItems.every(
-            (item: { status: string }) => item.status === 'concluida',
+            (item: { status: string }) => item.status === 'concluido',
           )
 
           if (allItemsCompleted) {
@@ -111,7 +111,7 @@ export async function updateDonation(app: FastifyInstance) {
 
           const totalItems = updatedItems.length
           const completedItems = updatedItems.filter(
-            (item: { status: string }) => item.status === 'concluida',
+            (item: { status: string }) => item.status === 'concluido',
           ).length
           const progressPercentage = (completedItems / totalItems) * 100
 
