@@ -3,7 +3,7 @@ export interface DonationItem {
   item_name: string
   quantity: number
   measure: string
-  campaign_id: string
+  campaign_name: string
   status: 'pendente' | 'confirmada'
   date: string
 }

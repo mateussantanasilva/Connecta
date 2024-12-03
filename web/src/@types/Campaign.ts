@@ -1,4 +1,17 @@
+export interface CampaignItemAdm {
+  id?: number
+  name?: string
+  goal?: number
+  measure?: string
+}
+
+export interface CampaignSectionAdm {
+  category: string
+  items: CampaignItemAdm[]
+}
+
 export interface CampaignItem {
+  id?: number
   name: string
   goal: number
   measure: string

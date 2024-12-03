@@ -1,5 +1,5 @@
 export interface Authentication {
-  userId: string
+  userID: string
   name: string
   email: string
   avatar: string

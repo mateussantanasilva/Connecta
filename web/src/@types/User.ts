@@ -4,7 +4,6 @@ export interface User extends Authentication {
   address?: string
   telephone?: string
   request?: string
-  id?: string // mudar depois
   doneeRequested?: boolean
 }
 
@@ -19,9 +18,14 @@ export interface DoneeRequestsDTO {
   doneeRequests: DoneeRequest[]
 }
 
+export interface Donee extends DoneeRequest {
+  doneeStatus: string
+  doneeAccepted: string
+}
+
 export interface DoneesDTO {
   page: number
   limit: number
   totalResponses: number
-  donees: User[]
+  donees: Donee[]
 }
