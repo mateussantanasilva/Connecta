@@ -8,6 +8,7 @@ import Cookies from 'js-cookie'
 import { api } from '@/utils/api'
 import { UserRound, X, Check } from 'lucide-react'
 import { useState } from 'react'
+import { ConfirmationModal } from '../modals/confirmation-modal'
 
 interface DonationsTableProps {
   fetchedDonations: DonationItem[]
@@ -18,7 +19,7 @@ export function DonationsTable({ fetchedDonations }: DonationsTableProps) {
 
   const userCookie = Cookies.get('user')
 
-  async function deleteDonation(id: string) {
+  async function handleDeleteDonation(id: string) {
     toast.promise(
       async () =>
         await fetch(`${api}/admin/donations/${id}`, {
@@ -42,7 +43,7 @@ export function DonationsTable({ fetchedDonations }: DonationsTableProps) {
     )
   }
 
-  async function confirmDonation(id: string) {
+  async function handleConfirmDonation(id: string) {
     toast.promise(
       async () =>
         await fetch(`${api}/donations/${id}`, {
@@ -68,6 +69,8 @@ export function DonationsTable({ fetchedDonations }: DonationsTableProps) {
       },
     )
   }
+
+  console.log(donations)
 
   return (
     <div className="overflow-x-scroll [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
@@ -107,7 +110,7 @@ export function DonationsTable({ fetchedDonations }: DonationsTableProps) {
               </div>
             </div>
 
-            <span className="flex-1">{donation.campaign_id}</span>
+            <span className="flex-1">{donation.campaign_name}</span>
 
             <div className="w-56">
               <span className="w-56 truncate">{donation.item_name}</span>
@@ -117,17 +120,26 @@ export function DonationsTable({ fetchedDonations }: DonationsTableProps) {
             <span className="w-48 truncate">{formatDate(donation.date)}</span>
 
             <div className="flex w-32 items-center gap-2">
-              <Button
-                size="xs"
+              <ConfirmationModal
                 variant="danger"
-                onClick={() => deleteDonation(donation.id)}
+                title="Deletar Doação"
+                description="Tem certeza de que deseja deletar esta doação? A quantidade do item na campanha será atualizada."
+                onConfirm={() => handleDeleteDonation(donation.id)}
               >
-                <X className="size-5 shrink-0" />
-              </Button>
+                <Button size="xs" variant="danger">
+                  <X className="size-5 shrink-0" />
+                </Button>
+              </ConfirmationModal>
 
-              <Button size="xs" onClick={() => confirmDonation(donation.id)}>
-                <Check className="size-5 shrink-0" />
-              </Button>
+              <ConfirmationModal
+                title="Confirmar Doação"
+                description="Tem certeza de que deseja confirmar esta doação? A ação será registrada e a campanha será atualizada."
+                onConfirm={() => handleConfirmDonation(donation.id)}
+              >
+                <Button size="xs">
+                  <Check className="size-5 shrink-0" />
+                </Button>
+              </ConfirmationModal>
             </div>
           </div>
         ))}

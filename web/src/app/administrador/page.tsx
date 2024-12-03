@@ -22,7 +22,7 @@ export default async function Administrador() {
   })
   const metrics: AdminMetrics = await metricsResponse.json()
 
-  const donationsResponse = await fetch(`${api}/donations`, {
+  const donationsResponse = await fetch(`${api}/admin/donations`, {
     headers: {
       User: userCookie,
     },
@@ -84,7 +84,7 @@ export default async function Administrador() {
 
         <AdminFilter />
 
-        <DonationsTable fetchedDonations={donations} />
+        <DonationsTable fetchedDonations={donations || []} />
 
         {/* <Pagination /> */}
       </main>

@@ -1,41 +1,20 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog'
-import { useState } from 'react'
 import { Button } from '@/components/button'
 import { X, Search, ArrowUpRight } from 'lucide-react'
 import { Input } from '../input'
 import { CollectionPoints } from '../admin/collection-points'
 import { TextArea } from '../text-area'
+import { Campaign } from '@/@types/Campaign'
 import { CategoryCheckboxes } from '../admin/category-checkboxes'
+import Link from 'next/link'
 
-export function ClosedCampaignModal() {
-  const initialCampaignName = 'Mutirão de Aniversário'
-  const initialCampaignDescription =
-    'Ajude-nos a arrecadar brinquedos e comida para famílias carentes da cidade. Sua contribuição será boa!'
-  const initialCampaignObservation =
-    'Esta campanha foi finalizada. Consulte os detalhes para mais informações.'
-  const initialCollectionPoints = [
-    { endereco: 'Rua das Flores, 123 - São Paulo' },
-    { endereco: 'Av. Brasil, 789 - Rio de Janeiro' },
-  ]
-  const initialCategories = ['Brinquedos', 'Alimentação']
+interface ClosedCampaignModalProps {
+  campaign: Campaign
+}
 
-  const initialItems = {
-    Alimentação: [{ nome: 'Bolacha', quantidade: '5 Pacotes' }],
-    Brinquedos: [{ nome: 'Boneca', quantidade: '3 Caixas' }],
-  }
-
-  const [collectionPoints, setCollectionPoints] = useState(
-    initialCollectionPoints,
-  )
-
-  const handlePointsChange = (updatedPoints: { endereco: string }[]) => {
-    setCollectionPoints(updatedPoints)
-  }
-
-  const isDisabled = true
-
+export function ClosedCampaignModal({ campaign }: ClosedCampaignModalProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -65,47 +44,55 @@ export function ClosedCampaignModal() {
             </Dialog.Description>
           </header>
 
-          <a
-            href="http://localhost:3000/campanhas/1"
+          <Link
+            href={`/campanhas/${campaign.id}`}
             target="_blank"
             rel="noopener"
             className="flex items-center gap-1.5 font-bold text-orange-600 transition-colors hover:text-orange-700"
           >
             Veja os resultados desta campanha
             <ArrowUpRight className="size-5 shrink-0" />
-          </a>
+          </Link>
 
           <form className="space-y-5">
             <Input
               title="Nome da campanha"
               type="text"
-              defaultValue={initialCampaignName}
-              disabled={isDisabled}
+              defaultValue={campaign.name}
+              disabled
             />
 
             <CollectionPoints
-              title="Pontos de coleta"
-              initialPoints={collectionPoints}
-              onPointsChange={handlePointsChange}
-              disabled={isDisabled}
+              initialPoints={campaign.collection_point}
+              disabled
             />
 
             <TextArea
               title="Descrição"
-              defaultValue={initialCampaignDescription}
-              disabled={isDisabled}
+              defaultValue={campaign.description}
+              disabled
             />
             <TextArea
               title="Observações"
-              defaultValue={initialCampaignObservation}
-              disabled={isDisabled}
+              defaultValue={campaign.observation}
+              disabled
             />
 
             <CategoryCheckboxes
-              title="Categorias"
-              selectedCategories={initialCategories}
-              initialItems={initialItems}
-              disabled={isDisabled}
+              selectedCategories={['Alimentação']}
+              categorySections={[
+                {
+                  category: 'Alimentação',
+                  items: [
+                    {
+                      name: 'Arroz',
+                      goal: 10,
+                      measure: 'kg',
+                    },
+                  ],
+                },
+              ]}
+              disabled
             />
           </form>
         </Dialog.Content>

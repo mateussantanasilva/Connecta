@@ -1,114 +1,157 @@
-import React, { useState } from 'react'
 import { Trash, Plus } from 'lucide-react'
 import { Button } from '@/components/button'
 import { Input } from '@/components/input'
+import { Checkbox } from '../checkbox'
+import {
+  CampaignItemAdm,
+  CampaignSection,
+  CampaignSectionAdm,
+} from '@/@types/Campaign'
+import { CATEGORIES } from '@/utils/campaign-creation'
 
 interface CategoryCheckboxesProps {
-  title: string
-  selectedCategories: string[]
-  initialItems?: Record<string, { nome: string; quantidade: string }[]>
   disabled?: boolean
+  selectedCategories?: string[]
+  categorySections: CampaignSection[] | CampaignSectionAdm[]
+  onSetCategorySections?: (section: CampaignSectionAdm[]) => void
 }
 
-const categories = [
-  'Alimentação',
-  'Vestuário',
-  'Higiene',
-  'Limpeza',
-  'Brinquedos',
-  'Educação',
-  'Utilidades',
-] as const
-
-type Category = (typeof categories)[number]
-
 export function CategoryCheckboxes({
-  title,
-  selectedCategories,
-  initialItems = {},
   disabled,
+  selectedCategories,
+  categorySections,
+  onSetCategorySections,
 }: CategoryCheckboxesProps) {
-  const initialSelectedCategories: Record<Category, boolean> =
-    categories.reduce(
-      (acc, category) => {
-        acc[category] = selectedCategories.includes(category)
-        return acc
-      },
-      {} as Record<Category, boolean>,
+  function handleCheck(category: string) {
+    if (!onSetCategorySections) return
+
+    const isSelectedSection = categorySections.find(
+      (section) => section.category === category,
     )
 
-  const [selectedCategoriesState, setSelectedCategories] = useState<
-    Record<Category, boolean>
-  >(initialSelectedCategories)
-  const [items, setItems] = useState<typeof initialItems>(initialItems)
+    if (isSelectedSection) {
+      const updatedSections = categorySections.filter(
+        (section) => section.category !== category,
+      )
 
-  const handleCheckboxChange = (category: Category) => {
-    if (!disabled) {
-      setSelectedCategories((prev) => ({
-        ...prev,
-        [category]: !prev[category],
-      }))
+      return onSetCategorySections(updatedSections)
     }
+
+    return onSetCategorySections([
+      ...categorySections,
+      {
+        category,
+        items: [{ id: Date.now(), name: '', goal: 0, measure: '' }],
+      },
+    ])
   }
 
-  const handleItemChange = (
-    category: Category,
-    index: number,
-    field: 'nome' | 'quantidade',
-    value: string,
-  ) => {
-    if (!disabled) {
-      setItems((prevItems) => {
-        const updatedItems = [...prevItems[category]]
-        updatedItems[index][field] = value
+  function handleAddItem(category: string) {
+    if (!onSetCategorySections) return
 
-        return {
-          ...prevItems,
-          [category]: updatedItems,
-        }
-      })
-    }
+    const updatedSections = categorySections.map((section) =>
+      section.category === category
+        ? {
+            ...section,
+            items: [
+              ...section.items,
+              { id: Date.now(), name: '', goal: 0, measure: '' },
+            ],
+          }
+        : section,
+    )
+
+    onSetCategorySections(updatedSections)
   }
 
-  const handleAddItem = (category: Category) => {
-    setItems((prevItems) => ({
-      ...prevItems,
-      [category]: [
-        ...(prevItems[category] || []),
-        { nome: '', quantidade: '' },
-      ],
-    }))
+  function handleRemoveItem(category: string, item: CampaignItemAdm) {
+    if (!onSetCategorySections) return
+
+    const updatedSections = categorySections
+      .map((section) =>
+        section.category === category
+          ? {
+              ...section,
+              items: section.items.filter(
+                (storedItem) => storedItem.name !== item.name,
+              ),
+            }
+          : section,
+      )
+      .filter((section) => section.items.length > 0)
+
+    onSetCategorySections(updatedSections)
   }
 
-  const handleRemoveItem = (category: Category, index: number) => {
-    setItems((prevItems) => {
-      const updatedItems = [...prevItems[category]]
-      updatedItems.splice(index, 1)
+  function handleChangeItemName(category: string, index: number, name: string) {
+    if (!onSetCategorySections) return
+
+    const updatedSections = categorySections.map((section) => {
+      if (section.category !== category) return section
+
+      const updatedItems = section.items.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, name } : item,
+      )
 
       return {
-        ...prevItems,
-        [category]: updatedItems,
+        ...section,
+        items: updatedItems,
       }
     })
+
+    onSetCategorySections(updatedSections)
+  }
+
+  function handleChangeItemQuantity(
+    category: string,
+    index: number,
+    value: string,
+  ) {
+    if (!onSetCategorySections) return
+
+    const [goal, ...measureParts] = value.split(' ')
+    const measure = measureParts.join(' ')
+
+    const updatedSections = categorySections.map((section) => {
+      if (section.category !== category) return section
+
+      const updatedItems = section.items.map((item, itemIndex) =>
+        itemIndex === index
+          ? { ...item, goal: isNaN(Number(goal)) ? 0 : Number(goal), measure }
+          : item,
+      )
+
+      return {
+        ...section,
+        items: updatedItems,
+      }
+    })
+
+    onSetCategorySections(updatedSections)
   }
 
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-zinc-800">
-        {title}
+        Campanhas
       </label>
+
       <div className="space-y-4">
-        {categories.map((category) => (
+        {CATEGORIES.map((category) => (
           <div key={category}>
             <div className="flex items-center">
-              <input
-                id={category}
-                type="checkbox"
-                checked={!!selectedCategoriesState[category]}
-                onChange={() => handleCheckboxChange(category)}
-                className="h-4 w-4 rounded border-zinc-400"
+              <Checkbox
+                checked={
+                  !!categorySections.find(
+                    (section) =>
+                      section.category === category ||
+                      selectedCategories?.includes(category),
+                  )
+                }
+                onCheckedChange={() => handleCheck(category)}
                 disabled={disabled}
               />
+
               <label
                 htmlFor={category}
                 className="ml-2 block text-sm text-zinc-900"
@@ -117,69 +160,82 @@ export function CategoryCheckboxes({
               </label>
             </div>
 
-            {selectedCategoriesState[category] && (
-              <div className="mt-2 space-y-5 sm:space-y-2">
-                <label className="mb-1 flex flex-col gap-1 text-sm font-medium text-zinc-800">
-                  Nome do item
-                </label>
-                {items[category]?.map((item, index) => (
-                  <div key={index} className="flex flex-col gap-2 sm:flex-row">
-                    <Input
-                      type="text"
-                      value={item.nome}
-                      onChange={(e) =>
-                        handleItemChange(
-                          category,
-                          index,
-                          'nome',
-                          e.target.value,
-                        )
-                      }
-                      className="flex-grow"
-                      disabled={disabled}
-                    />
-
-                    <div className="flex items-center gap-2">
+            {categorySections
+              .find((section) => section.category === category)
+              ?.items.map((item, index) => (
+                <div key={item.id} className="mt-2 space-y-5 sm:space-y-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+                    <div className="flex flex-1 flex-col gap-1">
+                      <label className="mb-1 text-sm font-medium text-zinc-800">
+                        Nome do item
+                      </label>
                       <Input
                         type="text"
-                        placeholder="Ex.: 10kg, 5 pacotes, peças..."
-                        value={item.quantidade}
-                        onChange={(e) =>
-                          handleItemChange(
+                        defaultValue={item.name !== String(0) ? item.name : ''}
+                        disabled={disabled}
+                        onChange={(event) =>
+                          handleChangeItemName(
                             category,
                             index,
-                            'quantidade',
-                            e.target.value,
+                            event.target.value,
                           )
                         }
-                        disabled={disabled}
                       />
+                    </div>
 
-                      {!disabled && (
-                        <Button
-                          variant="danger"
-                          size="xxs"
-                          type="button"
-                          onClick={() => handleRemoveItem(category, index)}
-                        >
-                          <Trash className="size-4" />
-                        </Button>
-                      )}
+                    <div className="flex flex-col sm:min-w-64">
+                      <label className="mb-1 text-sm font-medium text-zinc-800">
+                        Quantidade
+                      </label>
+
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="text"
+                          placeholder="Ex.: 10 kg, 5 pacotes, peças..."
+                          defaultValue={
+                            item.goal ? `${item.goal} ${item.measure}` : ''
+                          }
+                          disabled={disabled}
+                          onChange={(event) =>
+                            handleChangeItemQuantity(
+                              category,
+                              index,
+                              event.target.value,
+                            )
+                          }
+                          className="w-full xs:w-fit sm:flex-1"
+                        />
+
+                        {!disabled && (
+                          <Button
+                            variant="danger"
+                            size="xxs"
+                            type="button"
+                            onClick={() => handleRemoveItem(category, item)}
+                          >
+                            <Trash className="size-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                ))}
-                {!disabled && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => handleAddItem(category)}
-                  >
-                    <span>Adicionar item</span>
-                    <Plus className="size-5 shrink-0" />
-                  </Button>
-                )}
-              </div>
-            )}
+                </div>
+              ))}
+
+            {!disabled &&
+              categorySections.find(
+                (section) => section.category === category,
+              ) && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleAddItem(category)}
+                  className="mt-2"
+                >
+                  <span>Adicionar item</span>
+                  <Plus className="size-5 shrink-0" />
+                </Button>
+              )}
           </div>
         ))}
       </div>
