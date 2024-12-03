@@ -2,15 +2,15 @@
 
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import { Button } from '../button'
 
-interface ConfirmationModalProps {
+interface ConfirmationModalProps extends ComponentProps<'button'> {
   children: ReactNode
   variant?: 'safe' | 'danger'
   title: string
   description: string
-  onConfirm: () => void
+  onConfirm?: () => void
 }
 
 export function ConfirmationModal({
@@ -19,10 +19,13 @@ export function ConfirmationModal({
   title,
   description,
   onConfirm,
+  ...props
 }: ConfirmationModalProps) {
   return (
     <Dialog.Root>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog.Trigger asChild {...props}>
+        {children}
+      </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-20 bg-black/60" />

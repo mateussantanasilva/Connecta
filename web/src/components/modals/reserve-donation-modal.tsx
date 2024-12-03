@@ -11,6 +11,7 @@ import Cookies from 'js-cookie'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { ConfirmationModal } from './confirmation-modal'
 
 interface ReserveDonationModalProps {
   items: CampaignItem[]
@@ -26,9 +27,11 @@ export function ReserveDonationModal({
 
   const router = useRouter()
 
-  const userCookie = Cookies.get('user')
-
   async function handleReserve() {
+    const userCookie = Cookies.get('user')
+
+    if (!userCookie) return
+
     const maxQuantity = items[0].goal - items[0].amount_donated
 
     if (quantity < 1 || quantity > maxQuantity)
@@ -48,7 +51,7 @@ export function ReserveDonationModal({
         await fetch(`${api}/donations`, {
           method: 'POST',
           headers: {
-            User: String(userCookie),
+            User: userCookie,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify([donation]),
@@ -132,7 +135,7 @@ export function ReserveDonationModal({
                 </div>
               ))}
 
-            {items.length === 0 && (
+            {(!items || items.length === 0) && (
               <span className="mt-10 flex max-w-md justify-self-center text-center text-sm">
                 Nenhum item selecionado para doação. Por favor, escolha algo
                 para continuar.
@@ -142,14 +145,17 @@ export function ReserveDonationModal({
 
           <div className="mt-auto h-px w-full bg-zinc-400" />
 
-          <Button
-            onClick={handleReserve}
+          <ConfirmationModal
+            title="Confirmar Reserva de Doação"
+            description="Deseja confirmar os itens selecionados para doação? Verifique se as informações estão corretas."
             disabled={items.length === 0}
-            className="ml-auto"
+            onConfirm={handleReserve}
           >
-            <span>Confirmar reserva</span>
-            <HandHeart className="size-5 shrink-0" />
-          </Button>
+            <Button className="ml-auto">
+              <span>Confirmar reserva</span>
+              <HandHeart className="size-5 shrink-0" />
+            </Button>
+          </ConfirmationModal>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

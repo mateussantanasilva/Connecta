@@ -8,10 +8,9 @@ import { getAuthentication } from '@/utils/get-authentication'
 import { api } from '@/utils/api'
 import { User } from '@/@types/User'
 import { cookies } from 'next/headers'
-
 import { ProfileRole } from '@/components/sections/profile-role'
-import { Campaign } from '@/@types/Campaign'
 import { DonationsDTO } from '@/@types/DonationItem'
+import { CampaignsDTO } from '@/@types/Campaign'
 
 export default async function Perfil() {
   const userCookie = cookies().get('user')?.value
@@ -19,7 +18,7 @@ export default async function Perfil() {
 
   if (!user || !userCookie) return
 
-  const profileResponse = await fetch(`${api}/users/${user.userId}`, {
+  const profileResponse = await fetch(`${api}/users/${user.userID}`, {
     headers: {
       User: userCookie,
     },
@@ -27,17 +26,17 @@ export default async function Perfil() {
   const profile: User = await profileResponse.json()
 
   const campaignsResponse = await fetch(
-    `${api}/users/${user.userId}/campaigns?limit=3`,
+    `${api}/users/${user.userID}/campaigns?limit=3`,
     {
       headers: {
         User: userCookie,
       },
     },
   )
-  const campaigns: Campaign[] = await campaignsResponse.json()
+  const { campaigns }: CampaignsDTO = await campaignsResponse.json()
 
   const donationsResponse = await fetch(
-    `${api}/donations/user/${user.userId}`,
+    `${api}/donations/user/${user.userID}`,
     {
       headers: {
         User: userCookie,

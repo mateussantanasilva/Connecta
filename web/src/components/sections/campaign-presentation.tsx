@@ -13,6 +13,7 @@ import { getAuthentication } from '@/utils/get-authentication'
 import { User } from '@/@types/User'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { ConfirmationModal } from '../modals/confirmation-modal'
 
 interface CampaignPresentationProps {
   campaign: Campaign
@@ -28,9 +29,9 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
   const { user } = getAuthentication(userCookie)
 
   const isDonor = currentRole === 'doador'
-  const isParticipant = user && campaign.participants_ids.includes(user?.userId)
+  const isParticipant = user && campaign.participants_ids.includes(user?.userID)
 
-  async function participateInCampaign() {
+  async function handleParticipateInCampaign() {
     toast.promise(
       async () =>
         await fetch(`${api}/campaigns/${campaign.id}/participate`, {
@@ -39,7 +40,7 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
             User: String(userCookie),
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userId: user?.userId }),
+          body: JSON.stringify({ userId: user?.userID }),
         }),
       {
         success: () => {
@@ -67,7 +68,7 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
   const fetchUpdatedRole = useCallback(async () => {
     if (!user || !userCookie) return
 
-    const profileResponse = await fetch(`${api}/users/${user.userId}`, {
+    const profileResponse = await fetch(`${api}/users/${user.userID}`, {
       headers: {
         User: userCookie,
       },
@@ -93,21 +94,28 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
         )}
 
         {!isParticipant && isDonor && campaign.status !== 'fechada' && (
-          <Button disabled={!user} onClick={participateInCampaign}>
-            {campaign.status === 'aberta' && (
-              <>
-                <span>Participar agora</span>
-                <SquareCheck className="size-5 shrink-0" />
-              </>
-            )}
+          <ConfirmationModal
+            title="Confirmar Participação"
+            description="Deseja começar a participar desta campanha? Isso permitirá que você realize doações para ela."
+            disabled={!user}
+            onConfirm={handleParticipateInCampaign}
+          >
+            <Button>
+              {campaign.status === 'aberta' && (
+                <>
+                  <span>Participar agora</span>
+                  <SquareCheck className="size-5 shrink-0" />
+                </>
+              )}
 
-            {campaign.status === 'em breve' && (
-              <>
-                <span>Reservar vaga</span>
-                <Hourglass className="size-5 shrink-0" />
-              </>
-            )}
-          </Button>
+              {campaign.status === 'em breve' && (
+                <>
+                  <span>Reservar vaga</span>
+                  <Hourglass className="size-5 shrink-0" />
+                </>
+              )}
+            </Button>
+          </ConfirmationModal>
         )}
       </header>
 

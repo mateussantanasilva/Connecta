@@ -12,7 +12,7 @@ interface MyDonationsProps {
 }
 
 export function MyDonations({ donations }: MyDonationsProps) {
-  const [donationList, setDonationList] = useState(donations)
+  const [donationList, setDonationList] = useState<DonationItem[]>(donations)
 
   function handleCancelDonation(donationId: string) {
     const updatedDonations = donations.filter(
@@ -30,7 +30,7 @@ export function MyDonations({ donations }: MyDonationsProps) {
     <section className="space-y-5">
       <h2 className="text-2xl font-bold text-zinc-800">Minhas Doações</h2>
 
-      {donations.length === 0 ? (
+      {!donations || donations.length === 0 ? (
         <div className="flex h-56 items-center justify-center">
           <span className="max-w-md text-center text-sm">
             Você ainda não cadastrou nenhuma doação. Participe de uma campanha e
@@ -63,7 +63,9 @@ export function MyDonations({ donations }: MyDonationsProps) {
                   <span>{`${donation.quantity} ${donation.measure}`}</span>
                 </div>
 
-                <span className="min-w-44 flex-1">{donation.campaign_id}</span>
+                <span className="min-w-44 flex-1">
+                  {donation.campaign_name}
+                </span>
 
                 <div className="flex min-w-44 flex-1 justify-center">
                   <span

@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 import { api } from '@/utils/api'
 import Cookies from 'js-cookie'
+import { ConfirmationModal } from './confirmation-modal'
 
 const becomeDoneeSchema = z.object({
   telephone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, {
@@ -32,8 +33,6 @@ interface BecomeDoneeModalProps {
 }
 
 export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
-  const userCookie = Cookies.get('user')
-
   const [isOpenModal, setIsOpenModal] = useState(false)
 
   const {
@@ -45,12 +44,16 @@ export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
   })
 
   async function handleRequestDoneeRole(data: BecomeDoneeSchema) {
+    const userCookie = Cookies.get('user')
+
+    if (!userCookie) return
+
     toast.promise(
       async () =>
         await fetch(`${api}/users/donee-request`, {
           method: 'POST',
           headers: {
-            User: String(userCookie),
+            User: userCookie,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
@@ -129,10 +132,16 @@ export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
 
             <div className="mt-auto h-px w-full bg-zinc-400" />
 
-            <Button className="ml-auto" type="submit" disabled={isSubmitting}>
-              <span>Enviar solicitação</span>
-              <Send className="size-5 shrink-0" />
-            </Button>
+            <ConfirmationModal
+              title="Enviar Solicitação de Donatário"
+              description="Deseja enviar sua solicitação para se tornar donatário? Aguarde a análise após o envio."
+              disabled={isSubmitting}
+            >
+              <Button className="ml-auto" type="submit">
+                <span>Enviar solicitação</span>
+                <Send className="size-5 shrink-0" />
+              </Button>
+            </ConfirmationModal>
           </form>
         </Dialog.Content>
       </Dialog.Portal>

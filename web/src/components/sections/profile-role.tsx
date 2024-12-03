@@ -8,6 +8,7 @@ import { User } from '@/@types/User'
 import { HandHeart } from 'lucide-react'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
+import { ConfirmationModal } from '../modals/confirmation-modal'
 
 interface ProfileRoleProps {
   profile: User
@@ -16,14 +17,16 @@ interface ProfileRoleProps {
 export function ProfileRole({ profile }: ProfileRoleProps) {
   const router = useRouter()
 
-  const userCookie = Cookies.get('user')
+  async function handleBecomeDonor() {
+    const userCookie = Cookies.get('user')
 
-  async function becomeDonor() {
+    if (!userCookie) return
+
     toast.promise(
       async () =>
-        await fetch(`${api}/users/${profile.id}/donor-role`, {
+        await fetch(`${api}/users/${profile.userID}/donor-role`, {
           headers: {
-            User: String(userCookie),
+            User: userCookie,
           },
         }),
       {
@@ -51,14 +54,16 @@ export function ProfileRole({ profile }: ProfileRoleProps) {
       {profile.role === 'doador' ? (
         <BecomeDoneeModal doneeRequested={profile.doneeRequested} />
       ) : (
-        <Button
-          size="full"
-          onClick={becomeDonor}
-          className="md:w-fit lg:w-full"
+        <ConfirmationModal
+          title="Alterar para Doador"
+          description="Tem certeza de que deseja voltar a ser doador? Será necessário solicitar para ser donatário novamente."
+          onConfirm={handleBecomeDonor}
         >
-          <span>Tornar doador</span>
-          <HandHeart className="size-5 shrink-0" />
-        </Button>
+          <Button size="full" className="md:w-fit lg:w-full">
+            <span>Tornar doador</span>
+            <HandHeart className="size-5 shrink-0" />
+          </Button>
+        </ConfirmationModal>
       )}
     </>
   )

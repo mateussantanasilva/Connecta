@@ -19,7 +19,7 @@ export function CampaignDetails({ campaign }: CampaignDetailsProps) {
     campaign.started_at,
   )
 
-  const isParticipant = user && campaign.participants_ids.includes(user?.userId)
+  const isParticipant = user && campaign.participants_ids.includes(user?.userID)
 
   const participants =
     campaign.participants > 0

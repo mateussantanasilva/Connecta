@@ -24,7 +24,7 @@ export function MyCampaigns({ campaigns }: MyCampaignsProps) {
         </Link>
       </header>
 
-      {campaigns.length === 0 ? (
+      {!campaigns || campaigns.length === 0 ? (
         <div className="flex h-56 items-center justify-center">
           <span className="max-w-md text-center text-sm">
             Você ainda não está participando de nenhuma campanha. Participe de

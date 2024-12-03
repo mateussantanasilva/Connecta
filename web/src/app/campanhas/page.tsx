@@ -1,12 +1,47 @@
-import { CampaignsDTO } from '@/@types/Campaign'
+'use client'
+
+import { Campaign, CampaignsDTO } from '@/@types/Campaign'
 import { CampaignCard } from '@/components/campaign-card'
+import { Pagination } from '@/components/pagination'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
 import { api } from '@/utils/api'
+import { useEffect, useState } from 'react'
 
-export default async function Campanhas() {
-  const data = await fetch(`${api}/public/campaigns`)
-  const { campaigns }: CampaignsDTO = await data.json()
+export default function Campanhas() {
+  const [campaigns, setCampaigns] = useState<Campaign[]>()
+  const [page, setPage] = useState(0)
+  const [totalResponses, setTotalResponses] = useState(0)
+
+  function handleChangePage(action: 'previous' | 'next') {
+    if (!page) return
+
+    if (action === 'previous' && page > 1) return setPage((state) => state - 1)
+
+    const totalPages = Math.ceil((totalResponses || 0) / 8)
+
+    if (action === 'next' && page < totalPages)
+      return setPage((state) => state + 1)
+  }
+
+  async function fetchCampaigns() {
+    console.log('ROUDOU')
+
+    const data = await fetch(`${api}/public/campaigns?page=${page || 1}`)
+    const {
+      campaigns,
+      page: fetchedPage,
+      totalResponses,
+    }: CampaignsDTO = await data.json()
+
+    setCampaigns(campaigns)
+    setPage(fetchedPage)
+    setTotalResponses(totalResponses)
+  }
+
+  useEffect(() => {
+    fetchCampaigns()
+  }, [])
 
   return (
     <>
@@ -23,7 +58,7 @@ export default async function Campanhas() {
           </p>
         </header>
 
-        {campaigns.length === 0 ? (
+        {!campaigns || campaigns.length === 0 ? (
           <div className="flex h-80 items-center justify-center">
             <span className="max-w-md text-center text-sm">
               Nenhuma campanha disponível no momento. Por favor, volte em breve
@@ -38,13 +73,13 @@ export default async function Campanhas() {
               ))}
             </section>
 
-            {/* <Pagination
-              total={campaigns.length}
+            <Pagination
+              total={totalResponses}
               currentPage={page}
-              totalPages={2}
-              handlePreviousPage={() => setPage((state) => state - 1)}
-              handleNextPage={() => setPage((state) => state + 1)}
-            /> */}
+              totalPages={Math.ceil(totalResponses / 8)}
+              handlePreviousPage={() => handleChangePage('previous')}
+              handleNextPage={() => handleChangePage('next')}
+            />
           </>
         )}
       </main>

@@ -17,6 +17,7 @@ import { useState } from 'react'
 import { DoneeRequest, DoneeRequestsDTO } from '@/@types/User'
 import Cookies from 'js-cookie'
 import { toast } from 'sonner'
+import { ConfirmationModal } from './confirmation-modal'
 
 export function DoneeRequestsModal() {
   const [requests, setRequests] = useState<DoneeRequest[]>([])
@@ -34,7 +35,7 @@ export function DoneeRequestsModal() {
     setRequests(doneeRequests)
   }
 
-  async function deleteRequest(requestId: string) {
+  async function handleDeleteRequest(requestId: string) {
     toast.promise(
       async () =>
         await fetch(`${api}/admin/donee-requests/${requestId}`, {
@@ -59,7 +60,7 @@ export function DoneeRequestsModal() {
     )
   }
 
-  async function acceptRequest(requestId: string) {
+  async function handleAcceptRequest(requestId: string) {
     toast.promise(
       async () =>
         await fetch(`${api}/admin/donee-requests/${requestId}/accept`, {
@@ -136,19 +137,26 @@ export function DoneeRequestsModal() {
                       <span className="text-sm">há cerca de 1 hora</span>
 
                       <div className="flex gap-2">
-                        <Button
+                        <ConfirmationModal
                           variant="danger"
-                          size="xs"
-                          onClick={() => deleteRequest(request.id)}
+                          title="Recusar Solicitação"
+                          description="Tem certeza de que deseja recusar a solicitação para donatário? A ação não poderá ser desfeita."
+                          onConfirm={() => handleDeleteRequest(request.id)}
                         >
-                          <Trash className="size-5" />
-                        </Button>
-                        <Button
-                          size="xs"
-                          onClick={() => acceptRequest(request.id)}
+                          <Button variant="danger" size="xs">
+                            <Trash className="size-5" />
+                          </Button>
+                        </ConfirmationModal>
+
+                        <ConfirmationModal
+                          title="Aceitar Solicitação"
+                          description="Tem certeza de que deseja aceitar a solicitação para donatário? Ele poderá começar a receber doações."
+                          onConfirm={() => handleAcceptRequest(request.id)}
                         >
-                          <UserRoundPlus className="size-5" />
-                        </Button>
+                          <Button size="xs">
+                            <UserRoundPlus className="size-5" />
+                          </Button>
+                        </ConfirmationModal>
                       </div>
                     </div>
                   </div>
@@ -175,7 +183,7 @@ export function DoneeRequestsModal() {
               </div>
             ))}
 
-          {requests.length === 0 && (
+          {(!requests || requests.length === 0) && (
             <span className="mx-auto mt-10 max-w-md text-center text-sm">
               Nenhuma solicitação de donatário no momento. Aguarde novas
               solicitações.
