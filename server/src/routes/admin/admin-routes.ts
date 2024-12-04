@@ -11,6 +11,7 @@ import { deleteCampaign } from "./delete-campaign"
 import { getAdminPanel } from "./get-panel"
 import { getDonations } from "./get-donations"
 import { putSwitchDoneeStatus } from "./put-switch-donee-status"
+import { updateAcceptDonation } from "./update-accept-donation"
 
 export async function adminRoutes(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
@@ -25,4 +26,5 @@ export async function adminRoutes(app: FastifyInstance) {
         .register(getAdminPanel)
         .register(getDonations)
         .register(putSwitchDoneeStatus)
+        .register(updateAcceptDonation)
 }
