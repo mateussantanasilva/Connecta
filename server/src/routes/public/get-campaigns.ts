@@ -37,6 +37,13 @@ export async function getCampaigns(app: FastifyInstance) {
 
             const numberDonations = (data.donations?.length || 0)
 
+            let displayDate: string | null = null;
+            if (data.status === 'aberta' && data.started_at) {
+              displayDate = data.started_at;
+            } else if (data.status === 'fechada' && data.closed_at) {
+              displayDate = data.closed_at;
+            }
+
             return {
               id: doc.id,
               name: data.name,
@@ -47,18 +54,19 @@ export async function getCampaigns(app: FastifyInstance) {
               progress: data.progress,
               status: data.status,
               participants: data.participants,
-              started_at: data.started_at,
               section: data.section,
               goal: data.goal,
               numberDonations: numberDonations,
+              created_at: data.created_at,  
+              displayDate, 
             }
           })
         )
 
         campaignsData.sort((a, b) => {
-          const dateA = a.started_at ? new Date(a.started_at) : new Date(0) 
-          const dateB = b.started_at ? new Date(b.started_at) : new Date(0)
-          return dateB.getTime() - dateA.getTime()
+          const dateA = a.created_at ? new Date(a.created_at) : new Date(0)
+          const dateB = b.created_at ? new Date(b.created_at) : new Date(0)
+          return dateB.getTime() - dateA.getTime() 
         })
 
         const filterIsValid = (key: string): key is keyof typeof campaignsData[0] => {

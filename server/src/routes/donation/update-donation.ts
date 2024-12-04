@@ -1,19 +1,15 @@
 /* eslint-disable camelcase */
-import { FastifyInstance } from 'fastify'
-import { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
-import { db } from '../../lib/firebase'
-import fromZodSchema from 'zod-to-json-schema'
-import { ClientError } from '../../errors/client-error'
-import { donationStatus } from './create-donation'
-
-const donationSchema = z.object({
-  status: donationStatus, 
-})
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import { db } from '../../lib/firebase';
+import fromZodSchema from 'zod-to-json-schema';
+import { ClientError } from '../../errors/client-error';
+import { donationStatus } from './create-donation';
 
 const ParamsSchema = z.object({
   donation_id: z.string(),
-})
+});
 
 export async function updateDonation(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().put(
@@ -21,112 +17,102 @@ export async function updateDonation(app: FastifyInstance) {
     {
       schema: {
         params: fromZodSchema(ParamsSchema),
-        body: fromZodSchema(donationSchema),
       },
     },
     async (request, reply) => {
-      const { donation_id } = request.params as z.infer<typeof ParamsSchema>
+      const { donation_id } = request.params as z.infer<typeof ParamsSchema>;
 
       try {
-        const donationRef = db.collection('donations').doc(donation_id)
-        const donationDoc = await donationRef.get()
+        const donationRef = db.collection('donations').doc(donation_id);
+        const donationDoc = await donationRef.get();
 
         if (!donationDoc.exists) {
-          return reply.status(404).send(new ClientError('Doação não encontrada'))
+          return reply.status(404).send(new ClientError('Doação não encontrada'));
         }
 
-        const donationData = donationDoc.data()
+        const donationData = donationDoc.data();
         if (!donationData) {
-          return reply.status(404).send(new ClientError('Dados da doação não encontrados'))
+          return reply.status(404).send(new ClientError('Dados da doação não encontrados'));
         }
 
-        const item_name = donationData.item_name
-        const section_id = donationData.section_id
-        const campaign_id = donationData.campaign_id
+        const status = 'confirmada';
+        await donationRef.update({ status });
 
-        const status = 'confirmada'
-        await donationRef.update({ status })
+        const item_name = donationData.item_name;
+        const section_id = donationData.section_id;
+        const campaign_id = donationData.campaign_id;
 
-        const campaignRef = await db
-          .collection('campaigns')
-          .doc(campaign_id)
-          .get()
+        const campaignRef = await db.collection('campaigns').doc(campaign_id).get();
 
         if (!campaignRef.exists) {
-          return reply.status(404).send(new ClientError('Campanha não encontrada'))
+          return reply.status(404).send(new ClientError('Campanha não encontrada'));
         }
 
-        const campaignData = campaignRef.data()
-
+        const campaignData = campaignRef.data();
         if (!campaignData) {
-          return reply.status(404).send(new ClientError('Dados da campanha não encontrados'))
+          return reply.status(404).send(new ClientError('Dados da campanha não encontrados'));
         }
 
-        const section = campaignData.sections.find((section: { id: string }) => section.id === section_id)
-
+        const section = campaignData.sections.find((section: { id: string }) => section.id === section_id);
         if (!section) {
-          return reply.status(404).send(new ClientError('Seção não encontrada'))
+          return reply.status(404).send(new ClientError('Seção não encontrada'));
         }
 
         const updatedDonations = section.donations.map((donation: { id_donation: string; status: string }) => {
           if (donation.id_donation === donation_id) {
-            return { ...donation, status }
+            return { ...donation, status };
           }
-          return donation
-        })
+          return donation;
+        });
 
-        section.donations = updatedDonations
+        section.donations = updatedDonations;
 
         await db.collection('campaigns').doc(campaign_id).update({
           sections: campaignData.sections,
-        })
+        });
 
         const pendingDonations = updatedDonations.filter(
           (donation: { item_name: string; status: string }) =>
-            donation.item_name === item_name && donation.status === 'pendente',
-        )
+            donation.item_name === item_name && donation.status === 'pendente'
+        );
 
         if (pendingDonations.length === 0) {
           const updatedItems = campaignData.items.map(
             (item: { name: string; status: string }) => {
-              return item.name === item_name
-                ? { ...item, status: 'concluido' }
-                : item
-            },
-          )
+              return item.name === item_name ? { ...item, status: 'concluido' } : item;
+            }
+          );
 
           await db.collection('campaigns').doc(campaign_id).update({
             items: updatedItems,
-          })
+          });
 
           const allItemsCompleted = updatedItems.every(
-            (item: { status: string }) => item.status === 'concluido',
-          )
+            (item: { status: string }) => item.status === 'concluido'
+          );
 
           if (allItemsCompleted) {
             await db.collection('campaigns').doc(campaign_id).update({
               status: 'fechada',
-            })
+            });
           }
 
-          const totalItems = updatedItems.length
+          const totalItems = updatedItems.length;
           const completedItems = updatedItems.filter(
-            (item: { status: string }) => item.status === 'concluido',
-          ).length
-          const progressPercentage = (completedItems / totalItems) * 100
+            (item: { status: string }) => item.status === 'concluido'
+          ).length;
+          const progressPercentage = (completedItems / totalItems) * 100;
 
           await db.collection('campaigns').doc(campaign_id).update({
             progress: progressPercentage,
-          })
+          });
         }
 
-        return reply.status(200).send()
+        return reply.status(200).send();
       } catch (error) {
-        console.error(error)
-        return reply
-          .status(500)
-          .send(new ClientError('Erro ao atualizar doação'))
+        console.error(error);
+        return reply.status(500).send(new ClientError('Erro ao atualizar doação'));
       }
-    },
-  )
+    }
+  );
 }

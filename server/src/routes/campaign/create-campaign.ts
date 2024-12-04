@@ -97,6 +97,7 @@ export async function createCampaign(app: FastifyInstance) {
           section,
           donations,
           participants_ids,
+          created_at: new Date().toISOString(),
         };
 
         if (status === 'aberta') {
