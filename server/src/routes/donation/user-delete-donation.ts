@@ -94,9 +94,8 @@ export async function deleteDonation(app: FastifyInstance) {
           item.name === item_name && item.measure === measure
             ? {
                 ...item,
-                amount_donated: Math.max(0, (item.amount_donated || 0) - quantity), 
-                goal: item.goal + quantity,
-                status: (item.amount_donated || 0) - quantity === 0 ? 'pendente' : item.status,
+                amount_donated: Math.max(0, item.amount_donated - quantity), 
+                status: item.amount_donated - quantity === 0 ? 'pendente' : item.status, 
               }
             : item
         ),
@@ -120,3 +119,4 @@ export async function deleteDonation(app: FastifyInstance) {
     }
   );
 }
+
