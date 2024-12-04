@@ -95,7 +95,7 @@ export async function deleteDonation(app: FastifyInstance) {
             ? {
                 ...item,
                 amount_donated: Math.max(0, item.amount_donated - quantity), 
-                status: item.amount_donated - quantity === 0 ? 'pendente' : item.status, 
+                status: item.amount_donated - quantity === 0 ? 'disponível' : item.status, 
               }
             : item
         ),
