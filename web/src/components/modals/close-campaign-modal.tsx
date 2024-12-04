@@ -128,19 +128,8 @@ export function CloseCampaignModal({ campaign }: CloseCampaignModalProps) {
             />
 
             <CategoryCheckboxes
-              selectedCategories={['Alimentação']}
-              categorySections={[
-                {
-                  category: 'Alimentação',
-                  items: [
-                    {
-                      name: 'Arroz',
-                      goal: 10,
-                      measure: 'kg',
-                    },
-                  ],
-                },
-              ]}
+              selectedCategories={campaign.categories}
+              categorySections={campaign.section}
               disabled
             />
           </form>
@@ -150,9 +139,9 @@ export function CloseCampaignModal({ campaign }: CloseCampaignModalProps) {
               variant="danger"
               title="Fechar Campanha"
               description="Tem certeza de que deseja fechar esta campanha? Não será mais possível realizar doações, mas os resultados poderão ser consultados."
-              onConfirm={handleCloseCampaign}
+              onConfirm={() => handleCloseCampaign()}
             >
-              <Button variant="danger" onClick={handleCloseCampaign}>
+              <Button variant="danger">
                 <span>Fechar Campanha</span>
                 <Lock className="size-5 shrink-0" />
               </Button>

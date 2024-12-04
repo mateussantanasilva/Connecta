@@ -9,6 +9,7 @@ export interface User extends Authentication {
 
 export interface DoneeRequest extends User {
   id: string
+  createdAt: string
 }
 
 export interface DoneeRequestsDTO {

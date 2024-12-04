@@ -120,7 +120,7 @@ export function DoneeDetailsModal({ donee }: DoneeDetailsModalProps) {
 
               <div className="flex items-center gap-1.5 text-sm">
                 <Calendar className="size-4 shrink-0" />
-                {/* <span>{formatDate(donee.doneeAccepted)}</span> */}
+                <span>{formatDate(donee.doneeAccepted)}</span>
               </div>
 
               <div className="flex items-center gap-1.5 text-sm">
@@ -153,11 +153,10 @@ export function DoneeDetailsModal({ donee }: DoneeDetailsModalProps) {
                   ? 'Tem certeza de que deseja desativar este donatário? Ele não poderá mais receber doações.'
                   : 'Tem certeza de que deseja reativar este donatário? Ele poderá começar a receber doações.'
               }
-              onConfirm={handleSwitchStatus}
+              onConfirm={() => handleSwitchStatus()}
             >
               <Button
                 variant={donee.doneeStatus === 'ativo' ? 'danger' : 'primary'}
-                onClick={handleSwitchStatus}
                 className="ml-auto"
               >
                 {donee.doneeStatus === 'ativo' ? (

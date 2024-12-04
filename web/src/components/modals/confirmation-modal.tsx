@@ -30,7 +30,7 @@ export function ConfirmationModal({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-20 bg-black/60" />
 
-        <Dialog.Content className="fixed inset-4 z-30 m-auto h-fit max-w-lg space-y-5 rounded-2xl bg-white p-5">
+        <Dialog.Content className="fixed inset-4 z-30 m-auto h-fit max-w-lg space-y-5 rounded-2xl border border-zinc-400 bg-white p-5">
           <Dialog.Close asChild>
             <Button size="xs" variant="outline" className="ml-auto">
               <X className="size-5 shrink-0" />

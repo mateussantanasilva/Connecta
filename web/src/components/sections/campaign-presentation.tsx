@@ -98,7 +98,7 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
             title="Confirmar Participação"
             description="Deseja começar a participar desta campanha? Isso permitirá que você realize doações para ela."
             disabled={!user}
-            onConfirm={handleParticipateInCampaign}
+            onConfirm={() => handleParticipateInCampaign()}
           >
             <Button>
               {campaign.status === 'aberta' && (

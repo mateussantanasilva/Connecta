@@ -149,7 +149,7 @@ export function ReserveDonationModal({
             title="Confirmar Reserva de Doação"
             description="Deseja confirmar os itens selecionados para doação? Verifique se as informações estão corretas."
             disabled={items.length === 0}
-            onConfirm={handleReserve}
+            onConfirm={() => handleReserve()}
           >
             <Button className="ml-auto">
               <span>Confirmar reserva</span>

@@ -33,7 +33,7 @@ export interface Campaign {
   categories: string[]
   section: CampaignSection[]
   progress: number
-  goal: number
+  numberDonations: number
   status: 'aberta' | 'em breve' | 'fechada'
   participants: number
   participants_ids: string[]

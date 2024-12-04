@@ -109,10 +109,7 @@ export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
             </Dialog.Description>
           </header>
 
-          <form
-            onSubmit={handleSubmit(handleRequestDoneeRole)}
-            className="flex h-full flex-col gap-5"
-          >
+          <form className="flex h-full flex-col gap-5">
             <Input
               title="Telefone"
               mask="(99) 99999-9999"
@@ -136,8 +133,9 @@ export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
               title="Enviar Solicitação de Donatário"
               description="Deseja enviar sua solicitação para se tornar donatário? Aguarde a análise após o envio."
               disabled={isSubmitting}
+              onConfirm={() => handleSubmit(handleRequestDoneeRole)()}
             >
-              <Button className="ml-auto" type="submit">
+              <Button className="ml-auto">
                 <span>Enviar solicitação</span>
                 <Send className="size-5 shrink-0" />
               </Button>

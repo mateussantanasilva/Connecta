@@ -10,7 +10,6 @@ import { User } from '@/@types/User'
 import { cookies } from 'next/headers'
 import { ProfileRole } from '@/components/sections/profile-role'
 import { DonationsDTO } from '@/@types/DonationItem'
-import { CampaignsDTO } from '@/@types/Campaign'
 
 export default async function Perfil() {
   const userCookie = cookies().get('user')?.value
@@ -24,16 +23,6 @@ export default async function Perfil() {
     },
   })
   const profile: User = await profileResponse.json()
-
-  const campaignsResponse = await fetch(
-    `${api}/users/${user.userID}/campaigns?limit=3`,
-    {
-      headers: {
-        User: userCookie,
-      },
-    },
-  )
-  const { campaigns }: CampaignsDTO = await campaignsResponse.json()
 
   const donationsResponse = await fetch(
     `${api}/donations/user/${user.userID}`,
@@ -103,7 +92,7 @@ export default async function Perfil() {
         </aside>
 
         <div className="flex-1 space-y-5">
-          <MyCampaigns campaigns={campaigns} />
+          <MyCampaigns />
 
           <div className="h-px w-full bg-zinc-400" />
 

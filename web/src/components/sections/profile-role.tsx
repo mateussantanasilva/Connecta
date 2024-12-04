@@ -57,7 +57,7 @@ export function ProfileRole({ profile }: ProfileRoleProps) {
         <ConfirmationModal
           title="Alterar para Doador"
           description="Tem certeza de que deseja voltar a ser doador? Será necessário solicitar para ser donatário novamente."
-          onConfirm={handleBecomeDonor}
+          onConfirm={() => handleBecomeDonor()}
         >
           <Button size="full" className="md:w-fit lg:w-full">
             <span>Tornar doador</span>

@@ -1,12 +1,10 @@
 import { HandHeart, Trophy, SquareCheck, UserRoundCheck } from 'lucide-react'
-import { AdminFilter } from '@/components/admin/admin-filter'
 import { HeaderAdmin } from '@/components/admin/header-admin'
 import { StatusCard } from '@/components/admin/status-card'
 import { getAuthentication } from '@/utils/get-authentication'
 import { api } from '@/utils/api'
 import { AdminMetrics } from '@/@types/Metrics'
 import { cookies } from 'next/headers'
-import { DonationsDTO } from '@/@types/DonationItem'
 import { DonationsTable } from '@/components/admin/donations-table'
 
 export default async function Administrador() {
@@ -22,13 +20,6 @@ export default async function Administrador() {
   })
   const metrics: AdminMetrics = await metricsResponse.json()
 
-  const donationsResponse = await fetch(`${api}/admin/donations`, {
-    headers: {
-      User: userCookie,
-    },
-  })
-  const { donations }: DonationsDTO = await donationsResponse.json()
-
   return (
     <>
       <HeaderAdmin />
@@ -42,7 +33,7 @@ export default async function Administrador() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatusCard
             title="Campanhas Abertas"
-            count={metrics.openCampaigns}
+            count={metrics.openCampaigns || 0}
             description={
               metrics.soonCampaigns > 0
                 ? `${metrics.soonCampaigns} nova(s) para anunciar`
@@ -52,7 +43,7 @@ export default async function Administrador() {
           />
           <StatusCard
             title="Donatários Ativos"
-            count={metrics.activeDonors}
+            count={metrics.activeDonors || 0}
             description={
               metrics.doneeRequests > 0
                 ? `${metrics.doneeRequests} solicitação(ões) para revisar`
@@ -62,7 +53,7 @@ export default async function Administrador() {
           />
           <StatusCard
             title="Doações Anuais"
-            count={metrics.annualDonations}
+            count={metrics.annualDonations || 0}
             description={
               metrics.unconfirmedDonations > 0
                 ? `${metrics.unconfirmedDonations} pendente(s) de confirmação`
@@ -72,7 +63,7 @@ export default async function Administrador() {
           />
           <StatusCard
             title="Campanhas 100%"
-            count={metrics.totalCompletedCampaigns}
+            count={metrics.totalCompletedCampaigns || 0}
             description={
               metrics.totalEndedCampaigns > 0
                 ? `${metrics.totalEndedCampaigns} finalizadas(s) ao total`
@@ -82,11 +73,7 @@ export default async function Administrador() {
           />
         </div>
 
-        <AdminFilter />
-
-        <DonationsTable fetchedDonations={donations || []} />
-
-        {/* <Pagination /> */}
+        <DonationsTable />
       </main>
     </>
   )

@@ -191,11 +191,7 @@ export function OpenCampaignModal({ campaign }: OpenCampaignModalProps) {
             <ArrowUpRight className="size-5 shrink-0" />
           </Link>
 
-          <form
-            id="form-update"
-            onSubmit={handleSubmit(handleUpdateCampaign)}
-            className="space-y-5"
-          >
+          <form className="space-y-5">
             <Input
               title="Nome da campanha"
               type="text"
@@ -239,7 +235,7 @@ export function OpenCampaignModal({ campaign }: OpenCampaignModalProps) {
                 title="Deletar Campanha"
                 description="Tem certeza de que deseja excluir esta campanha? Ela será apagada permanentemente e não poderá ser recuperada."
                 disabled={isSubmitting}
-                onConfirm={handleDeleteCampaign}
+                onConfirm={() => handleDeleteCampaign()}
               >
                 <Button variant="danger">
                   <span>Excluir</span>
@@ -251,8 +247,9 @@ export function OpenCampaignModal({ campaign }: OpenCampaignModalProps) {
                 title="Atualizar Campanha"
                 description="Deseja confirmar a atualização das informações desta campanha? Você poderá reavaliar antes de iniciar."
                 disabled={isSubmitting}
+                onConfirm={() => handleSubmit(handleUpdateCampaign)()}
               >
-                <Button variant="outline" form="form-update" type="submit">
+                <Button variant="outline">
                   <span>Editar</span>
                   <Pencil className="size-5 shrink-0" />
                 </Button>
@@ -263,7 +260,7 @@ export function OpenCampaignModal({ campaign }: OpenCampaignModalProps) {
               title="Iniciar Campanha"
               description="Deseja confirmar o início desta campanha? Ela será aberta para doações e não poderá ser revertida."
               disabled={isSubmitting}
-              onConfirm={handleOpenCampaign}
+              onConfirm={() => handleOpenCampaign()}
             >
               <Button>
                 <span>Iniciar Campanha</span>

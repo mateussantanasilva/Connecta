@@ -117,11 +117,7 @@ export function CreateCampaignModal() {
             </Dialog.Description>
           </header>
 
-          <form
-            id="form-create"
-            onSubmit={handleSubmit(handleCreateCampaign)}
-            className="space-y-5"
-          >
+          <form className="space-y-5">
             <Input
               title="Nome da campanha"
               type="text"
@@ -158,8 +154,9 @@ export function CreateCampaignModal() {
             title="Criar Campanha"
             description="Deseja confirmar a criação desta campanha? Ela poderá ser aberta para doações mais tarde."
             disabled={isSubmitting}
+            onConfirm={() => handleSubmit(handleCreateCampaign)()}
           >
-            <Button type="submit" form="form-create" className="ml-auto">
+            <Button className="ml-auto">
               <span>Criar campanha</span>
               <Plus className="size-5 shrink-0" />
             </Button>

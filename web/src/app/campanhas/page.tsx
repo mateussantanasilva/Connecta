@@ -5,28 +5,17 @@ import { CampaignCard } from '@/components/campaign-card'
 import { Pagination } from '@/components/pagination'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
+import { usePagination } from '@/hooks/use-pagination'
 import { api } from '@/utils/api'
 import { useEffect, useState } from 'react'
 
 export default function Campanhas() {
   const [campaigns, setCampaigns] = useState<Campaign[]>()
-  const [page, setPage] = useState(0)
-  const [totalResponses, setTotalResponses] = useState(0)
 
-  function handleChangePage(action: 'previous' | 'next') {
-    if (!page) return
-
-    if (action === 'previous' && page > 1) return setPage((state) => state - 1)
-
-    const totalPages = Math.ceil((totalResponses || 0) / 8)
-
-    if (action === 'next' && page < totalPages)
-      return setPage((state) => state + 1)
-  }
+  const { page, setPage, totalResponses, setTotalResponses, onChangePage } =
+    usePagination()
 
   async function fetchCampaigns() {
-    console.log('ROUDOU')
-
     const data = await fetch(`${api}/public/campaigns?page=${page || 1}`)
     const {
       campaigns,
@@ -41,7 +30,7 @@ export default function Campanhas() {
 
   useEffect(() => {
     fetchCampaigns()
-  }, [])
+  }, [page])
 
   return (
     <>
@@ -77,8 +66,8 @@ export default function Campanhas() {
               total={totalResponses}
               currentPage={page}
               totalPages={Math.ceil(totalResponses / 8)}
-              handlePreviousPage={() => handleChangePage('previous')}
-              handleNextPage={() => handleChangePage('next')}
+              handlePreviousPage={() => onChangePage('previous')}
+              handleNextPage={() => onChangePage('next')}
             />
           </>
         )}

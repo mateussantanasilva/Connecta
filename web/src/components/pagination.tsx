@@ -26,11 +26,21 @@ export function Pagination({
         </span>
 
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={handlePreviousPage}>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={handlePreviousPage}
+          >
             <ChevronLeft className="size-5 shrink-0" />
             <span>Anterior</span>
           </Button>
-          <Button size="sm" variant="outline" onClick={handleNextPage}>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={handleNextPage}
+          >
             <span>Próximo</span>
             <ChevronRight className="size-5 shrink-0" />
           </Button>

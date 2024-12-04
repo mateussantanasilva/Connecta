@@ -18,6 +18,7 @@ import { DoneeRequest, DoneeRequestsDTO } from '@/@types/User'
 import Cookies from 'js-cookie'
 import { toast } from 'sonner'
 import { ConfirmationModal } from './confirmation-modal'
+import { formatDate } from '@/utils/format-date'
 
 export function DoneeRequestsModal() {
   const [requests, setRequests] = useState<DoneeRequest[]>([])
@@ -134,7 +135,9 @@ export function DoneeRequestsModal() {
                     </div>
 
                     <div className="flex flex-col gap-1 sm:items-end">
-                      <span className="text-sm">há cerca de 1 hora</span>
+                      <span className="text-sm">
+                        {formatDate(request.createdAt)}
+                      </span>
 
                       <div className="flex gap-2">
                         <ConfirmationModal

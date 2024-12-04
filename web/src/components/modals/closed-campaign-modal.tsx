@@ -79,19 +79,8 @@ export function ClosedCampaignModal({ campaign }: ClosedCampaignModalProps) {
             />
 
             <CategoryCheckboxes
-              selectedCategories={['Alimentação']}
-              categorySections={[
-                {
-                  category: 'Alimentação',
-                  items: [
-                    {
-                      name: 'Arroz',
-                      goal: 10,
-                      measure: 'kg',
-                    },
-                  ],
-                },
-              ]}
+              selectedCategories={campaign.categories}
+              categorySections={campaign.section}
               disabled
             />
           </form>
