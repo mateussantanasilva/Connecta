@@ -105,16 +105,19 @@ export async function createDonation(app: FastifyInstance) {
           }
 
           const currentAmountDonated = itemExists.amount_donated || 0;
-          const updatedAmountDonated = currentAmountDonated + quantity;
-          const remainingGoal = itemExists.goal - updatedAmountDonated;
+          const remainingGoal = itemExists.goal - currentAmountDonated;
 
-          if (remainingGoal < 0) {
+          if (quantity > remainingGoal) {
             return reply.status(400).send(
               new ClientError(
-                `A doação para o item ${item_name} excede o objetivo da campanha ${campaign_id}`,
-              ),
+                `A doação para o item ${item_name} excede o objetivo restante da campanha ${campaign_id}. Goal restante: ${remainingGoal}`,
+              )
             );
           }
+
+          const updatedAmountDonated = currentAmountDonated + quantity;
+
+          const updatedStatus = updatedAmountDonated === itemExists.goal ? 'reservado' : itemStatus;
 
           const donationData = {
             item_name,
@@ -142,7 +145,7 @@ export async function createDonation(app: FastifyInstance) {
                 amount_donated?: number;
                 goal: number;
                 status?: string;
-              }[];
+              }[]; 
             }) => ({
               ...section,
               items: section.items.map(
@@ -157,11 +160,11 @@ export async function createDonation(app: FastifyInstance) {
                     ? {
                         ...item,
                         amount_donated: updatedAmountDonated,
-                        status: updatedAmountDonated === item.goal ? 'reservado' : item.status,
+                        status: updatedStatus, 
                       }
                     : item,
               ),
-            }),
+            })
           );
 
           await db.collection('campaigns').doc(campaign_id).update({
