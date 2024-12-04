@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { db } from '../../lib/firebase';
 import fromZodSchema from 'zod-to-json-schema';
 import { ClientError } from '../../errors/client-error';
+import { FieldValue } from 'firebase-admin/firestore'; 
 
 const ParamsSchema = z.object({
   campaignId: z.string(),
@@ -66,8 +67,8 @@ export async function campaignParticipate(app: FastifyInstance) {
         }
 
         await campaignRef.update({
-          participants_ids: [...currentParticipants, userId].filter(Boolean), 
-          participants: (campaignData?.participants || 0) + 1,
+          participants_ids: FieldValue.arrayUnion(userId), 
+          participants: FieldValue.increment(1),
         });
 
         return reply.status(200).send({ message: 'Usuário adicionado com sucesso à campanha' });

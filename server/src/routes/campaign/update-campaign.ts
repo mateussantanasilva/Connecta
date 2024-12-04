@@ -18,7 +18,6 @@ const campaignSchema = z.object({
   progress: z.number().min(0).max(100),
   status: CampaignStatus,
   participants: z.number().nonnegative(),
-  started_at: z.string().min(1),
   section: z.array(campaignSection).min(1),
 })
 
@@ -46,7 +45,6 @@ export async function updateCampaign(app: FastifyInstance) {
         progress,
         status,
         participants,
-        started_at,
         section,
       } = request.body as z.infer<typeof campaignSchema>
 
@@ -58,12 +56,12 @@ export async function updateCampaign(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Campanha não encontrada'))
         }
 
-        const campaignData = campaignDoc.data();
+        const campaignData = campaignDoc.data()
         if (campaignData && campaignData.status === 'fechada') {
           return reply.status(400).send(new ClientError('Não é possível editar campanha fechada'))
         }
 
-        const updatedCampaignData = {
+        const updatedCampaignData: any = {
           name,
           collection_point,
           description,
@@ -72,8 +70,15 @@ export async function updateCampaign(app: FastifyInstance) {
           progress,
           status,
           participants,
-          started_at,
           section,
+        }
+
+        if (campaignData && status === 'aberta' && !campaignData.started_at) {
+          updatedCampaignData.started_at = new Date().toISOString()
+        }
+
+        if (campaignData && status === 'fechada' && !campaignData.closed_at) {
+          updatedCampaignData.closed_at = new Date().toISOString()
         }
 
         await campaignRef.update(updatedCampaignData)
@@ -87,10 +92,10 @@ export async function updateCampaign(app: FastifyInstance) {
         await campaignRef.update({ progress: progressPercentage })
 
         if (completedItems === totalItems) {
-          const currentDate = new Date().toISOString() 
+          const currentDate = new Date().toISOString()
           await campaignRef.update({
             status: 'fechada',
-            closed_at: currentDate, 
+            closed_at: currentDate,
           })
         }
 
