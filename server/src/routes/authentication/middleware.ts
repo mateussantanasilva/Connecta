@@ -31,8 +31,8 @@ export async function authenticationMiddleware(app: FastifyInstance) {
           return res.redirect(`${redirectURL}/login/google`)
         }
 
-        const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
-        const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
+        const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userID: string }
+        const userSnapshot = await db.collection('users').doc(userDecoded.userID).get()
         if (!userSnapshot.exists) {
           return res.status(401).send(new ClientError('Usuário não encontrado'))
         }

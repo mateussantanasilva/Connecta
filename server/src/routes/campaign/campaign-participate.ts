@@ -10,7 +10,7 @@ const ParamsSchema = z.object({
 });
 
 const HeadersSchema = z.object({
-  userId: z.string(),
+  userID: z.string(),
 });
 
 export async function campaignParticipate(app: FastifyInstance) {

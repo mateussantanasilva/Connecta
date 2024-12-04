@@ -80,8 +80,8 @@ export async function createCampaign(app: FastifyInstance) {
         return reply.status(401).send(new ClientError('Erro de autenticação'))
       }
 
-      const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
-      const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
+      const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userID: string }
+      const userSnapshot = await db.collection('users').doc(userDecoded.userID).get()
       const userData = userSnapshot.data()
       try {
         const campaignData = {

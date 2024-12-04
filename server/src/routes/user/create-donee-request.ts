@@ -33,8 +33,8 @@ export async function createDoneeRequest(app: FastifyInstance) {
             if (!user) {
                 return res.status(401).send(new ClientError('Erro de autenticação'))
             }
-            const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userId: string }
-            const userID = userDecoded.userId
+            const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userID: string }
+            const userID = userDecoded.userID
             const {
                 telephone,
                 address,
