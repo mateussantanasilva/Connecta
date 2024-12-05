@@ -34,7 +34,7 @@ export async function updateDonation(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Dados da doação não encontrados'));
         }
 
-        const { campaign_id } = donationData;
+        const { campaign_id, item_name } = donationData;
         const status = 'confirmada';
 
         await donationRef.update({ status });
@@ -51,14 +51,54 @@ export async function updateDonation(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Dados da campanha não encontrados'));
         }
 
-        const updatedDonations = campaignData.donations.map((donation: any) => {
-          if (donation.id_donation === donation_id) {
-            return { ...donation, status };
-          }
-          return donation;
-        });
+        const updatedDonations = Array.isArray(campaignData.donations)
+          ? campaignData.donations.map((donation: any) => {
+              if (donation.id_donation === donation_id) {
+                return { ...donation, status };
+              }
+              return donation;
+            })
+          : [];
 
         await campaignRef.update({ donations: updatedDonations });
+
+        const itemDonations = updatedDonations.filter(
+          (donation: any) => donation.item_name === item_name
+        );
+
+        const allConfirmed = itemDonations.every(
+          (donation: any) => donation.status === 'confirmada'
+        );
+
+        if (allConfirmed) {
+          const updatedItems = Array.isArray(campaignData.items)
+            ? campaignData.items.map((item: any) => {
+                if (item.name === item_name) {
+                  return { ...item, status: 'concluido' };
+                }
+                return item;
+              })
+            : [];
+
+          await campaignRef.update({ items: updatedItems });
+
+          const allItemsCompleted = updatedItems.every(
+            (item: any) => item.status === 'concluido'
+          );
+
+          if (allItemsCompleted) {
+            await campaignRef.update({ status: 'fechada' });
+          }
+
+          const totalItems = updatedItems.length;
+          const completedItems = updatedItems.filter(
+            (item: any) => item.status === 'concluido'
+          ).length;
+
+          const progressPercentage = (completedItems / totalItems) * 100;
+
+          await campaignRef.update({ progress: progressPercentage });
+        }
 
         return reply.status(200).send({ message: 'Doação atualizada com sucesso!' });
       } catch (error) {
