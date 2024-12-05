@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { db } from '../../lib/firebase';
 import fromZodSchema from 'zod-to-json-schema';
 import { ClientError } from '../../errors/client-error';
-import { donationStatus } from './create-donation';
 
 const ParamsSchema = z.object({
   donation_id: z.string(),
@@ -35,83 +34,36 @@ export async function updateDonation(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Dados da doação não encontrados'));
         }
 
+        const { campaign_id } = donationData;
         const status = 'confirmada';
+
         await donationRef.update({ status });
 
-        const item_name = donationData.item_name;
-        const section_id = donationData.section_id;
-        const campaign_id = donationData.campaign_id;
+        const campaignRef = db.collection('campaigns').doc(campaign_id);
+        const campaignDoc = await campaignRef.get();
 
-        const campaignRef = await db.collection('campaigns').doc(campaign_id).get();
-
-        if (!campaignRef.exists) {
+        if (!campaignDoc.exists) {
           return reply.status(404).send(new ClientError('Campanha não encontrada'));
         }
 
-        const campaignData = campaignRef.data();
+        const campaignData = campaignDoc.data();
         if (!campaignData) {
           return reply.status(404).send(new ClientError('Dados da campanha não encontrados'));
         }
 
-        const section = campaignData.sections.find((section: { id: string }) => section.id === section_id);
-        if (!section) {
-          return reply.status(404).send(new ClientError('Seção não encontrada'));
-        }
-
-        const updatedDonations = section.donations.map((donation: { id_donation: string; status: string }) => {
+        const updatedDonations = campaignData.donations.map((donation: any) => {
           if (donation.id_donation === donation_id) {
             return { ...donation, status };
           }
           return donation;
         });
 
-        section.donations = updatedDonations;
+        await campaignRef.update({ donations: updatedDonations });
 
-        await db.collection('campaigns').doc(campaign_id).update({
-          sections: campaignData.sections,
-        });
-
-        const pendingDonations = updatedDonations.filter(
-          (donation: { item_name: string; status: string }) =>
-            donation.item_name === item_name && donation.status === 'pendente'
-        );
-
-        if (pendingDonations.length === 0) {
-          const updatedItems = campaignData.items.map(
-            (item: { name: string; status: string }) => {
-              return item.name === item_name ? { ...item, status: 'concluido' } : item;
-            }
-          );
-
-          await db.collection('campaigns').doc(campaign_id).update({
-            items: updatedItems,
-          });
-
-          const allItemsCompleted = updatedItems.every(
-            (item: { status: string }) => item.status === 'concluido'
-          );
-
-          if (allItemsCompleted) {
-            await db.collection('campaigns').doc(campaign_id).update({
-              status: 'fechada',
-            });
-          }
-
-          const totalItems = updatedItems.length;
-          const completedItems = updatedItems.filter(
-            (item: { status: string }) => item.status === 'concluido'
-          ).length;
-          const progressPercentage = (completedItems / totalItems) * 100;
-
-          await db.collection('campaigns').doc(campaign_id).update({
-            progress: progressPercentage,
-          });
-        }
-
-        return reply.status(200).send();
+        return reply.status(200).send({ message: 'Doação atualizada com sucesso!' });
       } catch (error) {
         console.error(error);
-        return reply.status(500).send(new ClientError('Erro ao atualizar doação'));
+        return reply.status(500).send(new ClientError('Erro ao atualizar o status da doação'));
       }
     }
   );
