@@ -5,14 +5,9 @@ import { z } from 'zod'
 import { db } from '../../lib/firebase'
 import fromZodSchema from 'zod-to-json-schema'
 import { ClientError } from '../../errors/client-error'
+import { campaignSection } from './create-campaign'
 
 const CampaignStatus = z.enum(['aberta', 'em breve', 'fechada'])
-
-const itemCampaignSchema = z.object({
-  name: z.string().min(1),
-  measure: z.string().min(1),
-  status: z.enum(['disponível', 'reservado', 'concluído']),
-})
 
 const campaignSchema = z.object({
   name: z.string().min(1),
@@ -23,9 +18,7 @@ const campaignSchema = z.object({
   progress: z.number().min(0).max(100),
   status: CampaignStatus,
   participants: z.number().nonnegative(),
-  started_at: z.string().min(1),
-  goal: z.string().min(1),
-  items: z.array(itemCampaignSchema).min(1),
+  section: z.array(campaignSection).min(1),
 })
 
 const ParamsSchema = z.object({
@@ -52,9 +45,7 @@ export async function updateCampaign(app: FastifyInstance) {
         progress,
         status,
         participants,
-        started_at,
-        goal,
-        items,
+        section,
       } = request.body as z.infer<typeof campaignSchema>
 
       try {
@@ -65,7 +56,12 @@ export async function updateCampaign(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Campanha não encontrada'))
         }
 
-        const updatedCampaignData = {
+        const campaignData = campaignDoc.data()
+        if (campaignData && campaignData.status === 'fechada') {
+          return reply.status(400).send(new ClientError('Não é possível editar campanha fechada'))
+        }
+
+        const updatedCampaignData: any = {
           name,
           collection_point,
           description,
@@ -74,24 +70,33 @@ export async function updateCampaign(app: FastifyInstance) {
           progress,
           status,
           participants,
-          started_at,
-          goal,
-          items,
+          section,
+        }
+
+        if (campaignData && status === 'aberta' && !campaignData.started_at) {
+          updatedCampaignData.started_at = new Date().toISOString()
+        }
+
+        if (campaignData && status === 'fechada' && !campaignData.closed_at) {
+          updatedCampaignData.closed_at = new Date().toISOString()
         }
 
         await campaignRef.update(updatedCampaignData)
 
-        const totalItems = items.length
-        const completedItems = items.filter(
-          (item) => item.status === 'concluído',
-        ).length
+        const totalItems = section.flatMap(sec => sec.items).length
+        const completedItems = section.flatMap(sec => sec.items).filter(
+          item => item.status === 'concluído').length
 
         const progressPercentage = (completedItems / totalItems) * 100
 
         await campaignRef.update({ progress: progressPercentage })
 
         if (completedItems === totalItems) {
-          await campaignRef.update({ status: 'fechada' })
+          const currentDate = new Date().toISOString()
+          await campaignRef.update({
+            status: 'fechada',
+            closed_at: currentDate,
+          })
         }
 
         return reply.status(200).send()

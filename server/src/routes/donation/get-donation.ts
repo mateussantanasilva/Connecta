@@ -22,22 +22,39 @@ export async function getDonation(app: FastifyInstance) {
         },
       },
     },
+
     async (request, response) => {
+      const { donationId } = request.params as z.infer<typeof ParamsSchema>
+
       try {
-        const { donationId } = request.params as z.infer<typeof ParamsSchema>
-
         const donationDoc = await db.collection('donations').doc(donationId).get()
-
+        
         if (!donationDoc.exists) {
           return response.status(404).send(new ClientError('Doação não encontrada'))
         }
 
-        const donation = { id: donationDoc.id, ...donationDoc.data() }
+        const donationData = donationDoc.data()
+
+        if (!donationData || !donationData.userID) {
+          return response.status(400).send(new ClientError('Dados da doação inválidos'))
+        }
+
+        const userDoc = await db.collection('users').doc(donationData.userID).get()
+
+        if (!userDoc.exists) {
+          return response.status(404).send(new ClientError(`Usuário associado à doação ${donationId} não encontrado`))
+        }
+
+        const donation = {
+          id: donationDoc.id,
+          ...donationData,
+          user: userDoc.data(), 
+        }
 
         return response.status(200).send(donation)
       } catch (error) {
         console.error(error)
-        return response.status(500).send(new ClientError('Erro ao buscar doação por id'))
+        return response.status(500).send(new ClientError('Erro ao buscar doação por ID'))
       }
     }
   )

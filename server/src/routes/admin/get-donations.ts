@@ -7,7 +7,7 @@ import { donationStatus } from '../donation/create-donation'
 
 export async function getDonations(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    '/donations',
+    '/admin/donations',
     {
       schema: {
         querystring: {
@@ -30,37 +30,56 @@ export async function getDonations(app: FastifyInstance) {
       }
    
       try {
-        const donationsSnapshot = await db.collection('donations').get()
+        const donationsSnapshot = await db.collection('donations')
+          .orderBy('donation_date', 'desc')  
+          .get()
 
-        let donations = donationsSnapshot.docs.map((doc) => {
+        let donationsData = await Promise.all(donationsSnapshot.docs.map(async (doc) => {
           const data = doc.data()
+          const userDoc = await db.collection('users').doc(data?.userID).get()
+          if(!userDoc.exists) {
+            return reply.status(404).send(new ClientError(`Doação ${data.id} com usuário inexistente`))
+          }
+          const campaignDoc = await db.collection('campaigns').doc(data.campaign_id).get()
+          const campaignName = campaignDoc.exists ? campaignDoc.data()?.name : 'Campanha não encontrada'
+
           return {
             id: doc.id,
             item_name: data.item_name,
             quantity: data.quantity,
             measure: data.measure,
             campaign_id: data.campaign_id,
+            campaign_name: campaignName,
             status: data.status,
-            user_id: data.user_id,
+            userID: data.userID,
+            ...userDoc.data(),
             date: data.donation_date,
           }
-        })
+        }))
 
-        const filterIsValid = (key: string): key is keyof typeof donations[0] => {
-          return key in donations[0]
+        const filterIsValid = (key: string): key is keyof typeof donationsData[0] => {
+          return key in donationsData[0]
         }
 
-          if (filterBy && filterValue && filterIsValid(filterBy)) {
-            donations = donations.filter(donee =>
-              donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
-            )
-          }
-        
+        if (filterBy && filterValue && filterIsValid(filterBy)) {
+          donationsData = donationsData.filter(donee =>
+            donee[filterBy]?.toLowerCase().includes(filterValue.toLowerCase())
+          )
+        }
+
         const startIndex = (page - 1) * limit
         const endIndex = startIndex + limit
-        const paginatedCampaigns = donations.slice(startIndex, endIndex)
+        const donations = donationsData.slice(startIndex, endIndex)
 
-        return reply.status(200).send(paginatedCampaigns)
+        const totalResponses = donationsSnapshot.size
+        const responseSchema = {
+          page,
+          limit,
+          totalResponses,
+          donations
+        }
+
+        return reply.status(200).send(responseSchema)
       } catch (error) {
         console.error(error)
         return reply.status(500).send(new ClientError('Erro ao buscar doações'))

@@ -10,9 +10,9 @@ const ParamsSchema = z.object({
   donation_id: z.string(),
 });
 
-export async function updateDonation(app: FastifyInstance) {
+export async function updateAcceptDonation(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().put(
-    '/donations/:donation_id',
+    '/admin/donations/:donation_id',
     {
       schema: {
         params: fromZodSchema(ParamsSchema),
@@ -76,7 +76,7 @@ export async function updateDonation(app: FastifyInstance) {
                 const updatedItems = Array.isArray(section.items)
                   ? section.items.map((item: any) => {
                       if (item.name === item_name) {
-                        return { ...item, status: 'concluido' }; 
+                        return { ...item, status: 'concluido' };
                       }
                       return item;
                     })
@@ -105,10 +105,10 @@ export async function updateDonation(app: FastifyInstance) {
           }
         }
 
-        return reply.status(200).send({ message: 'Doação atualizada com sucesso!' });
+        return reply.status(200).send({ message: 'Doação confirmada com sucesso!' });
       } catch (error) {
         console.error(error);
-        return reply.status(500).send(new ClientError('Erro ao atualizar o status da doação'));
+        return reply.status(500).send(new ClientError('Erro ao atualizar a doação'));
       }
     }
   );

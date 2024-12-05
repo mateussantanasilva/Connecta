@@ -7,6 +7,7 @@ import { ClientError } from "../../errors/client-error"
 
 dotenv.config()
 const JWT_SECRET = process.env.SESSION_SECRET!
+const redirectURL = process.env.PRODUCTION ? 'https://connecta-1azy.onrender.com' : 'http://localhost:3000'
 
 export async function authenticationMiddleware(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().addHook('onRequest', async (req, res) => {
@@ -15,13 +16,23 @@ export async function authenticationMiddleware(app: FastifyInstance) {
         if (req.routeOptions.url && (authRoutes.includes(req.routeOptions.url) || req.routeOptions.url.includes('/public/'))) {
           return
         }
-        const token = req.cookies.token
-        const user = req.cookies.user
-        if (!token || !user) {
+        const user = req.headers['user']
+        if (!user) {
           return res.status(401).send(new ClientError('Usuário não autenticado'))
         }
-        const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
-        const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
+
+        const decoded = jwt.decode(user.toString())
+        if (!decoded || typeof decoded === 'string' || !decoded.exp) {
+          return res.status(401).send(new ClientError('Token inválido'))
+        }
+        const now = Math.floor(Date.now() / 1000)
+        if (decoded.exp < now) {
+          res.clearCookie('user', { path: '/', secure: true, sameSite: 'none' })
+          return res.redirect(`${redirectURL}/login/google`)
+        }
+
+        const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userID: string }
+        const userSnapshot = await db.collection('users').doc(userDecoded.userID).get()
         if (!userSnapshot.exists) {
           return res.status(401).send(new ClientError('Usuário não encontrado'))
         }

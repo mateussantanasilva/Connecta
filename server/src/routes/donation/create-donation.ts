@@ -1,25 +1,27 @@
 /* eslint-disable camelcase */
-import { FastifyInstance } from 'fastify'
-import { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
-import { db } from '../../lib/firebase'
-import { FieldValue } from 'firebase-admin/firestore'
-import fromZodSchema from 'zod-to-json-schema'
-import { ClientError } from '../../errors/client-error'
-import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import { db } from '../../lib/firebase';
+import { FieldValue } from 'firebase-admin/firestore';
+import fromZodSchema from 'zod-to-json-schema';
+import { ClientError } from '../../errors/client-error';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-dotenv.config()
-const JWT_SECRET = process.env.SESSION_SECRET!
+dotenv.config();
+const JWT_SECRET = process.env.SESSION_SECRET!;
 
-export const donationStatus = z.enum(['pendente', 'confirmada', 'cancelada'])
+export const donationStatus = z.enum(['pendente', 'confirmada', 'cancelada']);
 
-export const donationSchema = z.object({
-  item_name: z.string().min(1),
-  quantity: z.number().min(1),
-  measure: z.string().min(1),
-  campaign_id: z.string().min(1),
-})
+export const donationSchema = z.array(
+  z.object({
+    item_name: z.string().min(1),
+    quantity: z.number().min(1),
+    measure: z.string().min(1),
+    campaign_id: z.string().min(1),
+  }),
+);
 
 export async function createDonation(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -30,115 +32,155 @@ export async function createDonation(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { item_name, quantity, measure, campaign_id } =
-        request.body as z.infer<typeof donationSchema>
-      const user = request.cookies.user
-      const userDecoded = jwt.verify(user, JWT_SECRET) as { userId: string }
-      const userSnapshot = await db.collection('users').doc(userDecoded.userId).get()
-      const userData = userSnapshot.data()
+      const donations = request.body as z.infer<typeof donationSchema>;
+      const user = request.headers['user'];
+
+      if (!user) {
+        return reply.status(401).send(new ClientError('Erro de autenticação'));
+      }
+
+      const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userID: string };
+
+      const userSnapshot = await db.collection('users').doc(userDecoded.userID).get();
+      const userData = userSnapshot.data();
+
+      if (!userData) {
+        return reply.status(401).send(new ClientError('Usuário não encontrado'));
+      }
+
+      if (userData.role !== 'doador') {
+        return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'));
+      }
+
+      const userId = userDecoded.userID;
+
       try {
-        const campaignRef = await db
-          .collection('campaigns')
-          .doc(campaign_id)
-          .get()
+        const donationResponses: any[] = [];
 
-        if (!campaignRef.exists) {
-          return reply.status(404).send(new ClientError('Campanha não encontrada'))
-        }
-        
-        if (userData?.role != 'doador') {
-          return reply.status(403).send(new ClientError('Ação não autorizada para este usuário'));
-        }
+        for (const donation of donations) {
+          const { item_name, quantity, measure, campaign_id } = donation;
 
-        const campaignData = campaignRef.data()
+          const campaignRef = await db.collection('campaigns').doc(campaign_id).get();
 
-        if (!campaignData) {
-          return reply.status(404).send(new ClientError('Dados da campanha não encontrados'))
-        }
+          if (!campaignRef.exists) {
+            return reply.status(404).send(new ClientError(`Campanha ${campaign_id} não encontrada`));
+          }
 
-        const itemExists = campaignData.items.find(
-          (item: { name: string; measure: string }) =>
-            item.name === item_name && item.measure === measure,
-        )
+          const campaignData = campaignRef.data();
+          if (!campaignData) {
+            return reply
+              .status(404)
+              .send(new ClientError(`Dados da campanha ${campaign_id} não encontrados`));
+          }
 
-        const itemStatus = campaignData.items.find(
-          (item: { status: string }) => item.status === 'disponível',
-        )
+          const itemExists = campaignData.section?.flatMap(
+            (section: { items: { name: string; measure: string }[] }) => section.items,
+          ).find(
+            (item: { name: string; measure: string }) =>
+              item.name === item_name && item.measure === measure,
+          );
 
-        if (!itemExists) {
-          return reply.status(400).send(new ClientError(
-            'Item não encontrado ou medida não corresponde.'
-          ))
-        }
+          const itemStatus = campaignData.section?.flatMap(
+            (section: { items: { status: string }[] }) => section.items,
+          ).find((item: { status: string }) => item.status === 'disponível');
 
-        if (!itemStatus) {
-          return reply.status(400).send(new ClientError('Item não disponível para doação.'))
-        }
+          if (!itemExists) {
+            return reply
+              .status(400)
+              .send(
+                new ClientError(
+                  `Item ${item_name} com medida ${measure} não encontrado na campanha ${campaign_id}`,
+                ),
+              );
+          }
 
-        const currentAmountDonated = itemExists.amount_donated || 0
-        const updatedAmountDonated = currentAmountDonated + quantity
-        const remainingGoal = itemExists.goal - updatedAmountDonated
+          if (!itemStatus) {
+            return reply
+              .status(400)
+              .send(
+                new ClientError(
+                  `Item ${item_name} com medida ${measure} não está disponível para doação`,
+                ),
+              );
+          }
 
-        if (remainingGoal < 0) {
-          return reply.status(400).send(new ClientError(
-            `A doação excede o objetivo para o item ${item_name}`,
-          ))
-        }
+          const currentAmountDonated = itemExists.amount_donated || 0;
+          const remainingGoal = itemExists.goal - currentAmountDonated;
 
-        const donationData = {
-          item_name,
-          quantity,
-          campaign_id,
-          status: 'pendente',
-          measure,
-          donation_date: new Date().toISOString(),
-        }
+          if (quantity > remainingGoal) {
+            return reply.status(400).send(
+              new ClientError(
+                `A doação para o item ${item_name} excede o objetivo restante da campanha ${campaign_id}. Goal restante: ${remainingGoal}`,
+              )
+            );
+          }
 
-        const donationRef = await db.collection('donations').add(donationData)
-        const donationId = donationRef.id
+          const updatedAmountDonated = currentAmountDonated + quantity;
 
-        const updatedDonationData = {
-          ...donationData,
-          id_donation: donationId,
-        }
+          const updatedStatus = updatedAmountDonated === itemExists.goal ? 'reservado' : itemStatus;
 
-        const updatedItems = campaignData.items.map(
-          (item: {
-            name: string
-            measure: string
-            amount_donated?: number
-            goal: number
-            status?: string
-          }) =>
-            item.name === item_name && item.measure === measure
-              ? {
-                  ...item,
-                  amount_donated: updatedAmountDonated,
-                  status:
-                    updatedAmountDonated === item.goal
-                      ? 'concluida'
-                      : item.status,
-                }
-              : item,
-        )
+          const donationData = {
+            item_name,
+            quantity,
+            campaign_id,
+            status: 'pendente',
+            measure,
+            userID: userId,
+            donation_date: new Date().toISOString(),
+          };
 
-        await db
-          .collection('campaigns')
-          .doc(campaign_id)
-          .update({
-            items: updatedItems,
+          const donationRef = await db.collection('donations').add(donationData);
+          const donationId = donationRef.id;
+
+          const updatedDonationData = {
+            ...donationData,
+            id_donation: donationId,
+          };
+
+          const updatedSections = campaignData.section?.map(
+            (section: {
+              items: {
+                name: string;
+                measure: string;
+                amount_donated?: number;
+                goal: number;
+                status?: string;
+              }[]; 
+            }) => ({
+              ...section,
+              items: section.items.map(
+                (item: {
+                  name: string;
+                  measure: string;
+                  amount_donated?: number;
+                  goal: number;
+                  status?: string;
+                }) =>
+                  item.name === item_name && item.measure === measure
+                    ? {
+                        ...item,
+                        amount_donated: updatedAmountDonated,
+                        status: updatedStatus, 
+                      }
+                    : item,
+              ),
+            })
+          );
+
+          await db.collection('campaigns').doc(campaign_id).update({
+            section: updatedSections,
             donations: FieldValue.arrayUnion(updatedDonationData),
-          })
+            participants_ids: FieldValue.arrayUnion(userId),
+          });
 
-        return reply.status(201).send()
-      } catch (error) {
-        if (error instanceof ClientError) {
-          console.error(error.message)
-          return reply.status(500).send(new ClientError('Erro ao criar doação'))
+          donationResponses.push(updatedDonationData);
         }
-        console.error(error)
-        return reply.status(500).send(new ClientError('Erro ao criar doação'))
+
+        return reply.status(201).send(donationResponses);
+      } catch (error) {
+        console.error(error);
+        return reply.status(500).send(new ClientError('Erro ao processar doações'));
       }
     },
-  )
+  );
 }

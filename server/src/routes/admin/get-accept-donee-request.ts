@@ -3,6 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { ClientError } from '../../errors/client-error'
 import { db } from '../../lib/firebase'
+import { FieldValue } from 'firebase-admin/firestore'
 
 const ParamsSchema = z.object({
     id: z.string()
@@ -39,7 +40,11 @@ export async function getAcceptDoneeRequest(app: FastifyInstance) {
                 const updatedDoneeUser = {
                     role: 'donatário',
                     telephone: data?.telephone,
-                    address: data?.address
+                    address: data?.address,
+                    request: data?.request,
+                    doneeRequested: FieldValue.delete(),
+                    doneeAccepted: new Date().toISOString(),
+                    doneeStatus: 'ativo'
                 }
                 await userRef.update(updatedDoneeUser)
                 await doneeRequestRef.delete()

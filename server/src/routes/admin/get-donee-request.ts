@@ -41,12 +41,8 @@ export async function getDoneeRequest(app: FastifyInstance) {
                 const userData = userSnapshot.data()
                 const request = {
                     id: doneeRequestSnapshot.id,
-                    name: userData?.name,
-                    email: userData?.email,
-                    avatar: userData?.avatar,
-                    telephone: data?.telephone,
-                    address: data?.address,
-                    request: data?.request
+                    ...userData,
+                    ...data
                 }
                 return res.status(200).send(request)
             } catch(e) {
