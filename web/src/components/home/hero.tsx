@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Button } from '../../button'
+import { Button } from '../button'
 import Msg1Img from '@/assets/hero-message-1.png'
 import Msg2Img from '@/assets/hero-message-2.png'
 import Grid1Img from '@/assets/hero-grid-1.png'

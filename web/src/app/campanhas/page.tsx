@@ -1,11 +1,38 @@
+'use client'
+
+import { Campaign, CampaignsDTO } from '@/@types/Campaign'
 import { CampaignCard } from '@/components/campaign-card'
 import { Pagination } from '@/components/pagination'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
-import { CAMPAIGNS } from '@/constants/campaigns'
+import { usePagination } from '@/hooks/use-pagination'
+import { api } from '@/utils/api'
+import { useEffect, useState } from 'react'
 
 export default function Campanhas() {
-  const campaigns = CAMPAIGNS
+  const [campaigns, setCampaigns] = useState<Campaign[]>()
+
+  const { page, setPage, totalResponses, setTotalResponses, onChangePage } =
+    usePagination()
+
+  async function fetchCampaigns() {
+    const data = await fetch(`${api}/public/campaigns?page=${page || 1}`)
+    const {
+      campaigns,
+      page: fetchedPage,
+      totalResponses,
+    }: CampaignsDTO = await data.json()
+
+    setCampaigns(campaigns)
+    setPage(fetchedPage)
+    setTotalResponses(totalResponses)
+  }
+
+  useEffect(() => {
+    fetchCampaigns()
+  }, [page])
+
+  console.log(campaigns)
 
   return (
     <>
@@ -22,7 +49,7 @@ export default function Campanhas() {
           </p>
         </header>
 
-        {campaigns.length === 0 ? (
+        {!campaigns || campaigns.length === 0 ? (
           <div className="flex h-80 items-center justify-center">
             <span className="max-w-md text-center text-sm">
               Nenhuma campanha disponível no momento. Por favor, volte em breve
@@ -37,7 +64,13 @@ export default function Campanhas() {
               ))}
             </section>
 
-            <Pagination />
+            <Pagination
+              total={totalResponses}
+              currentPage={page}
+              totalPages={Math.ceil(totalResponses / 8)}
+              handlePreviousPage={() => onChangePage('previous')}
+              handleNextPage={() => onChangePage('next')}
+            />
           </>
         )}
       </main>

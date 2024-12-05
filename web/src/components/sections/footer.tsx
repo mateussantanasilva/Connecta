@@ -39,7 +39,7 @@ export function Footer() {
           <ul className="space-y-6">
             <li className="font-bold uppercase">Contato</li>
             <li>(11) 91234-5678</li>
-            <li>connecta@gmail.com</li>
+            <li>connecta.donate@gmail.com</li>
           </ul>
         </nav>
       </div>

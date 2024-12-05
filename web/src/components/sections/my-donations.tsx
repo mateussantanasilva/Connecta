@@ -2,23 +2,46 @@
 
 import { SquareCheck, X } from 'lucide-react'
 import { Button } from '../button'
-import { DONATION_ITEMS } from '@/constants/donation-items'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ConfirmationModal } from '../modals/confirmation-modal'
+import { DonationItem } from '@/@types/DonationItem'
+import { api } from '@/utils/api'
+import Cookies from 'js-cookie'
 
-export function MyDonations() {
-  const [donations, setDonations] = useState(DONATION_ITEMS)
+interface MyDonationsProps {
+  donations: DonationItem[]
+}
+
+export function MyDonations({ donations }: MyDonationsProps) {
+  const [donationList, setDonationList] = useState<DonationItem[]>(donations)
 
   function handleCancelDonation(donationId: string) {
-    const updatedDonations = donations.filter(
-      (donation) => donation.id !== donationId,
-    )
+    const userCookie = Cookies.get('user')
 
-    setDonations(updatedDonations)
+    if (!userCookie) return
 
-    toast.success(
-      'Sua doação foi cancelada. Esperamos contar com você em outras oportunidades!',
+    toast.promise(
+      async () =>
+        await fetch(`${api}/donations/${donationId}`, {
+          method: 'DELETE',
+          headers: {
+            User: userCookie,
+          },
+        }),
+      {
+        success: () => {
+          const updatedDonations = donations.filter(
+            (donation) => donation.id !== donationId,
+          )
+
+          setDonationList(updatedDonations)
+
+          return 'Sua doação foi cancelada. Esperamos contar com você em outras oportunidades!'
+        },
+        error:
+          'Erro ao cancelar a doação pendente. Tente novamente mais tarde.',
+      },
     )
   }
 
@@ -26,7 +49,7 @@ export function MyDonations() {
     <section className="space-y-5">
       <h2 className="text-2xl font-bold text-zinc-800">Minhas Doações</h2>
 
-      {donations.length === 0 ? (
+      {!donations || donations.length === 0 ? (
         <div className="flex h-56 items-center justify-center">
           <span className="max-w-md text-center text-sm">
             Você ainda não cadastrou nenhuma doação. Participe de uma campanha e
@@ -35,7 +58,7 @@ export function MyDonations() {
         </div>
       ) : (
         <div
-          className={`space-y-5 overflow-x-scroll md:overflow-x-visible [&::-webkit-scrollbar]:h-1.5 ${donations.length > 4 && 'overflow-y-scroll'}`}
+          className={`space-y-5 overflow-x-scroll md:overflow-x-visible [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1.5 ${donations.length > 4 && 'overflow-y-scroll'}`}
         >
           <header className="flex w-full gap-5 px-5 text-center text-sm uppercase text-zinc-800">
             <strong className="min-w-44 max-w-56 flex-1 text-start font-medium">
@@ -49,18 +72,18 @@ export function MyDonations() {
           </header>
 
           <div className={`max-h-96 space-y-2 pb-1`}>
-            {donations.map((donation) => (
+            {donationList.map((donation) => (
               <div
                 key={donation.id}
                 className="flex min-w-fit items-center gap-5 rounded-2xl p-5 text-center text-sm shadow"
               >
                 <div className="flex min-w-44 max-w-56 flex-1 flex-col text-start">
-                  <span>{donation.name}</span>
+                  <span>{donation.item_name}</span>
                   <span>{`${donation.quantity} ${donation.measure}`}</span>
                 </div>
 
                 <span className="min-w-44 flex-1">
-                  {donation.campaign.name}
+                  {donation.campaign_name}
                 </span>
 
                 <div className="flex min-w-44 flex-1 justify-center">

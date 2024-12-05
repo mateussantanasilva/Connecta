@@ -1,47 +1,69 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog'
-import { useState } from 'react'
 import { Button } from '@/components/button'
-import { X, Search, Lock } from 'lucide-react'
+import { X, Search, Lock, ArrowUpRight } from 'lucide-react'
 import { Input } from '../input'
 import { CollectionPoints } from '../admin/collection-points'
 import { TextArea } from '../text-area'
+import { Campaign } from '@/@types/Campaign'
 import { CategoryCheckboxes } from '../admin/category-checkboxes'
+import Link from 'next/link'
+import Cookies from 'js-cookie'
+import { api } from '@/utils/api'
+import { toast } from 'sonner'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ConfirmationModal } from './confirmation-modal'
 
-export function CloseCampaignModal() {
-  const initialCampaignName = 'Mutirão de Natal 2024'
-  const initialCampaignDescription =
-    'Campanha aberta para doações. Você pode fechá-la no momento que desejar.'
-  const initialCampaignObservation =
-    'Certifique-se de que os itens doados estejam dentro do prazo de validade e em boas condições.'
-  const initialCollectionPoints = [
-    { endereco: 'Rua das Flores, 123 - São Paulo' },
-    { endereco: 'Av. Brasil, 789 - Rio de Janeiro' },
-  ]
-  const initialCategories = ['Vestuário', 'Alimentação']
+interface CloseCampaignModalProps {
+  campaign: Campaign
+}
 
-  const initialItems = {
-    Alimentação: [
-      { nome: 'Carne seca', quantidade: '10 Kg' },
-      { nome: 'Pão', quantidade: '2 Pacotes' },
-    ],
-    Vestuário: [{ nome: 'Calça de frio', quantidade: '5' }],
-  }
+export function CloseCampaignModal({ campaign }: CloseCampaignModalProps) {
+  const [isOpenModal, setIsOpenModal] = useState(false)
 
-  const [collectionPoints, setCollectionPoints] = useState(
-    initialCollectionPoints,
-  )
-  const isDisabled = true
+  const router = useRouter()
 
-  const handlePointsChange = (updatedPoints: { endereco: string }[]) => {
-    setCollectionPoints(updatedPoints)
+  async function handleCloseCampaign() {
+    const userCookie = Cookies.get('user')
+
+    if (!userCookie) return
+
+    toast.promise(
+      async () =>
+        await fetch(`${api}/campaigns/${campaign.id}`, {
+          method: 'PUT',
+          headers: {
+            User: userCookie,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...campaign,
+            status: 'fechada',
+          }),
+        }),
+      {
+        success: () => {
+          setIsOpenModal(false)
+          router.refresh()
+
+          return 'A campanha foi aberta com sucesso. Agora as doações podem ser feitas.'
+        },
+        error: 'Erro ao tentar abrir a campanha. Tente novamente mais tarde.',
+      },
+    )
   }
 
   return (
-    <Dialog.Root>
+    <Dialog.Root open={isOpenModal}>
       <Dialog.Trigger asChild>
-        <Button variant="outline" size="xs">
+        <Button
+          variant="outline"
+          size="xs"
+          aria-label="Detalhes da campanha"
+          onClick={() => setIsOpenModal(!isOpenModal)}
+        >
           <Search className="size-5" />
         </Button>
       </Dialog.Trigger>
@@ -51,7 +73,12 @@ export function CloseCampaignModal() {
 
         <Dialog.Content className="fixed inset-0 left-4 right-4 z-30 mx-auto my-4 flex max-w-2xl flex-col gap-5 overflow-y-scroll rounded-2xl bg-white p-5 pr-2.5 md:ml-auto md:mr-0 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
           <Dialog.Close asChild>
-            <Button size="xs" variant="outline" className="ml-auto">
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={() => setIsOpenModal(false)}
+              className="ml-auto"
+            >
               <X className="size-5 shrink-0" />
             </Button>
           </Dialog.Close>
@@ -67,45 +94,59 @@ export function CloseCampaignModal() {
             </Dialog.Description>
           </header>
 
+          <Link
+            href={`/campanhas/${campaign.id}`}
+            target="_blank"
+            rel="noopener"
+            className="flex items-center gap-1.5 font-bold text-orange-600 transition-colors hover:text-orange-700"
+          >
+            Acompanhe os detalhes desta campanha
+            <ArrowUpRight className="size-5 shrink-0" />
+          </Link>
+
           <form className="space-y-5">
             <Input
               title="Nome da campanha"
               type="text"
-              defaultValue={initialCampaignName}
-              disabled={isDisabled}
+              defaultValue={campaign.name}
+              disabled
             />
 
             <CollectionPoints
-              title="Pontos de coleta"
-              initialPoints={collectionPoints}
-              onPointsChange={handlePointsChange}
-              disabled={isDisabled}
+              initialPoints={campaign.collection_point}
+              disabled
             />
 
             <TextArea
               title="Descrição"
-              defaultValue={initialCampaignDescription}
-              disabled={isDisabled}
+              defaultValue={campaign.description}
+              disabled
             />
             <TextArea
               title="Observações"
-              defaultValue={initialCampaignObservation}
-              disabled={isDisabled}
+              defaultValue={campaign.observation}
+              disabled
             />
 
             <CategoryCheckboxes
-              title="Categorias"
-              selectedCategories={initialCategories}
-              initialItems={initialItems}
-              disabled={isDisabled}
+              selectedCategories={campaign.categories}
+              categorySections={campaign.section}
+              disabled
             />
           </form>
 
           <div className="flex justify-end">
-            <Button variant="danger">
-              <span>Fechar Campanha</span>
-              <Lock className="size-5 shrink-0" />
-            </Button>
+            <ConfirmationModal
+              variant="danger"
+              title="Fechar Campanha"
+              description="Tem certeza de que deseja fechar esta campanha? Não será mais possível realizar doações, mas os resultados poderão ser consultados."
+              onConfirm={() => handleCloseCampaign()}
+            >
+              <Button variant="danger">
+                <span>Fechar Campanha</span>
+                <Lock className="size-5 shrink-0" />
+              </Button>
+            </ConfirmationModal>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

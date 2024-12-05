@@ -2,45 +2,36 @@ import React, { useState, useEffect } from 'react'
 import { Trash, Plus } from 'lucide-react'
 import { Button } from '@/components/button'
 import { Input } from '@/components/input'
+import { FieldError, Merge } from 'react-hook-form'
 
 interface CollectionPointsProps {
-  title: string
-  initialPoints: { endereco: string }[]
-  onPointsChange: (updatedPoints: { endereco: string }[]) => void
+  initialPoints: string[]
   disabled?: boolean
+  errorMessage?: Merge<FieldError, (FieldError | undefined)[]> | undefined
+  onPointsChange?: (updatedPoints: string[]) => void
 }
 
 export function CollectionPoints({
-  title,
   initialPoints,
-  onPointsChange,
   disabled,
+  errorMessage,
+  onPointsChange,
 }: CollectionPointsProps) {
-  const [points, setPoints] = useState<{ endereco: string }[]>(
-    initialPoints || [],
-  )
+  const [points, setPoints] = useState(initialPoints)
 
-  useEffect(() => {
-    setPoints(initialPoints)
-  }, [initialPoints])
-
-  useEffect(() => {
-    onPointsChange(points)
-  }, [points, onPointsChange])
-
-  const handleAddPoint = () => {
-    setPoints((prevPoints) => [...prevPoints, { endereco: '' }])
+  function handleAddPoint() {
+    setPoints((prevPoints) => [...prevPoints, ''])
   }
 
-  const handlePointChange = (index: number, value: string) => {
+  function handlePointChange(index: number, value: string) {
     setPoints((prevPoints) => {
       const updatedPoints = [...prevPoints]
-      updatedPoints[index].endereco = value
+      updatedPoints[index] = value
       return updatedPoints
     })
   }
 
-  const handleRemovePoint = (index: number) => {
+  function handleRemovePoint(index: number) {
     if (points.length > 1) {
       setPoints((prevPoints) => {
         const updatedPoints = [...prevPoints]
@@ -50,19 +41,28 @@ export function CollectionPoints({
     }
   }
 
+  useEffect(() => {
+    setPoints(initialPoints)
+  }, [initialPoints])
+
+  useEffect(() => {
+    onPointsChange && onPointsChange(points)
+  }, [points, onPointsChange])
+
   return (
     <div>
       <label className="mb-1 flex flex-col gap-1 text-sm font-medium text-zinc-800">
-        {title}
+        Pontos de coleta
       </label>
       <div className="space-y-4">
         {points.map((point, index) => (
           <div key={index} className="flex items-center gap-2">
             <Input
-              value={point.endereco}
+              value={point}
               onChange={(e) => handlePointChange(index, e.target.value)}
-              className="w-[632px]"
+              errorMessage={errorMessage && errorMessage[index]?.message}
               disabled={disabled}
+              className="w-[632px]"
             />
 
             {!disabled && index > 0 && (

@@ -1,12 +1,51 @@
+'use client'
+
 import { ArrowRight } from 'lucide-react'
 import { Button } from '../button'
 import { CampaignCard } from '../campaign-card'
-import { Pagination } from '../pagination'
-import { CAMPAIGNS } from '@/constants/campaigns'
 import Link from 'next/link'
+import { Campaign, CampaignsDTO } from '@/@types/Campaign'
+import Cookies from 'js-cookie'
+import { getAuthentication } from '@/utils/get-authentication'
+import { api } from '@/utils/api'
+import { useState, useEffect } from 'react'
+import { Pagination } from '../pagination'
+import { usePagination } from '@/hooks/use-pagination'
 
 export function MyCampaigns() {
-  const campaigns = CAMPAIGNS.slice(0, 3)
+  const [campaigns, setCampaigns] = useState<Campaign[]>()
+
+  const { page, setPage, totalResponses, setTotalResponses, onChangePage } =
+    usePagination()
+
+  async function fetchCampaigns() {
+    const userCookie = Cookies.get('user')
+    const { user } = getAuthentication(userCookie)
+
+    if (!userCookie || !user) return
+
+    const data = await fetch(
+      `${api}/users/${user.userID}/campaigns?limit=3&page=${page || 1}`,
+      {
+        headers: {
+          User: userCookie,
+        },
+      },
+    )
+    const {
+      campaigns,
+      page: fetchedPage,
+      totalResponses,
+    }: CampaignsDTO = await data.json()
+
+    setCampaigns(campaigns)
+    setPage(fetchedPage)
+    setTotalResponses(totalResponses)
+  }
+
+  useEffect(() => {
+    fetchCampaigns()
+  }, [page])
 
   return (
     <section className="space-y-5">
@@ -21,7 +60,7 @@ export function MyCampaigns() {
         </Link>
       </header>
 
-      {campaigns.length === 0 ? (
+      {!campaigns || campaigns.length === 0 ? (
         <div className="flex h-56 items-center justify-center">
           <span className="max-w-md text-center text-sm">
             Você ainda não está participando de nenhuma campanha. Participe de
@@ -36,7 +75,13 @@ export function MyCampaigns() {
             ))}
           </div>
 
-          <Pagination />
+          <Pagination
+            total={totalResponses}
+            currentPage={page}
+            totalPages={Math.ceil(totalResponses / 3)}
+            handlePreviousPage={() => onChangePage('previous')}
+            handleNextPage={() => onChangePage('next')}
+          />
         </>
       )}
     </section>

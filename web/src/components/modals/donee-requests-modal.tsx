@@ -12,12 +12,83 @@ import {
 } from 'lucide-react'
 import { Button } from '../button'
 import { Avatar } from '../avatar'
+import { api } from '@/utils/api'
+import { useState } from 'react'
+import { DoneeRequest, DoneeRequestsDTO } from '@/@types/User'
+import Cookies from 'js-cookie'
+import { toast } from 'sonner'
+import { ConfirmationModal } from './confirmation-modal'
+import { formatDate } from '@/utils/format-date'
 
 export function DoneeRequestsModal() {
+  const [requests, setRequests] = useState<DoneeRequest[]>([])
+
+  const userCookie = Cookies.get('user')
+
+  async function fecthRequests() {
+    const data = await fetch(`${api}/admin/donee-requests`, {
+      headers: {
+        User: String(userCookie),
+      },
+    })
+    const { doneeRequests }: DoneeRequestsDTO = await data.json()
+
+    setRequests(doneeRequests)
+  }
+
+  async function handleDeleteRequest(requestId: string) {
+    toast.promise(
+      async () =>
+        await fetch(`${api}/admin/donee-requests/${requestId}`, {
+          method: 'DELETE',
+          headers: {
+            User: String(userCookie),
+          },
+        }),
+      {
+        success: () => {
+          const updatedRequests = requests.filter(
+            (request) => request.id !== requestId,
+          )
+
+          setRequests(updatedRequests)
+
+          return 'A solicitação foi excluída com sucesso. O usuário será notificado.'
+        },
+        error:
+          'Erro ao deletar requisição para donatário. Tente novamente mais tarde.',
+      },
+    )
+  }
+
+  async function handleAcceptRequest(requestId: string) {
+    toast.promise(
+      async () =>
+        await fetch(`${api}/admin/donee-requests/${requestId}/accept`, {
+          headers: {
+            User: String(userCookie),
+          },
+        }),
+      {
+        success: () => {
+          const updatedRequests = requests.filter(
+            (request) => request.id !== requestId,
+          )
+
+          setRequests(updatedRequests)
+
+          return 'A solicitação foi aceita com sucesso. O usuário será notificado do seu cadastrado como donatário.'
+        },
+        error:
+          'Erro ao aceitar requisição para donatário. Tente novamente mais tarde.',
+      },
+    )
+  }
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button>
+        <Button onClick={fecthRequests}>
           <span>Ver solicitações</span>
           <TextSearch className="size-5 shrink-0" />
         </Button>
@@ -44,109 +115,83 @@ export function DoneeRequestsModal() {
             </Dialog.Description>
           </header>
 
-          <article className="space-y-2">
-            <div className="mb-5 flex flex-col justify-between gap-5 sm:mb-0 sm:flex-row sm:items-center">
-              <div className="flex items-center gap-3">
-                <Avatar />
+          {requests &&
+            requests.map((request) => (
+              <div key={request.id}>
+                <article className="space-y-2">
+                  <div className="mb-5 flex flex-col justify-between gap-5 sm:mb-0 sm:flex-row sm:items-center">
+                    <div className="flex items-center gap-3">
+                      <Avatar
+                        src={request.avatar}
+                        alt={`Foto de perfil de ${request.name}`}
+                      />
 
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-medium text-zinc-800">
-                    Antônio Carlos Braga
-                  </span>
-                  <span className="text-sm">antoniocarlos@gmail.com</span>
-                </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-medium text-zinc-800">
+                          {request.name}
+                        </span>
+                        <span className="text-sm">{request.email}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1 sm:items-end">
+                      <span className="text-sm">
+                        {formatDate(request.createdAt)}
+                      </span>
+
+                      <div className="flex gap-2">
+                        <ConfirmationModal
+                          variant="danger"
+                          title="Recusar Solicitação"
+                          description="Tem certeza de que deseja recusar a solicitação para donatário? A ação não poderá ser desfeita."
+                          onConfirm={() => handleDeleteRequest(request.id)}
+                        >
+                          <Button variant="danger" size="xs">
+                            <Trash className="size-5" />
+                          </Button>
+                        </ConfirmationModal>
+
+                        <ConfirmationModal
+                          title="Aceitar Solicitação"
+                          description="Tem certeza de que deseja aceitar a solicitação para donatário? Ele poderá começar a receber doações."
+                          onConfirm={() => handleAcceptRequest(request.id)}
+                        >
+                          <Button size="xs">
+                            <UserRoundPlus className="size-5" />
+                          </Button>
+                        </ConfirmationModal>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <Phone className="size-4 shrink-0" />
+                    <span>{request.telephone}</span>
+                  </div>
+
+                  <div className="flex items-start gap-1.5 text-sm">
+                    <MapPin className="size-4 shrink-0" />
+                    <span>{request.address}</span>
+                  </div>
+
+                  <div className="flex items-start gap-1.5 text-sm">
+                    <Info className="size-4 shrink-0" />
+                    <span className="line-clamp-3 break-words">
+                      {request.request}
+                    </span>
+                  </div>
+                </article>
+
+                <div className="mt-5 h-px w-full bg-zinc-400" />
               </div>
+            ))}
 
-              <div className="flex flex-col gap-1 sm:items-end">
-                <span className="text-sm">há cerca de 1 hora</span>
-
-                <div className="flex gap-2">
-                  <Button variant="danger" size="xs">
-                    <Trash className="size-5" />
-                  </Button>
-                  <Button size="xs">
-                    <UserRoundPlus className="size-5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-sm">
-              <Phone className="size-4 shrink-0" />
-              <span>(11) 98765-4321</span>
-            </div>
-
-            <div className="flex items-start gap-1.5 text-sm">
-              <MapPin className="size-4 shrink-0" />
-              <span>
-                Rua Árvore da Cera, 20c - Jardim Santo Antonio, São Paulo - SP,
-                08032-270
-              </span>
-            </div>
-
-            <div className="flex items-start gap-1.5 text-sm">
-              <Info className="size-4 shrink-0" />
-              <span className="line-clamp-3">
-                Após enfrentar a perda repentina do meu emprego, minha família e
-                eu estamos passando por um período desafiador. A falta de renda
-                afetou nossa capacidade de suprir as necessidades básicas, como
-                alimentação e outros itens essenciais.
-              </span>
-            </div>
-          </article>
-
-          <div className="h-px w-full bg-zinc-400" />
-
-          <article className="space-y-2">
-            <div className="mb-5 flex flex-col justify-between gap-5 sm:mb-0 sm:flex-row sm:items-center">
-              <div className="flex items-center gap-3">
-                <Avatar />
-
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-medium text-zinc-800">
-                    Antônio Carlos Braga
-                  </span>
-                  <span className="text-sm">antoniocarlos@gmail.com</span>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1 sm:items-end">
-                <span className="text-sm">há cerca de 1 hora</span>
-
-                <div className="flex gap-2">
-                  <Button variant="danger" size="xs">
-                    <Trash className="size-5" />
-                  </Button>
-                  <Button size="xs">
-                    <UserRoundPlus className="size-5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-sm">
-              <Phone className="size-4 shrink-0" />
-              <span>(11) 98765-4321</span>
-            </div>
-
-            <div className="flex items-start gap-1.5 text-sm">
-              <MapPin className="size-4 shrink-0" />
-              <span>
-                Rua Árvore da Cera, 20c - Jardim Santo Antonio, São Paulo - SP,
-                08032-270
-              </span>
-            </div>
-
-            <div className="flex items-start gap-1.5 text-sm">
-              <Info className="size-4 shrink-0" />
-              <span className="line-clamp-3">
-                Após enfrentar a perda repentina do meu emprego, minha família e
-                eu estamos passando por um período desafiador. A falta de renda
-                afetou nossa capacidade de suprir as necessidades básicas, como
-                alimentação e outros itens essenciais.
-              </span>
-            </div>
-          </article>
+          {(!requests || requests.length === 0) && (
+            <span className="mx-auto mt-10 max-w-md text-center text-sm">
+              Nenhuma solicitação de donatário no momento. Aguarde novas
+              solicitações.
+            </span>
+          )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

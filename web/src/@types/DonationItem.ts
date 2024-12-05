@@ -1,10 +1,19 @@
-import { Campaign } from './Campaign'
+import { Authentication } from './Authentication'
 
-export interface DonationItem {
+export interface DonationItem extends Authentication {
   id: string
-  name: string
+  item_name: string
   quantity: number
   measure: string
+  campaign_id: string
+  campaign_name: string
   status: 'pendente' | 'confirmada'
-  campaign: Campaign
+  date: string
+}
+
+export interface DonationsDTO {
+  page: number
+  limit: number
+  totalResponses: number
+  donations: DonationItem[]
 }

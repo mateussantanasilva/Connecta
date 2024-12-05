@@ -18,7 +18,7 @@ export function Avatar({ size = 'md', ...props }: AvatarProps) {
       ) : (
         <AvatarRdx.Image
           {...props}
-          className="size-10 rounded-full object-cover"
+          className="size-10 min-w-10 rounded-full object-cover"
         />
       )}
 
