@@ -16,7 +16,7 @@ const JWT_SECRET = process.env.SESSION_SECRET!;
 
 export async function deleteDonation(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().delete(
-    '/:user_id/donations/:donation_id',
+    '/donations/:donation_id',
     {
       schema: {
         params: {
@@ -36,7 +36,6 @@ export async function deleteDonation(app: FastifyInstance) {
         return reply.status(401).send(new ClientError('Erro de autenticação'));
       }
 
-      const userDecoded = jwt.verify(user.toString(), JWT_SECRET) as { userID: string };
       const donation_ref = db.collection('donations').doc(donation_id);
       const donation_doc = await donation_ref.get();
 
@@ -49,11 +48,7 @@ export async function deleteDonation(app: FastifyInstance) {
         return reply.status(404).send(new ClientError('Dados da doação não encontrados'));
       }
 
-      const { item_name, quantity, measure, campaign_id, userID } = donationData;
-
-      if (userDecoded.userID !== userID) {
-        return reply.status(403).send(new ClientError('Você não tem permissão para cancelar esta doação'));
-      }
+      const { item_name, quantity, measure, campaign_id } = donationData;
 
       const campaign_ref = db.collection('campaigns').doc(campaign_id);
       const campaign_doc = await campaign_ref.get();
@@ -106,7 +101,6 @@ export async function deleteDonation(app: FastifyInstance) {
       await db.collection('campaigns').doc(campaign_id).update({
         section: updatedSections,
         donations: updatedDonations,
-        participants_ids: FieldValue.arrayRemove(userDecoded.userID),
       });
 
       await donation_ref.delete();
