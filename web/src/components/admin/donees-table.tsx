@@ -1,6 +1,7 @@
+'use client'
+
 import { StatusIndicator } from '@/components/status-indicator'
 import { DoneeDetailsModal } from '@/components/modals/donee-details-modal'
-import { DoneeFilter } from '@/components/admin/donee-filter'
 import { api } from '@/utils/api'
 import { Donee, DoneesDTO } from '@/@types/User'
 import { formatDate } from '@/utils/format-date'
@@ -8,9 +9,11 @@ import { usePagination } from '@/hooks/use-pagination'
 import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
 import { Pagination } from '../pagination'
+import { Filter } from './filter'
 
 export function DoneesTable() {
   const [donees, setDonees] = useState<Donee[]>()
+  const [filter, setFilter] = useState('')
 
   const { page, setPage, totalResponses, setTotalResponses, onChangePage } =
     usePagination()
@@ -20,11 +23,14 @@ export function DoneesTable() {
 
     if (!userCookie) return
 
-    const data = await fetch(`${api}/admin/donees?limit=10&page=${page || 1}`, {
-      headers: {
-        User: userCookie,
+    const data = await fetch(
+      `${api}/admin/donees?limit=10&page=${page || 1}${filter}`,
+      {
+        headers: {
+          User: userCookie,
+        },
       },
-    })
+    )
 
     const {
       donees,
@@ -39,11 +45,15 @@ export function DoneesTable() {
 
   useEffect(() => {
     fetchDonees()
-  }, [page])
+  }, [page, filter])
 
   return (
     <>
-      <DoneeFilter />
+      <Filter
+        placeholder="Nome do donatário"
+        filter={filter}
+        onFilter={setFilter}
+      />
 
       <div className="overflow-x-scroll [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
         <section
@@ -68,23 +78,25 @@ export function DoneesTable() {
                 role="row"
                 className="flex h-16 items-center gap-5 px-5 text-sm"
               >
-                <div className="flex items-center gap-5">
+                <div role="cell" className="flex items-center gap-5">
                   <DoneeDetailsModal donee={donee} />
                   <span className="w-48 min-w-28 truncate">{donee.id}</span>
                 </div>
 
-                <div className="w-32">
+                <div role="cell" className="w-32">
                   <StatusIndicator status={donee.doneeStatus} />
                 </div>
 
-                <span className="min-w-48 flex-1">{donee.name}</span>
+                <span role="cell" className="min-w-48 flex-1">
+                  {donee.name}
+                </span>
 
-                <div className="w-56 truncate">
+                <div role="cell" className="w-56 truncate">
                   <span className="block truncate">{donee.telephone}</span>
                   <span className="truncate">{donee.email}</span>
                 </div>
 
-                <span className="w-48 min-w-28 truncate">
+                <span role="cell" className="w-48 min-w-28 truncate">
                   {formatDate(donee.doneeAccepted)}
                 </span>
               </div>
@@ -95,7 +107,10 @@ export function DoneesTable() {
               role="row"
               className="flex h-48 items-center gap-5 px-5 text-sm"
             >
-              <span className="mx-auto max-w-md text-center text-sm">
+              <span
+                role="cell"
+                className="mx-auto max-w-md text-center text-sm"
+              >
                 Nenhum donatário cadastrado no momento. Aprove solicitações
                 pendentes para registrar novos donatários.
               </span>
@@ -107,7 +122,7 @@ export function DoneesTable() {
       <Pagination
         total={totalResponses}
         currentPage={page}
-        totalPages={Math.ceil(totalResponses / 8)}
+        totalPages={Math.ceil(totalResponses / 10)}
         handlePreviousPage={() => onChangePage('previous')}
         handleNextPage={() => onChangePage('next')}
       />

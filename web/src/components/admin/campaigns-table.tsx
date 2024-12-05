@@ -5,22 +5,23 @@ import { OpenCampaignModal } from '@/components/modals/open-campaign-modal'
 import { CloseCampaignModal } from '@/components/modals/close-campaign-modal'
 import { ClosedCampaignModal } from '@/components/modals/closed-campaign-modal'
 import { StatusIndicator } from '@/components/status-indicator'
-import { CampaignFilter } from '@/components/admin/campaign-filter'
 import { Campaign, CampaignsDTO } from '@/@types/Campaign'
 import { Pagination } from '../pagination'
 import { usePagination } from '@/hooks/use-pagination'
 import { api } from '@/utils/api'
 import { useState, useEffect } from 'react'
+import { Filter } from './filter'
 
 export function CampaignsTable() {
   const [campaigns, setCampaigns] = useState<Campaign[]>()
+  const [filter, setFilter] = useState('')
 
   const { page, setPage, totalResponses, setTotalResponses, onChangePage } =
     usePagination()
 
   async function fetchCampaigns() {
     const data = await fetch(
-      `${api}/public/campaigns?limit=10&page=${page || 1}`,
+      `${api}/public/campaigns?limit=10&page=${page || 1}${filter}`,
     )
     const {
       campaigns,
@@ -35,11 +36,15 @@ export function CampaignsTable() {
 
   useEffect(() => {
     fetchCampaigns()
-  }, [page])
+  }, [page, filter])
 
   return (
     <>
-      <CampaignFilter />
+      <Filter
+        placeholder="Nome da campanha"
+        filter={filter}
+        onFilter={setFilter}
+      />
 
       <div className="overflow-x-scroll [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent">
         <section
@@ -64,7 +69,7 @@ export function CampaignsTable() {
                 role="row"
                 className="flex h-16 items-center gap-5 px-5 text-sm"
               >
-                <div className="flex items-center gap-5">
+                <div role="cell" className="flex items-center gap-5">
                   {campaign.status === 'em breve' && (
                     <OpenCampaignModal campaign={campaign} />
                   )}
@@ -78,17 +83,19 @@ export function CampaignsTable() {
                   <span className="w-48 truncate">{campaign.id}</span>
                 </div>
 
-                <div className="w-48">
+                <div role="cell" className="w-48">
                   <StatusIndicator status={campaign.status} />
                 </div>
 
-                <span className="flex-1">{campaign.name}</span>
+                <span role="cell" className="flex-1">
+                  {campaign.name}
+                </span>
 
-                <span className="w-48 truncate">
+                <span role="cell" className="w-48 truncate">
                   {campaign.categories.join(', ')}
                 </span>
 
-                <div className="flex w-56 items-center gap-5">
+                <div role="cell" className="flex w-56 items-center gap-5">
                   <span className="w-28">
                     {campaign.progress}%
                     <br />
@@ -112,7 +119,10 @@ export function CampaignsTable() {
               role="row"
               className="flex h-48 items-center gap-5 px-5 text-sm"
             >
-              <span className="mx-auto max-w-md text-center text-sm">
+              <span
+                role="cell"
+                className="mx-auto max-w-md text-center text-sm"
+              >
                 Nenhuma campanha cadastrada no momento. Adicione novas campanhas
                 para começar o processo de doações.
               </span>
@@ -124,7 +134,7 @@ export function CampaignsTable() {
       <Pagination
         total={totalResponses}
         currentPage={page}
-        totalPages={Math.ceil(totalResponses / 8)}
+        totalPages={Math.ceil(totalResponses / 10)}
         handlePreviousPage={() => onChangePage('previous')}
         handleNextPage={() => onChangePage('next')}
       />

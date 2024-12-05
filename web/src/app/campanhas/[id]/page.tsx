@@ -1,5 +1,4 @@
 import { Campaign } from '@/@types/Campaign'
-
 import { CampaignDetails } from '@/components/sections/campaign-details'
 import { CampaignPresentation } from '@/components/sections/campaign-presentation'
 import { Footer } from '@/components/sections/footer'

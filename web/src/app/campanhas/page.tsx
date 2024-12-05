@@ -32,6 +32,8 @@ export default function Campanhas() {
     fetchCampaigns()
   }, [page])
 
+  console.log(campaigns)
+
   return (
     <>
       <Header />

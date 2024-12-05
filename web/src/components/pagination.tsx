@@ -22,7 +22,7 @@ export function Pagination({
 
       <div className="flex flex-col-reverse items-center gap-5 sm:flex-row">
         <span className="text-sm font-medium">
-          Página {currentPage} de {totalPages}
+          Página {totalPages === 0 ? 0 : currentPage} de {totalPages}
         </span>
 
         <div className="flex gap-2">
@@ -38,7 +38,7 @@ export function Pagination({
           <Button
             size="sm"
             variant="outline"
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages === 0}
             onClick={handleNextPage}
           >
             <span>Próximo</span>
