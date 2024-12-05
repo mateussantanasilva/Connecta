@@ -34,7 +34,7 @@ export async function updateAcceptDonation(app: FastifyInstance) {
           return reply.status(404).send(new ClientError('Dados da doação não encontrados'));
         }
 
-        const { campaign_id } = donationData;
+        const { campaign_id, item_name } = donationData;
         const status = 'confirmada';
 
         await donationRef.update({ status });
@@ -63,7 +63,7 @@ export async function updateAcceptDonation(app: FastifyInstance) {
         await campaignRef.update({ donations: updatedDonations });
 
         const itemDonations = updatedDonations.filter(
-          (donation: any) => donation.item_name === donationData.item_name
+          (donation: any) => donation.item_name === item_name
         );
 
         const allConfirmed = itemDonations.every(
@@ -71,39 +71,44 @@ export async function updateAcceptDonation(app: FastifyInstance) {
         );
 
         if (allConfirmed) {
-          const updatedItems = Array.isArray(campaignData.items)
-            ? campaignData.items.map((item: any) => {
-                if (item.name === donationData.item_name) {
-                  return { ...item, status: 'concluido' };
-                }
-                return item;
+          const updatedSections = Array.isArray(campaignData.section)
+            ? campaignData.section.map((section: any) => {
+                const updatedItems = Array.isArray(section.items)
+                  ? section.items.map((item: any) => {
+                      if (item.name === item_name) {
+                        return { ...item, status: 'concluido' };
+                      }
+                      return item;
+                    })
+                  : [];
+
+                return { ...section, items: updatedItems };
               })
             : [];
 
-          await campaignRef.update({ items: updatedItems });
+          await campaignRef.update({ section: updatedSections });
 
-          const allItemsCompleted = updatedItems.every(
-            (item: any) => item.status === 'concluido'
-          );
-
-          if (allItemsCompleted) {
-            await campaignRef.update({ status: 'fechada' });
-          }
-
-          const totalItems = updatedItems.length;
-          const completedItems = updatedItems.filter(
+          const allItems = updatedSections.flatMap((section: any) => section.items);
+          const totalItems = allItems.length;
+          const completedItems = allItems.filter(
             (item: any) => item.status === 'concluido'
           ).length;
 
           const progressPercentage = (completedItems / totalItems) * 100;
-
           await campaignRef.update({ progress: progressPercentage });
+
+          const allItemsCompleted = allItems.every(
+            (item: any) => item.status === 'concluido'
+          );
+          if (allItemsCompleted) {
+            await campaignRef.update({ status: 'fechada' });
+          }
         }
 
         return reply.status(200).send({ message: 'Doação confirmada com sucesso!' });
       } catch (error) {
         console.error(error);
-        return reply.status(500).send(new ClientError('Erro ao atualizar doação'));
+        return reply.status(500).send(new ClientError('Erro ao atualizar a doação'));
       }
     }
   );
