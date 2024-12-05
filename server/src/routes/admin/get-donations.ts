@@ -40,12 +40,16 @@ export async function getDonations(app: FastifyInstance) {
           if(!userDoc.exists) {
             return reply.status(404).send(new ClientError(`Doação ${data.id} com usuário inexistente`))
           }
+          const campaignDoc = await db.collection('campaigns').doc(data.campaign_id).get()
+          const campaignName = campaignDoc.exists ? campaignDoc.data()?.name : 'Campanha não encontrada'
+
           return {
             id: doc.id,
             item_name: data.item_name,
             quantity: data.quantity,
             measure: data.measure,
             campaign_id: data.campaign_id,
+            campaign_name: campaignName,
             status: data.status,
             userID: data.userID,
             ...userDoc.data(),
