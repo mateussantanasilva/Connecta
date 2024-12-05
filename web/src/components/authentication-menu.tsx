@@ -36,7 +36,7 @@ export function AuthenticationMenu() {
           </span>
         </Link>
       ) : (
-        <Link href={`${api}/login/google`}>
+        <Link href={`${api}/login/google`} aria-label="Fazer login">
           <Button variant="secondary" className="hidden md:flex">
             <span>Faça sua doação</span>
           </Button>

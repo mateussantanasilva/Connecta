@@ -23,7 +23,7 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <Dialog.Root>
-      <Dialog.Trigger asChild {...props}>
+      <Dialog.Trigger aria-label="" asChild {...props}>
         {children}
       </Dialog.Trigger>
 

@@ -6,6 +6,8 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { ConfirmationModal } from '../modals/confirmation-modal'
 import { DonationItem } from '@/@types/DonationItem'
+import { api } from '@/utils/api'
+import Cookies from 'js-cookie'
 
 interface MyDonationsProps {
   donations: DonationItem[]
@@ -15,14 +17,31 @@ export function MyDonations({ donations }: MyDonationsProps) {
   const [donationList, setDonationList] = useState<DonationItem[]>(donations)
 
   function handleCancelDonation(donationId: string) {
-    const updatedDonations = donations.filter(
-      (donation) => donation.id !== donationId,
-    )
+    const userCookie = Cookies.get('user')
 
-    setDonationList(updatedDonations)
+    if (!userCookie) return
 
-    toast.success(
-      'Sua doação foi cancelada. Esperamos contar com você em outras oportunidades!',
+    toast.promise(
+      async () =>
+        await fetch(`${api}/donations/${donationId}`, {
+          method: 'DELETE',
+          headers: {
+            User: userCookie,
+          },
+        }),
+      {
+        success: () => {
+          const updatedDonations = donations.filter(
+            (donation) => donation.id !== donationId,
+          )
+
+          setDonationList(updatedDonations)
+
+          return 'Sua doação foi cancelada. Esperamos contar com você em outras oportunidades!'
+        },
+        error:
+          'Erro ao cancelar a doação pendente. Tente novamente mais tarde.',
+      },
     )
   }
 

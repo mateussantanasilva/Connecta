@@ -10,7 +10,7 @@ export function SettingsMenuAdmin() {
     <NavigationMenu.Root>
       <NavigationMenu.List>
         <NavigationMenu.Item className="relative flex">
-          <NavigationMenu.Trigger>
+          <NavigationMenu.Trigger aria-label="menu">
             <Settings className="hidden size-6 transition-colors hover:text-green-600 md:flex" />
 
             <Menu className="flex size-6 transition-colors hover:text-green-600 md:hidden" />

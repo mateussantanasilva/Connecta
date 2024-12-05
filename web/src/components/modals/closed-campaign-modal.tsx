@@ -18,7 +18,7 @@ export function ClosedCampaignModal({ campaign }: ClosedCampaignModalProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button variant="outline" size="xs">
+        <Button variant="outline" size="xs" aria-label="Detalhes da campanha">
           <Search className="size-5" />
         </Button>
       </Dialog.Trigger>

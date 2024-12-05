@@ -38,9 +38,7 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
           method: 'POST',
           headers: {
             User: String(userCookie),
-            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userId: user?.userID }),
         }),
       {
         success: () => {
@@ -81,6 +79,8 @@ export function CampaignPresentation({ campaign }: CampaignPresentationProps) {
   useEffect(() => {
     fetchUpdatedRole()
   }, [fetchUpdatedRole])
+
+  console.log(campaign)
 
   return (
     <section className="flex-1 space-y-5">

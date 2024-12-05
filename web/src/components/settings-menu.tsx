@@ -15,7 +15,7 @@ export function SettingsMenu({ isAuthenticated }: SettingsMenuProps) {
     <NavigationMenu.Root>
       <NavigationMenu.List>
         <NavigationMenu.Item className="relative flex">
-          <NavigationMenu.Trigger>
+          <NavigationMenu.Trigger aria-label="menu">
             {isAuthenticated ? (
               <>
                 <Settings className="hidden size-6 transition-colors hover:text-green-600 md:flex" />
@@ -51,7 +51,7 @@ export function SettingsMenu({ isAuthenticated }: SettingsMenuProps) {
                 <LogOut className="size-5 shrink-0" />
               </Link>
             ) : (
-              <Link href={`${api}/login/google`}>
+              <Link href={`${api}/login/google`} aria-label="Fazer login">
                 <Button variant="secondary">
                   <span>Faça sua doação</span>
                 </Button>

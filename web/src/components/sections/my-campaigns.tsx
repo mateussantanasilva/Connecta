@@ -78,7 +78,7 @@ export function MyCampaigns() {
           <Pagination
             total={totalResponses}
             currentPage={page}
-            totalPages={Math.ceil(totalResponses / 8)}
+            totalPages={Math.ceil(totalResponses / 3)}
             handlePreviousPage={() => onChangePage('previous')}
             handleNextPage={() => onChangePage('next')}
           />

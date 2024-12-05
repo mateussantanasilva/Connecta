@@ -39,6 +39,7 @@ export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
     handleSubmit,
     register,
     formState: { isSubmitting, errors },
+    reset,
   } = useForm<BecomeDoneeSchema>({
     resolver: zodResolver(becomeDoneeSchema),
   })
@@ -61,6 +62,7 @@ export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
       {
         success: () => {
           setIsOpenModal(false)
+          reset()
 
           return 'Sua solicitação foi enviada com sucesso para ser analisada. Aguarde a resposta.'
         },
@@ -132,7 +134,7 @@ export function BecomeDoneeModal({ doneeRequested }: BecomeDoneeModalProps) {
             <ConfirmationModal
               title="Enviar Solicitação de Donatário"
               description="Deseja enviar sua solicitação para se tornar donatário? Aguarde a análise após o envio."
-              disabled={isSubmitting}
+              disabled={isSubmitting || doneeRequested}
               onConfirm={() => handleSubmit(handleRequestDoneeRole)()}
             >
               <Button className="ml-auto">

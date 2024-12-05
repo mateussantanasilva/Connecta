@@ -149,6 +149,7 @@ export function OpenCampaignModal({ campaign }: OpenCampaignModalProps) {
         <Button
           variant="outline"
           size="xs"
+          aria-label="Detalhes da campanha"
           onClick={() => setIsOpenModal(!isOpenModal)}
         >
           <Search className="size-5" />

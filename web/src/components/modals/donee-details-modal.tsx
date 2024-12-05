@@ -60,7 +60,7 @@ export function DoneeDetailsModal({ donee }: DoneeDetailsModalProps) {
 
   return (
     <Dialog.Root open={isOpenModal}>
-      <Dialog.Trigger asChild>
+      <Dialog.Trigger aria-label="Detalhes do donatario" asChild>
         <Button
           variant="outline"
           size="xs"
