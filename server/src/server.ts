@@ -17,7 +17,7 @@ const googleClientId = process.env.GOOGLE_CLIENT_ID!
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET!
 const sessionSecret = process.env.SESSION_SECRET
 const PORT = process.env.PORT
-const redirectURL = process.env.PRODUCTION ? 'https://connecta-test.vercel.app' : 'http://localhost:3000'
+const redirectURL = process.env.PRODUCTION ? 'https://connectaapp.vercel.app' : 'http://localhost:3000'
 
 fastify.register(cors, {
   origin: `${redirectURL}`,
